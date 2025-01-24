@@ -1,4 +1,5 @@
 import OrganizationModel from '../Organization.model'
+import type { IOrganization } from '../../entities/organization';
 
 interface Idependency {
     organizationModel: OrganizationModel;
@@ -15,5 +16,9 @@ export default class EventService {
 
     storeLogo(id: string, logo: any) {
         this.organizationModel.storeLogo(id, logo)
+    }
+
+    newItem(organization: IOrganization) {
+        this.organizationModel.createNewDoc(uid, logo)
     }
 }
