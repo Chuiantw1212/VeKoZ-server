@@ -8,6 +8,7 @@
 		"@elysiajs/node": "^1.2.3",
 		"@types/node": "^22.10.10",
 		"elysia": "^1.2.10",
+		"firebase-admin": "^13.0.2",
 		"tsx": "^4.19.2",
 		"typescript": "^5.7.3"
 	}
