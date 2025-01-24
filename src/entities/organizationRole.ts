@@ -1,7 +1,9 @@
 /**
- * LimitedEventManager 簡單的事件管理
- * FullEventManager 所有人的事件管理、樣板設定
- * FullAccess, 所有權限
+ * Event Editor 簡單的事件管理
+ * Event Owner 所有人的事件管理、樣板設定
+ * Organization Editor 
+ * Organization Owner 權限以及各種編輯
+ * Owner 所有權限
  */
 
 export interface IOrganizationRole {
