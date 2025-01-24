@@ -1,9 +1,8 @@
 import { Query, QuerySnapshot, CollectionReference, DocumentReference, DocumentData, Firestore } from 'firebase-admin/firestore'
-import FirestoreDataAccess from './Firebase.model'
 
-export default class EventActor {
+export default class OrganizationMember {
     collection: CollectionReference = null as any
     constructor(firestore: Firestore) {
-        this.collection = firestore.collection('eventActors')
+        this.collection = firestore.collection('organizationMembers')
     }
 }
