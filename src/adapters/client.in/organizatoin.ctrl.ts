@@ -1,36 +1,55 @@
+import { memoryUsage } from 'node:process'
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 const router = new Elysia
-router.post('/organization', async ({ request }) => {
-    const { OrganizationService } = AccessGlobalService.locals
-    return {
-        name: 'Jane Doe'
-    }
-    // const headers = request.headers
-    // console.log(headers)
-    // const organization = await OrganizationService
-    // // const countiesAndTownMap = await MetaService.getTaiwanLocations()
-    // // const selectOptionsMap = await GetOptionsService.getOptionsMap()
-    // const result = {
-    //     // ...countiesAndTownMap,
-    //     // ...selectOptionsMap,
-    // }
-    // return result
+router.post('/organization', async () => {
+    console.log('post')
+    //     const memoryUsageInMB: ReturnType<typeof memoryUsage> = {
+    //         rss: 0,
+    //         heapTotal: 0,
+    //         heapUsed: 0,
+    //         arrayBuffers: 0,
+    //         external: 0,
+    //     }
+    //     const currentMemoryUsage: any = memoryUsage()
+    //     for (const key in memoryUsageInMB) {
+    //         const mb: number = Math.floor(1024 * 1024)
+    //         const value: number = currentMemoryUsage[key]
+    //         const valueInMB: number = Math.floor(value / mb)
+    //         Object.assign(memoryUsageInMB, {
+    //             [key]: `${valueInMB.toLocaleString()}Mb`
+    //         })
+    //     }
+    //     return {
+    //         memoryUsage: memoryUsageInMB,
+    //         startupTime: AccessGlobalService.get('startupTime'),
+    //     }
 })
 router.get('/organization', async () => {
-
-    const { MetaService } = AccessGlobalService.locals
-    // const countiesAndTownMap = await MetaService.getTaiwanLocations()
-    // const selectOptionsMap = await GetOptionsService.getOptionsMap()
-    const result = {
-        // ...countiesAndTownMap,
-        // ...selectOptionsMap,
+    const memoryUsageInMB: ReturnType<typeof memoryUsage> = {
+        rss: 0,
+        heapTotal: 0,
+        heapUsed: 0,
+        arrayBuffers: 0,
+        external: 0,
     }
-    return result
+    const currentMemoryUsage: any = memoryUsage()
+    for (const key in memoryUsageInMB) {
+        const mb: number = Math.floor(1024 * 1024)
+        const value: number = currentMemoryUsage[key]
+        const valueInMB: number = Math.floor(value / mb)
+        Object.assign(memoryUsageInMB, {
+            [key]: `${valueInMB.toLocaleString()}Mb`
+        })
+    }
+    return {
+        memoryUsage: memoryUsageInMB,
+        startupTime: AccessGlobalService.get('startupTime'),
+    }
 })
-router.put('/organization/logo', async ({ request }) => {
+router.put('/organization/logo', async () => {
     try {
-        const blob = request.body
+        // const blob = request.body
         const { OrganizationService } = AccessGlobalService.locals
         // OrganizationService.storeLogo()
 

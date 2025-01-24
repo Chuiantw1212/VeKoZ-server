@@ -1,3 +1,6 @@
+/**
+ * https://elysiajs.com/key-concept.html#everything-is-a-component
+ */
 import { memoryUsage } from 'node:process'
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'

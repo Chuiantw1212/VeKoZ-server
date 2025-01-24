@@ -86,6 +86,7 @@ import organizationController from './adapters/client.in/organizatoin.ctrl'
     app.use(eventController)
     app.use(organizationController)
 
+    // Start Listening
     app.listen(8080, ({ hostname, port }) => {
         console.log(
             `🦊 Elysia is running at ${hostname}:${port}`
