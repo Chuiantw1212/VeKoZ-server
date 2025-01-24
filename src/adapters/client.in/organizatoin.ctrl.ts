@@ -2,7 +2,6 @@ import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 const router = new Elysia
 router.post('/organization', async ({ request }) => {
-
     const { OrganizationService } = AccessGlobalService.locals
     return {
         name: 'Jane Doe'

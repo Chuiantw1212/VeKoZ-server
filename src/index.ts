@@ -16,11 +16,13 @@ import OrganizationModel from './domain/Organization.model'
 // services
 import MetaService from './domain/services/Meta.service';
 import EventService from './domain/services/Event.service';
+import OrganizationService from './domain/services/Organization.service'
 // services.others
 import { ILocals } from './entities/app';
 // controllers
 import rootController from './adapters/client.in/root.ctrl'
 import eventController from './adapters/client.in/event.ctrl'
+import organizationController from './adapters/client.in/organizatoin.ctrl'
 
 (async () => {
     const app = new Elysia({ adapter: node() })
@@ -67,6 +69,9 @@ import eventController from './adapters/client.in/event.ctrl'
             eventModel,
             eventActorModel,
             eventTemplateModel,
+        }),
+        OrganizationService: new OrganizationService({
+            organizationModel,
         })
     }
     Object.assign(AccessGlobalService.locals, {
@@ -79,6 +84,7 @@ import eventController from './adapters/client.in/event.ctrl'
     app.use(cors())
     app.use(rootController)
     app.use(eventController)
+    app.use(organizationController)
 
     app.listen(8080, ({ hostname, port }) => {
         console.log(
