@@ -1,9 +1,9 @@
-import type { ISelectMap, ISelectDocData } from '../..//entities/select'
+import type { ISelectMap, ISelectDocData } from '../../entities/select'
 import SelectModel from '../Select.model'
 interface Idependency {
     model: SelectModel
 }
-export default class GetOptionsService {
+export default class MetaService {
     selectModel: SelectModel = null as any
     optionsMap: ISelectMap = {}
     optionKeys: string[] = ['floorSizes', 'buildingAges', 'buildingTypes', 'genders', 'retirementQuartile', 'insuranceTypes']
