@@ -1,16 +1,18 @@
 import { Query, QuerySnapshot, CollectionReference, DocumentReference, DocumentData, Firestore } from 'firebase-admin/firestore'
 import Firebase from '../adapters/firebase.out'
+import FirestoreDataAccess from './Firebase.model'
 
 interface ILogo {
     type: string;
     buffer: Buffer,
 }
 
-export default class Organization {
+export default class Organization extends FirestoreDataAccess {
     collection: CollectionReference = null as any
     publicPucket: any = null
 
     constructor(firebase: typeof Firebase) {
+        super()
         this.publicPucket = firebase.bucketPublic
         this.collection = firebase.firestore.collection('organizations')
     }

@@ -1,26 +1,39 @@
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 const router = new Elysia
-router.get('/organization', async () => {
-    try {
-        const { MetaService } = AccessGlobalService.locals
-        // const countiesAndTownMap = await MetaService.getTaiwanLocations()
-        // const selectOptionsMap = await GetOptionsService.getOptionsMap()
-        const result = {
-            // ...countiesAndTownMap,
-            // ...selectOptionsMap,
-        }
-        return result
-    } catch (error: any) {
-        console.trace(error)
-        return error.message || error
+router.post('/organization', async ({ request }) => {
+
+    const { OrganizationService } = AccessGlobalService.locals
+    return {
+        name: 'Jane Doe'
     }
+    // const headers = request.headers
+    // console.log(headers)
+    // const organization = await OrganizationService
+    // // const countiesAndTownMap = await MetaService.getTaiwanLocations()
+    // // const selectOptionsMap = await GetOptionsService.getOptionsMap()
+    // const result = {
+    //     // ...countiesAndTownMap,
+    //     // ...selectOptionsMap,
+    // }
+    // return result
+})
+router.get('/organization', async () => {
+
+    const { MetaService } = AccessGlobalService.locals
+    // const countiesAndTownMap = await MetaService.getTaiwanLocations()
+    // const selectOptionsMap = await GetOptionsService.getOptionsMap()
+    const result = {
+        // ...countiesAndTownMap,
+        // ...selectOptionsMap,
+    }
+    return result
 })
 router.put('/organization/logo', async ({ request }) => {
     try {
         const blob = request.body
         const { OrganizationService } = AccessGlobalService.locals
-        OrganizationService.storeLogo()
+        // OrganizationService.storeLogo()
 
         return true
     } catch (error) {
