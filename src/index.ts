@@ -1,27 +1,24 @@
 import { Elysia } from 'elysia'
 import { node } from '@elysiajs/node'
 import path from 'path'
-
-// services.others
-import { ILocals } from './entities/app';
-
+// entities
+import AccessGlobalService from './entities/app'
 // adapters
 import firebase from './adapters/firebase.out'
 import googleCloud from './adapters/googleCloud.out'
-
 // models
 import SelectModel from './domain/Select.model';
 import EventModel from './domain/Event.model'
 import EventActorModel from './domain/EventActor.model'
 import EventTemplateModel from './domain/EventTemplate.model'
-
 // services
 import MetaService from './domain/services/Meta.service';
-
+import EventService from './domain/services/Event.service';
+// services.others
+import { ILocals } from './entities/app';
 // controllers
 import rootController from './adapters/client.in/root.ctrl'
 import eventController from './adapters/client.in/event.ctrl'
-import EventService from './domain/services/Event.service';
 
 (async () => {
     const app = new Elysia({ adapter: node() })
@@ -70,11 +67,15 @@ import EventService from './domain/services/Event.service';
             eventTemplateModel,
         })
     }
+    Object.assign(AccessGlobalService.locals, {
+        ...allServices
+    })
 
     /**
     * controllers
     */
     app.use(rootController)
+    app.use(eventController)
 
     app.listen(8080, ({ hostname, port }) => {
         console.log(
