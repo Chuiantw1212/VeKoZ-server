@@ -3,7 +3,7 @@ import { node } from '@elysiajs/node'
 
 const app = new Elysia({ adapter: node() })
     .get('/', () => 'Hello Elysia')
-    .listen(3000, ({ hostname, port }) => {
+    .listen(8080, ({ hostname, port }) => {
         console.log(
             `🦊 Elysia is running at ${hostname}:${port}`
         )
