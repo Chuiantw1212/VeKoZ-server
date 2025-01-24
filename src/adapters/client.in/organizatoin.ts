@@ -20,7 +20,9 @@ router.put('/organization/logo', async ({ request }) => {
     try {
         const blob = request.body
         const { OrganizationService } = AccessGlobalService.locals
-        OrganizationService.storeLogo()
+        // const organization ＝OrganizationService.get
+        // const id = 
+        // OrganizationService.storeLogo(blob)
 
         return true
     } catch (error) {
