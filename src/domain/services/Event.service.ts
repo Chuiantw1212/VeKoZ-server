@@ -1,12 +1,25 @@
-import type { ISelectMap, ISelectDocData } from '../../entities/select'
-import SelectModel from '../Select.model'
+import EventModel from '../Event.model'
+import EventActorModel from '../EventActor.model'
+import EventTemplateModel from '../EventTemplate.model'
+
 interface Idependency {
-    model: SelectModel
+    eventModel: EventModel;
+    eventActorModel: EventActorModel;
+    eventTemplateModel: EventTemplateModel;
 }
 export default class EventService {
-    selectModel: SelectModel = null as any
+    eventModel: EventModel = null as any
+    eventActorModel: EventActorModel = null as any
+    eventTemplateModel: EventTemplateModel = null as any
+
     constructor(dependency: Idependency) {
-        const { model } = dependency
-        this.selectModel = model
+        const {
+            eventModel,
+            eventActorModel,
+            eventTemplateModel,
+        } = dependency
+        this.eventModel = eventModel
+        this.eventActorModel = eventActorModel
+        this.eventTemplateModel = eventTemplateModel
     }
 }

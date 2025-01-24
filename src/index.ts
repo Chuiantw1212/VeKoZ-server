@@ -1,21 +1,27 @@
 import { Elysia } from 'elysia'
 import { node } from '@elysiajs/node'
+import path from 'path'
+
 // services.others
 import { ILocals } from './entities/app';
 
 // adapters
-import firebase from './adapters/firebase.out.ts'
-import googleCloud from './adapters/googleCloud.out.ts'
-import chatGpt from './adapters/chatGpt.out'
+import firebase from './adapters/firebase.out'
+import googleCloud from './adapters/googleCloud.out'
 
 // models
 import SelectModel from './domain/Select.model';
+import EventModel from './domain/Event.model'
+import EventActorModel from './domain/EventActor.model'
+import EventTemplateModel from './domain/EventTemplate.model'
 
 // services
 import MetaService from './domain/services/Meta.service';
 
 // controllers
 import rootController from './adapters/client.in/root.ctrl'
+import eventController from './adapters/client.in/event.ctrl'
+import EventService from './domain/services/Event.service';
 
 (async () => {
     const app = new Elysia({ adapter: node() })
@@ -30,7 +36,7 @@ import rootController from './adapters/client.in/root.ctrl'
         const keyPath = path.resolve(__dirname, '../OPEN_API_KEY.json')
         OPENAI_API_KEY = require(keyPath);
     }
-    chatGpt.initializeSync(OPENAI_API_KEY)
+
     // Load firebase
     let FIREBASE_SERVICE_ACCOUNT_KEY_JSON = null
     try {
@@ -47,13 +53,21 @@ import rootController from './adapters/client.in/root.ctrl'
     * models
     */
     const selectModel = new SelectModel(firestore)
+    const eventModel = new EventModel(firestore)
+    const eventActorModel = new EventActorModel(firestore)
+    const eventTemplateModel = new EventTemplateModel(firestore)
 
     /**
      * Services
      */
     const allServices: ILocals = {
         MetaService: new MetaService({
-            model:
+            model: selectModel,
+        }),
+        EventService: new EventService({
+            eventModel,
+            eventActorModel,
+            eventTemplateModel,
         })
     }
 
