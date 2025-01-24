@@ -1,5 +1,6 @@
 import { Elysia } from 'elysia'
 import { node } from '@elysiajs/node'
+import { cors } from '@elysiajs/cors'
 import path from 'path'
 // entities
 import AccessGlobalService from './entities/app'
@@ -47,8 +48,8 @@ import eventController from './adapters/client.in/event.ctrl'
 
 
     /**
-    * models
-    */
+     * models
+     */
     const selectModel = new SelectModel(firestore)
     const eventModel = new EventModel(firestore)
     const eventActorModel = new EventActorModel(firestore)
@@ -72,8 +73,9 @@ import eventController from './adapters/client.in/event.ctrl'
     })
 
     /**
-    * controllers
-    */
+     * controllers
+     */
+    app.use(cors())
     app.use(rootController)
     app.use(eventController)
 
@@ -82,5 +84,4 @@ import eventController from './adapters/client.in/event.ctrl'
             `🦊 Elysia is running at ${hostname}:${port}`
         )
     })
-
 })()
