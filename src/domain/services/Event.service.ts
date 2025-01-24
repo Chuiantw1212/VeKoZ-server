@@ -22,4 +22,8 @@ export default class EventService {
         this.eventActorModel = eventActorModel
         this.eventTemplateModel = eventTemplateModel
     }
+
+    putTemplate(template: string) {
+
+    }
 }

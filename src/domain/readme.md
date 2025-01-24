@@ -1,0 +1,1 @@
+1. 一個.model.ts只會對應一個collection

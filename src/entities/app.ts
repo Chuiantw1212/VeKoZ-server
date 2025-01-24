@@ -2,11 +2,13 @@
  * 為了開發維護方便的Interface，在開發方法上無特別理論用意。
  */
 import MetaService from "../domain/services/Meta.service"
+import EventService from "../domain/services/Event.service"
 
 export interface ILocals {
     [key: string]: any
     startupTime?: number,
     MetaService: MetaService,
+    EventService: EventService,
 }
 
 export interface IApp {
