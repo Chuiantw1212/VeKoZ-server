@@ -12,6 +12,7 @@ import SelectModel from './domain/Select.model';
 import EventModel from './domain/Event.model'
 import EventActorModel from './domain/EventActor.model'
 import EventTemplateModel from './domain/EventTemplate.model'
+import OrganizationModel from './domain/Organization.model'
 // services
 import MetaService from './domain/services/Meta.service';
 import EventService from './domain/services/Event.service';
@@ -44,16 +45,16 @@ import eventController from './adapters/client.in/event.ctrl'
         const keyPath = path.resolve(__dirname, '../FIREBASE_SERVICE_ACCOUNT_KEY_JSON.json')
         FIREBASE_SERVICE_ACCOUNT_KEY_JSON = require(keyPath);
     }
-    const firestore = await firebase.initializeSync(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
-
+    await firebase.initializeSync(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
 
     /**
-     * models
+     * Models
      */
-    const selectModel = new SelectModel(firestore)
-    const eventModel = new EventModel(firestore)
-    const eventActorModel = new EventActorModel(firestore)
-    const eventTemplateModel = new EventTemplateModel(firestore)
+    const selectModel = new SelectModel(firebase.firestore)
+    const eventModel = new EventModel(firebase.firestore)
+    const eventActorModel = new EventActorModel(firebase.firestore)
+    const eventTemplateModel = new EventTemplateModel(firebase.firestore)
+    const organizationModel = new OrganizationModel(firebase)
 
     /**
      * Services

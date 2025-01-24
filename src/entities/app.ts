@@ -3,12 +3,14 @@
  */
 import MetaService from "../domain/services/Meta.service"
 import EventService from "../domain/services/Event.service"
+import OrganizationService from '../domain/services/Organization.service'
 
 export interface ILocals {
     [key: string]: any
     startupTime?: number,
     MetaService: MetaService,
     EventService: EventService,
+    OrganizationService: OrganizationService,
 }
 
 export interface IApp {

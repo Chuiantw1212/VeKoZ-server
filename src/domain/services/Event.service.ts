@@ -8,9 +8,9 @@ interface Idependency {
     eventTemplateModel: EventTemplateModel;
 }
 export default class EventService {
-    eventModel: EventModel = null as any
-    eventActorModel: EventActorModel = null as any
-    eventTemplateModel: EventTemplateModel = null as any
+    protected eventModel: EventModel = null as any
+    protected eventActorModel: EventActorModel = null as any
+    protected eventTemplateModel: EventTemplateModel = null as any
 
     constructor(dependency: Idependency) {
         const {

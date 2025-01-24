@@ -26,8 +26,7 @@ export class FirebaseAdapter {
          * 使用Firestore(noSQL)
          * https://firebase.google.com/docs/firestore/quickstart
          */
-        const firestore = getFirestore();
-        return firestore
+        this.firestore = getFirestore();
     }
     async verifyIdToken(idToken: string | null) {
         if (!idToken) {
