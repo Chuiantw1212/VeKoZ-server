@@ -85,6 +85,14 @@ import organizationController from './adapters/client.in/organizatoin.ctrl'
     app.use(rootController)
     app.use(eventController)
     app.use(organizationController)
+    app.onError(({ error, code }) => {
+        console.log({
+            error
+        })
+        if (code === 'NOT_FOUND') return
+
+        console.error(error)
+    })
 
     // Start Listening
     app.listen(8080, ({ hostname, port }) => {
