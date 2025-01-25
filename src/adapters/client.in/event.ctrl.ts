@@ -1,6 +1,6 @@
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
-const router = new Elysia
+const router = new Elysia()
 router.post('/event', async function () {
     const { MetaService } = AccessGlobalService.locals
     // const countiesAndTownMap = await MetaService.getTaiwanLocations()

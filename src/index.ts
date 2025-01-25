@@ -85,7 +85,6 @@ import organizationController from './adapters/client.in/organizatoin.ctrl'
     app.use(rootController)
     app.use(eventController)
     app.use(organizationController)
-    // app.post("/organization", () => "Hello Bookshelf")
 
     // Start Listening
     app.listen(8080, ({ hostname, port }) => {

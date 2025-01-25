@@ -1,6 +1,6 @@
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
-const router = new Elysia
+const router = new Elysia()
 router.get('/meta/select', async function () {
     try {
         const { MetaService } = AccessGlobalService.locals

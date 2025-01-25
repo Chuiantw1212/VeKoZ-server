@@ -1,7 +1,7 @@
 import { memoryUsage } from 'node:process'
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
-const router = new Elysia
+const router = new Elysia()
 // router.post('/organization', 'World!!')
 router.get('/organization', async () => {
     const memoryUsageInMB: ReturnType<typeof memoryUsage> = {
