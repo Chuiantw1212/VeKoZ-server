@@ -1,4 +1,3 @@
-import { memoryUsage } from 'node:process'
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 const router = new Elysia()

@@ -82,19 +82,20 @@ import organizationController from './adapters/client.in/organizatoin.ctrl'
     /**
      * controllers
      */
-    app.use(cors())
-    app.use(rootController)
-    app.use(eventController)
-    app.use(organizationController)
-    app.use(bearer())
-    app.onError(({ error, code }) => {
-        console.log({
-            error
-        })
-        if (code === 'NOT_FOUND') return
+    app
+        .use(cors())
+        .use(bearer())
+        .use(rootController)
+        .use(eventController)
+        .use(organizationController)
+        .onError(({ error, code }) => {
+            console.log({
+                error
+            })
+            if (code === 'NOT_FOUND') return
 
-        console.error(error)
-    })
+            console.error(error)
+        })
 
     // Start Listening
     app.listen(8080, ({ hostname, port }) => {
