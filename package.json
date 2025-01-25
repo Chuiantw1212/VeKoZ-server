@@ -5,6 +5,7 @@
 		"start": "NODE_ENV=production node dist/index.js"
 	},
 	"dependencies": {
+		"@elysiajs/bearer": "^1.2.0",
 		"@elysiajs/cors": "^1.2.0",
 		"@elysiajs/node": "^1.2.3",
 		"@google-cloud/secret-manager": "^5.6.0",
