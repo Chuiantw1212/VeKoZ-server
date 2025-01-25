@@ -1,6 +1,7 @@
 import { Elysia } from 'elysia'
 import { node } from '@elysiajs/node'
 import { cors } from '@elysiajs/cors'
+import { bearer } from '@elysiajs/bearer'
 import path from 'path'
 // entities
 import AccessGlobalService from './entities/app'
@@ -85,6 +86,7 @@ import organizationController from './adapters/client.in/organizatoin.ctrl'
     app.use(rootController)
     app.use(eventController)
     app.use(organizationController)
+    app.use(bearer())
     app.onError(({ error, code }) => {
         console.log({
             error
