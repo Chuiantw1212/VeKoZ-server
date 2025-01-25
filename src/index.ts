@@ -1,9 +1,9 @@
+const time = new Date().getTime()
 import { Elysia } from 'elysia'
 import { node } from '@elysiajs/node'
 import { cors } from '@elysiajs/cors'
-import { bearer } from '@elysiajs/bearer'
 import path from 'path'
-// entities
+// // entities
 import AccessGlobalService from './entities/app'
 // adapters
 import firebase from './adapters/firebase.out'
@@ -84,7 +84,6 @@ import organizationController from './adapters/client.in/organizatoin.ctrl'
      */
     app
         .use(cors())
-        .use(bearer())
         .use(rootController)
         .use(eventController)
         .use(organizationController)
@@ -102,5 +101,8 @@ import organizationController from './adapters/client.in/organizatoin.ctrl'
         console.log(
             `🦊 Elysia is running at ${hostname}:${port}`
         )
+        const timeEnd = new Date().getTime()
+        const timeDiff = (timeEnd - time) / 1000
+        AccessGlobalService.locals.startupTime = timeDiff
     })
 })()

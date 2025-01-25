@@ -4,8 +4,8 @@
 import { memoryUsage } from 'node:process'
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
-const rootController = new Elysia()
-rootController.get('/', async () => {
+const router = new Elysia()
+router.get('/', async () => {
     const memoryUsageInMB: ReturnType<typeof memoryUsage> = {
         rss: 0,
         heapTotal: 0,
@@ -27,4 +27,4 @@ rootController.get('/', async () => {
         startupTime: AccessGlobalService.get('startupTime'),
     }
 })
-export default rootController
+export default router
