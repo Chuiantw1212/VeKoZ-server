@@ -7,16 +7,25 @@ export default class FirestoreDataAccess {
     collection: CollectionReference = null as any
 
     /**
+     * Get all documents in a collection
+     * https://firebase.google.com/docs/firestore/query-data/get-data#node.js_6
+     * @returns 
+     */
+    async getList() {
+        const snapshot = await this.collection.get()
+        const docDatas = snapshot.docs.map(doc => {
+            return doc.data()
+        });
+        return docDatas
+    }
+
+    /**
      * 新增document
      * @param uid user id
      * @param data
      * @returns 
      */
     createNewDoc(uid: string, data: any) {
-        console.log({
-            uid,
-            data
-        })
         const docRef = this.collection.doc()
         data.id = docRef.id
         data.uid = uid // IMPORTANT 否則新資料會是null

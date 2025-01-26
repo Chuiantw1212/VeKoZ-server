@@ -24,7 +24,7 @@ import { ILocals } from './entities/app';
 // controllers
 import rootController from './adapters/client.in/root.ctrl'
 import eventController from './adapters/client.in/event.ctrl'
-import organizationController from './adapters/client.in/organizatoin.ctrl'
+import organizationController from './adapters/client.in/organization.ctrl'
 
 (async () => {
     const app = new Elysia({ adapter: node() })

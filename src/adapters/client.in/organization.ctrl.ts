@@ -1,11 +1,13 @@
 import AccessGlobalService from '../../entities/app'
 import type { IOrganization } from '../../entities/organization';
 import { Elysia, } from 'elysia'
-
-const router = new Elysia()
 import { bearer } from '@elysiajs/bearer'
+const router = new Elysia()
 router.use(bearer())
-  .post('/organization', async ({ request, bearer, store }) => {
+  .get('/organization/list', async () => {
+    const { OrganizationService, } = AccessGlobalService.locals
+  })
+  .post('/organization', async ({ request, bearer }) => {
     // console.log({ bearer })
     // const idToken = request.headers.authorization || ''
     const { OrganizationService, AuthService } = AccessGlobalService.locals
@@ -17,35 +19,6 @@ router.use(bearer())
     const newOrganization: IOrganization = OrganizationService.newItem(user.uid, organization)
     return newOrganization
   })
-
-  /**
-   * var nodeRequestToWebstand = (req, abortController) => {
-    let _signal;
-    console.log('debug', "content-type" in req.headers)
-    const test = new Request(getUrl(req), {
-      method: req.method,
-      headers: req.headers,
-      get body() {
-        if (req.method === "GET" || req.method === "HEAD") return null;
-        return import_stream2.Readable.toWeb(req);
-      },
-      get signal() {
-        if (_signal) return _signal;
-        const controller = abortController ?? new AbortController();
-        _signal = controller.signal;
-        req.once("close", () => {
-          controller.abort();
-        });
-        return _signal;
-      },
-      // @ts-expect-error
-      duplex: "content-type" in req.headers ? "half" : "half"
-    });
-    
-    return test
-  };
-   */
-
   .put('/organization/logo', async () => {
     try {
       // const blob = request.body
