@@ -1,5 +1,5 @@
 import AccessGlobalService from '../../entities/app'
-import type { IOrganization } from '../../entities/organization';
+import type { IOrganization } from '../../entities/organization'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
 const router = new Elysia()
@@ -16,8 +16,8 @@ router.use(bearer())
     const logo = organization.logo
     organization.logo = ''
     let newOrganization: IOrganization = OrganizationService.newItem(user.uid, organization)
-    if (logo) {
-      const publicUrl: string = await OrganizationService.storeLogo(organization.id, organization.logo)
+    if (logo && typeof organization.logo !== 'string') {
+      const publicUrl: string = await OrganizationService.storeLogo(organization.id, logo)
       organization.logo = publicUrl
     }
     newOrganization = await OrganizationService.mergeSingleDoc(user.uid, organization)
@@ -37,5 +37,13 @@ router.use(bearer())
     }
     newOrganization = await OrganizationService.mergeSingleDoc(user.uid, organization)
     return newOrganization
+  })
+  .delete('/organization', async ({ bearer }) => {
+    // TODO: 新增的管理者也可以刪除組織嗎？
+    const { OrganizationService, AuthService } = AccessGlobalService.locals
+    const user = await AuthService.verifyIdToken(bearer)
+    const organization: IOrganization = await OrganizationService.getItem(user.uid)
+    const isSuccess = await OrganizationService.removeByDocId(organization.id)
+    return isSuccess
   })
 export default router

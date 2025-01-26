@@ -98,4 +98,25 @@ export default class FirestoreDataAccess {
         delete doc.uid
         return doc
     }
+
+    async removeSingleDoc(uid: string) {
+        const targetQuery = this.collection.where('uid', '==', uid)
+        const countData = await targetQuery.count().get()
+        const count: number = countData.data().count
+        if (count == 0) {
+            throw 'uid不存在'
+        }
+        if (count > 1) {
+            throw '現有資料重複uid'
+        }
+        (await targetQuery.get()).forEach(doc => {
+            this.collection.doc(doc.id).delete()
+        })
+        return count
+    }
+
+    async removeByDocId(id: string) {
+        await this.collection.doc(id).delete()
+        return true
+    }
 }

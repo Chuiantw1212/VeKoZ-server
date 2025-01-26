@@ -49,4 +49,13 @@ export default class EventService {
         const list: IOrganization[] = await this.organizationModel.getList()
         return list
     }
+
+    /**
+     * 刪除組織
+     * @param id 
+     * @returns 
+     */
+    async removeByDocId(id: string) {
+        return await this.organizationModel.removeByDocId(id)
+    }
 }
