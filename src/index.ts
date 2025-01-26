@@ -18,6 +18,7 @@ import OrganizationModel from './domain/Organization.model'
 import MetaService from './domain/services/Meta.service';
 import EventService from './domain/services/Event.service';
 import OrganizationService from './domain/services/Organization.service'
+import AuthService from './domain/services/Auth.service'
 // services.others
 import { ILocals } from './entities/app';
 // controllers
@@ -73,7 +74,8 @@ import organizationController from './adapters/client.in/organizatoin.ctrl'
         }),
         OrganizationService: new OrganizationService({
             organizationModel,
-        })
+        }),
+        AuthService: new AuthService(firebase)
     }
     Object.assign(AccessGlobalService.locals, {
         ...allServices

@@ -4,6 +4,7 @@
 import MetaService from "../domain/services/Meta.service"
 import EventService from "../domain/services/Event.service"
 import OrganizationService from '../domain/services/Organization.service'
+import AuthService from '../domain/services/Auth.service'
 
 export interface ILocals {
     [key: string]: any
@@ -11,6 +12,7 @@ export interface ILocals {
     MetaService: MetaService,
     EventService: EventService,
     OrganizationService: OrganizationService,
+    AuthService: AuthService,
 }
 
 export interface IApp {

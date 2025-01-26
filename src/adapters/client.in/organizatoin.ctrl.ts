@@ -1,4 +1,5 @@
 import AccessGlobalService from '../../entities/app'
+import type { IOrganization } from '../../entities/organization';
 import { Elysia, } from 'elysia'
 
 const router = new Elysia()
@@ -7,14 +8,11 @@ router.use(bearer())
   .post('/organization', async ({ request, bearer, store }) => {
     // console.log({ bearer })
     // const idToken = request.headers.authorization || ''
-    const { OrganizationService } = AccessGlobalService.locals
-    const user = await fastify.firebase.verifyIdToken(bearer)
-    const organization = request.body
-    // const idToken = request.headers.authorization || ''
-
-    return {
-
-    }
+    const { OrganizationService, AuthService } = AccessGlobalService.locals
+    const user = await AuthService.verifyIdToken(bearer)
+    const organization: IOrganization = request.body as any
+    const newOrganization: IOrganization = OrganizationService.newItem(user.uid, organization)
+    return newOrganization
   })
 
   /**

@@ -18,7 +18,12 @@ export default class EventService {
         this.organizationModel.storeLogo(id, logo)
     }
 
-    newItem(organization: IOrganization) {
-        this.organizationModel.createNewDoc(uid, logo)
+    /**
+     * 新增組織
+     * @param uid UserUid
+     * @param organization 
+     */
+    newItem(uid: string, organization: IOrganization) {
+        return this.organizationModel.createNewDoc(uid, organization)
     }
 }

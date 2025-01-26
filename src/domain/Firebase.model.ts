@@ -12,7 +12,7 @@ export default class FirestoreDataAccess {
      * @param data
      * @returns 
      */
-    async createNewDoc(uid: string, data: any) {
+    createNewDoc(uid: string, data: any) {
         const docRef = this.collection.doc()
         data.id = docRef.id
         data.uid = uid // IMPORTANT 否則新資料會是null
