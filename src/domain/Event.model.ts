@@ -1,4 +1,4 @@
-import { Query, QuerySnapshot, CollectionReference, DocumentReference, DocumentData, Firestore } from 'firebase-admin/firestore'
+import { CollectionReference, Firestore } from 'firebase-admin/firestore'
 import FirestoreDataAccess from './Firebase.model'
 
 export default class Event extends FirestoreDataAccess {
