@@ -27,9 +27,6 @@ router.use(bearer())
     const { OrganizationService, AuthService } = AccessGlobalService.locals
     const user = await AuthService.verifyIdToken(bearer)
     const organization: IOrganization = await OrganizationService.getItem(user.uid)
-    console.log({
-      organization
-    })
     let newOrganization: IOrganization = await request.json() as any
     Object.assign(organization, {
       ...newOrganization
