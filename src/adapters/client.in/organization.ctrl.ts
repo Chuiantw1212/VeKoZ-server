@@ -13,10 +13,14 @@ router.use(bearer())
     const { OrganizationService, AuthService } = AccessGlobalService.locals
     const user = await AuthService.verifyIdToken(bearer)
     const organization: IOrganization = await request.json() as any
-    if (organization.logo) {
-
+    const logo = organization.logo
+    organization.logo = ''
+    let newOrganization: IOrganization = OrganizationService.newItem(user.uid, organization)
+    if (logo) {
+      const publicUrl: string = await OrganizationService.storeLogo(organization.id, organization.logo)
+      organization.logo = publicUrl
     }
-    const newOrganization: IOrganization = OrganizationService.newItem(user.uid, organization)
+    newOrganization = await OrganizationService.setItem(user.uid, organization)
     return newOrganization
   })
   .put('/organization', async ({ request, bearer }) => {
