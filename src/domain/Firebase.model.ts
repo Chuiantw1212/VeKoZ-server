@@ -14,7 +14,9 @@ export default class FirestoreDataAccess {
     async getList() {
         const snapshot = await this.collection.get()
         const docDatas = snapshot.docs.map(doc => {
-            return doc.data()
+            const docData = doc.data()
+            delete docData.uid
+            return docData
         });
         return docDatas as any[]
     }
@@ -28,9 +30,21 @@ export default class FirestoreDataAccess {
     createNewDoc(uid: string, data: any) {
         const docRef = this.collection.doc()
         data.id = docRef.id
-        data.uid = uid // IMPORTANT 否則新資料會是null
-        this.collection.doc(data.id).set(data)
+        this.collection.doc(data.id).set({
+            ...data,
+            uid // IMPORTANT 否則新資料會是null
+        })
         return data
+    }
+
+    /**
+     * 利用user uid取得document
+     */
+    async getSingleDoc(uid: string) {
+        const targetQuery = this.collection.where('uid', '==', uid)
+        const doc = (await targetQuery.get()).docs[0] as any
+        delete doc.uid
+        return doc
     }
 
     /**
@@ -82,7 +96,8 @@ export default class FirestoreDataAccess {
         if (count > 1) {
             throw '現有資料重複uid'
         }
-        const doc = (await targetQuery.get()).docs[0]
+        const doc = (await targetQuery.get()).docs[0] as any
+        delete doc.uid
         return doc
     }
 }

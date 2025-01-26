@@ -10,21 +10,25 @@ router.use(bearer())
     return organizations
   })
   .post('/organization', async ({ request, bearer }) => {
-    // console.log({ bearer })
-    // const idToken = request.headers.authorization || ''
     const { OrganizationService, AuthService } = AccessGlobalService.locals
     const user = await AuthService.verifyIdToken(bearer)
-    console.log({
-      user
-    })
     const organization: IOrganization = await request.json() as any
+    if (organization.logo) {
+
+    }
     const newOrganization: IOrganization = OrganizationService.newItem(user.uid, organization)
     return newOrganization
   })
-  .put('/organization/logo', async () => {
+  .put('/organization/logo', async ({ request, bearer }) => {
     try {
+      const { OrganizationService, AuthService } = AccessGlobalService.locals
+      const user = await AuthService.verifyIdToken(bearer)
+      const organization: IOrganization = await request.json() as any
+      if (organization.logo) {
+        const company = await OrganizationService.getByAdminUid(user.uid)
+        const publicUrl = await OrganizationService.storeLogo(company.id, blob)
+      }
       // const blob = request.body
-      const { OrganizationService } = AccessGlobalService.locals
       // OrganizationService.storeLogo()
 
       return true
