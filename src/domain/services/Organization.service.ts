@@ -14,8 +14,8 @@ export default class EventService {
         this.organizationModel = organizationModel
     }
 
-    storeLogo(id: string, logo: any) {
-        this.organizationModel.storeLogo(id, logo)
+    async storeLogo(id: string, logo: any) {
+        return await this.organizationModel.storeLogo(id, logo)
     }
 
     /**
@@ -25,6 +25,20 @@ export default class EventService {
      */
     newItem(uid: string, organization: IOrganization) {
         return this.organizationModel.createNewDoc(uid, organization)
+    }
+
+    /**
+     * 取得組織
+     */
+    async getItem(uid: string) {
+        return await this.organizationModel.getSingleDoc(uid)
+    }
+
+    /**
+     * 更新組織
+     */
+    async setItem(uid: string, organization: IOrganization) {
+        return await this.organizationModel.setSingleDoc(uid, organization)
     }
 
     /**

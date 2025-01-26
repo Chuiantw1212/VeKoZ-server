@@ -42,6 +42,11 @@ export default class FirestoreDataAccess {
      */
     async getSingleDoc(uid: string) {
         const targetQuery = this.collection.where('uid', '==', uid)
+        const countData = await targetQuery.count().get()
+        const count: number = countData.data().count
+        if (count == 0) {
+            throw 'uid不存在'
+        }
         const doc = (await targetQuery.get()).docs[0] as any
         delete doc.uid
         return doc
@@ -55,6 +60,7 @@ export default class FirestoreDataAccess {
     async setSingleDoc(uid: string, data: any) {
         const singleDocSnapshot = await this.checkSingleDoc(uid)
         singleDocSnapshot.ref.set(data)
+        return data
     }
     /**
      * 合併現有的Document
