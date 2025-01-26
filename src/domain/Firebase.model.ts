@@ -13,6 +13,10 @@ export default class FirestoreDataAccess {
      * @returns 
      */
     createNewDoc(uid: string, data: any) {
+        console.log({
+            uid,
+            data
+        })
         const docRef = this.collection.doc()
         data.id = docRef.id
         data.uid = uid // IMPORTANT 否則新資料會是null

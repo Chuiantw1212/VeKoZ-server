@@ -10,7 +10,10 @@ router.use(bearer())
     // const idToken = request.headers.authorization || ''
     const { OrganizationService, AuthService } = AccessGlobalService.locals
     const user = await AuthService.verifyIdToken(bearer)
-    const organization: IOrganization = request.body as any
+    console.log({
+      user
+    })
+    const organization: IOrganization = await request.json() as any
     const newOrganization: IOrganization = OrganizationService.newItem(user.uid, organization)
     return newOrganization
   })
