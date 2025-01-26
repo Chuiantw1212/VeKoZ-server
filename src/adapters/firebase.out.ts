@@ -16,7 +16,7 @@ export class FirebaseAdapter {
          * https://firebase.google.com/docs/storage/admin/start
         */
         const firebaseStorage: Storage = getStorage()
-        this.bucketPublic = firebaseStorage.bucket('public.econ-sense.com')
+        this.bucketPublic = firebaseStorage.bucket('public.venonia.com')
         /**
          * 管理Firebase使用者
          * https://firebase.google.com/docs/auth/admin/manage-users

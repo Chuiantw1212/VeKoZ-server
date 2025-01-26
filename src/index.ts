@@ -31,15 +31,6 @@ import organizationController from './adapters/client.in/organizatoin.ctrl'
     /**
      * Adapters
      */
-    let OPENAI_API_KEY: string = ''
-    try {
-        OPENAI_API_KEY = await googleCloud.accessSecret('OPENAI_API_KEY')
-    } catch (error: any) {
-        console.trace('OPENAI_API_KEY:', error.message)
-        const keyPath = path.resolve(__dirname, '../OPEN_API_KEY.json')
-        OPENAI_API_KEY = require(keyPath);
-    }
-
     // Load firebase
     let FIREBASE_SERVICE_ACCOUNT_KEY_JSON = null
     try {
@@ -86,9 +77,6 @@ import organizationController from './adapters/client.in/organizatoin.ctrl'
      */
     app
         .use(cors())
-        .use(rootController)
-        .use(eventController)
-        .use(organizationController)
         .onError(({ error, code }) => {
             console.log({
                 error
@@ -97,6 +85,9 @@ import organizationController from './adapters/client.in/organizatoin.ctrl'
 
             console.error(error)
         })
+        .use(rootController)
+        .use(eventController)
+        .use(organizationController)
 
     // Start Listening
     app.listen(8080, ({ hostname, port }) => {
