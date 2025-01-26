@@ -1,3 +1,4 @@
+import { IEventTemplate } from '../../entities/eventTemplate';
 import EventModel from '../Event.model'
 import EventActorModel from '../EventActor.model'
 import EventTemplateModel from '../EventTemplate.model'
@@ -23,7 +24,12 @@ export default class EventService {
         this.eventTemplateModel = eventTemplateModel
     }
 
-    putTemplate(template: string) {
-
+    async putTemplate(uid: string, template: IEventTemplate) {
+        if (template.id) {
+            return await this.eventTemplateModel.mergeUniqueDoc()
+        } else {
+            return await this.eventTemplateModel.createNewDoc(uid, template)
+        }
+        // this.eventTemplateModel.
     }
 }

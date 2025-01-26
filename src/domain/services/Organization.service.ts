@@ -31,14 +31,14 @@ export default class EventService {
      * 取得組織
      */
     async getItem(uid: string) {
-        return await this.organizationModel.getSingleDoc(uid)
+        return await this.organizationModel.getUniqueDoc(uid)
     }
 
     /**
      * 更新組織
      */
-    async mergeSingleDoc(uid: string, organization: IOrganization) {
-        return await this.organizationModel.mergeSingleDoc(uid, organization)
+    async mergeUniqueDoc(uid: string, organization: IOrganization) {
+        return await this.organizationModel.mergeUniqueDoc(uid, organization)
     }
 
     /**

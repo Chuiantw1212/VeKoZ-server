@@ -40,7 +40,7 @@ export default class FirestoreDataAccess {
     /**
      * 利用user uid取得document
      */
-    async getSingleDoc(uid: string) {
+    async getUniqueDoc(uid: string) {
         const targetQuery = this.collection.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
@@ -58,8 +58,8 @@ export default class FirestoreDataAccess {
      * @param uid user id
      * @param data 
      */
-    async mergeSingleDoc(uid: string, data: any) {
-        const singleDocSnapshot = await this.checkSingleDoc(uid)
+    async mergeUniqueDoc(uid: string, data: any) {
+        const singleDocSnapshot = await this.checkUniqueDoc(uid)
         singleDocSnapshot.ref.set(data, {
             merge: true
         })
@@ -70,8 +70,8 @@ export default class FirestoreDataAccess {
      * @param uid user id
      * @param data 
      */
-    async mergeSingleDocField(uid: string, field: string, data: any) {
-        const singleDocSnapshot = await this.checkSingleDoc(uid)
+    async mergeUniqueDocField(uid: string, field: string, data: any) {
+        const singleDocSnapshot = await this.checkUniqueDoc(uid)
         const user: { id: string, uid: string, [key: string]: any } = {
             id: singleDocSnapshot.id,
             uid,
@@ -84,7 +84,7 @@ export default class FirestoreDataAccess {
      * @param uid user id
      * @returns 
      */
-    async checkSingleDoc(uid: string) {
+    async checkUniqueDoc(uid: string) {
         const targetQuery = this.collection.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
@@ -99,7 +99,7 @@ export default class FirestoreDataAccess {
         return doc
     }
 
-    async removeSingleDoc(uid: string) {
+    async removeUniqueDoc(uid: string) {
         const targetQuery = this.collection.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count

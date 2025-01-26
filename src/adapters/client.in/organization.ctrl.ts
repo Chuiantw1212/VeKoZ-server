@@ -20,7 +20,7 @@ router.use(bearer())
       const publicUrl: string = await OrganizationService.storeLogo(organization.id, logo)
       organization.logo = publicUrl
     }
-    newOrganization = await OrganizationService.mergeSingleDoc(user.uid, organization)
+    newOrganization = await OrganizationService.mergeUniqueDoc(user.uid, organization)
     return newOrganization
   })
   .put('/organization', async ({ request, bearer }) => {
@@ -35,7 +35,7 @@ router.use(bearer())
       const publicUrl: string = await OrganizationService.storeLogo(organization.id, organization.logo)
       organization.logo = publicUrl
     }
-    newOrganization = await OrganizationService.mergeSingleDoc(user.uid, organization)
+    newOrganization = await OrganizationService.mergeUniqueDoc(user.uid, organization)
     return newOrganization
   })
   .delete('/organization', async ({ bearer }) => {

@@ -25,9 +25,9 @@ router.get('/event/template', async function ({ request }) {
 
 router.put('/event/template', async function ({ request }) {
 
-    const requestBody = await request.json()
+    const eventTemplate = await request.json()
     const { EventService } = AccessGlobalService.locals
-    EventService.putTemplate(requestBody)
+    EventService.putTemplate(eventTemplate)
     // const countiesAndTownMap = await MetaService.getTaiwanLocations()
     // const selectOptionsMap = await GetOptionsService.getOptionsMap()
     const result = {
