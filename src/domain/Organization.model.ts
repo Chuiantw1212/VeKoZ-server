@@ -1,4 +1,4 @@
-import { Query, QuerySnapshot, CollectionReference, DocumentReference, DocumentData, Firestore } from 'firebase-admin/firestore'
+import { CollectionReference, } from 'firebase-admin/firestore'
 import Firebase from '../adapters/firebase.out'
 import FirestoreDataAccess from './Firebase.model'
 
@@ -43,5 +43,13 @@ export default class Organization extends FirestoreDataAccess {
         blobStream.end(typedResult)
         const publicUrl = blob.publicUrl()
         return publicUrl
+    }
+
+    async deleteItem(id: string) {
+        await this.publicPucket.deleteFiles({
+            prefix: `company/${id}`
+        })
+        await this.removeByDocId(id)
+        return true
     }
 }

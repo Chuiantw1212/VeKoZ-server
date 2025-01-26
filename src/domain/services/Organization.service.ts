@@ -55,7 +55,7 @@ export default class EventService {
      * @param id 
      * @returns 
      */
-    async removeByDocId(id: string) {
-        return await this.organizationModel.removeByDocId(id)
+    async deleteItem(id: string) {
+        return await this.organizationModel.deleteItem(id)
     }
 }

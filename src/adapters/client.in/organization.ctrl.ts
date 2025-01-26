@@ -43,7 +43,7 @@ router.use(bearer())
     const { OrganizationService, AuthService } = AccessGlobalService.locals
     const user = await AuthService.verifyIdToken(bearer)
     const organization: IOrganization = await OrganizationService.getItem(user.uid)
-    const isSuccess = await OrganizationService.removeByDocId(organization.id)
+    const isSuccess = await OrganizationService.deleteItem(organization.id)
     return isSuccess
   })
 export default router
