@@ -6,6 +6,8 @@ const router = new Elysia()
 router.use(bearer())
   .get('/organization/list', async () => {
     const { OrganizationService, } = AccessGlobalService.locals
+    const organizations: IOrganization[] = await OrganizationService.getList()
+    return organizations
   })
   .post('/organization', async ({ request, bearer }) => {
     // console.log({ bearer })

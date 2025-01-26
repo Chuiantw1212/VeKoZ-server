@@ -16,7 +16,7 @@ export default class FirestoreDataAccess {
         const docDatas = snapshot.docs.map(doc => {
             return doc.data()
         });
-        return docDatas
+        return docDatas as any[]
     }
 
     /**

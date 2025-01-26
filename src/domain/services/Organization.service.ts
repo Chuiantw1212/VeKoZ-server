@@ -26,4 +26,13 @@ export default class EventService {
     newItem(uid: string, organization: IOrganization) {
         return this.organizationModel.createNewDoc(uid, organization)
     }
+
+    /**
+     * 取得列表
+     * @returns 
+     */
+    async getList() {
+        const list: IOrganization[] = await this.organizationModel.getList()
+        return list
+    }
 }
