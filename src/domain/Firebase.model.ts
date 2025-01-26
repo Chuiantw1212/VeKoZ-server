@@ -45,7 +45,7 @@ export default class FirestoreDataAccess {
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
         if (count == 0) {
-            throw 'uid不存在'
+            return {}
         }
         const doc = (await targetQuery.get()).docs[0] as any
         const docData = doc.data()

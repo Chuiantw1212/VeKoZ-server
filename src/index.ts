@@ -76,15 +76,15 @@ import organizationController from './adapters/client.in/organization.ctrl'
      * controllers
      */
     app
-        .use(cors())
         .onError(({ error, code }) => {
-            console.log({
+            console.trace({
                 error
             })
             if (code === 'NOT_FOUND') return
 
             console.error(error)
         })
+        .use(cors())
         .use(rootController)
         .use(eventController)
         .use(organizationController)

@@ -26,10 +26,12 @@ export default class EventService {
 
     async putTemplate(uid: string, template: IEventTemplate) {
         if (template.id) {
-            return await this.eventTemplateModel.mergeUniqueDoc()
+            return await this.eventTemplateModel.mergeUniqueDoc(uid, template)
         } else {
             return await this.eventTemplateModel.createNewDoc(uid, template)
         }
-        // this.eventTemplateModel.
+    }
+    async getItem(uid: string) {
+        return await this.eventTemplateModel.getUniqueDoc(uid)
     }
 }
