@@ -48,20 +48,11 @@ export default class FirestoreDataAccess {
             throw 'uid不存在'
         }
         const doc = (await targetQuery.get()).docs[0] as any
-        delete doc.uid
-        return doc
+        const docData = doc.data()
+        delete docData.uid
+        return docData
     }
 
-    /**
-     * 取代現有的Document
-     * @param uid user id
-     * @param data 
-     */
-    async setSingleDoc(uid: string, data: any) {
-        const singleDocSnapshot = await this.checkSingleDoc(uid)
-        singleDocSnapshot.ref.set(data)
-        return data
-    }
     /**
      * 合併現有的Document
      * @param uid user id
@@ -72,6 +63,7 @@ export default class FirestoreDataAccess {
         singleDocSnapshot.ref.set(data, {
             merge: true
         })
+        return data
     }
     /**
      * 取代現有的Document某個欄位

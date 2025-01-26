@@ -37,8 +37,8 @@ export default class EventService {
     /**
      * 更新組織
      */
-    async setItem(uid: string, organization: IOrganization) {
-        return await this.organizationModel.setSingleDoc(uid, organization)
+    async mergeSingleDoc(uid: string, organization: IOrganization) {
+        return await this.organizationModel.mergeSingleDoc(uid, organization)
     }
 
     /**

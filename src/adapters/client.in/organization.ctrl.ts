@@ -20,18 +20,25 @@ router.use(bearer())
       const publicUrl: string = await OrganizationService.storeLogo(organization.id, organization.logo)
       organization.logo = publicUrl
     }
-    newOrganization = await OrganizationService.setItem(user.uid, organization)
+    newOrganization = await OrganizationService.mergeSingleDoc(user.uid, organization)
     return newOrganization
   })
   .put('/organization', async ({ request, bearer }) => {
     const { OrganizationService, AuthService } = AccessGlobalService.locals
     const user = await AuthService.verifyIdToken(bearer)
-    const organization: IOrganization = await request.json() as any
-    if (organization.logo) {
+    const organization: IOrganization = await OrganizationService.getItem(user.uid)
+    console.log({
+      organization
+    })
+    let newOrganization: IOrganization = await request.json() as any
+    Object.assign(organization, {
+      ...newOrganization
+    })
+    if (typeof organization.logo !== 'string') {
       const publicUrl: string = await OrganizationService.storeLogo(organization.id, organization.logo)
       organization.logo = publicUrl
     }
-    const newOrganization: IOrganization = await OrganizationService.setItem(user.uid, organization)
+    newOrganization = await OrganizationService.mergeSingleDoc(user.uid, organization)
     return newOrganization
   })
 export default router
