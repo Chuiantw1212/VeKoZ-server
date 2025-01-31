@@ -16,13 +16,19 @@ router.use(bearer())
         const result = await AccomdationService.newItem(user.uid, accommodation)
         return result
     })
+    .put('/accommodation/:id', async ({ request, bearer, params }) => {
+        const { id } = params
+        const { AuthService, AccomdationService } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const accommodation: IAccommodation = await request.json() as any
+        const result = await AccomdationService.mergeByDocId(user.uid, id, accommodation)
+        return result
+    })
     .delete('/accommodation/:id', async ({ request, bearer, params }) => {
         const { id } = params
         const { AuthService, AccomdationService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const result = await AccomdationService.deleteItem()
-        // const accommodation: IAccommodation = await request.json() as any
-        // const result = await AccomdationService.newItem(user.uid, accommodation)
+        const result = await AccomdationService.deleteByDocId(user.uid, id)
         return result
     })
 export default router

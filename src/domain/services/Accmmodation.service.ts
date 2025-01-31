@@ -51,7 +51,17 @@ export default class AccommodationService {
      * @param id 
      * @returns 
      */
-    async deleteByDocId(uid, id: string) {
-        return await this.accommodationModel.deleteByDocId(id)
+    async deleteByDocId(uid: string, id: string) {
+        return await this.accommodationModel.deleteByDocId(uid, id)
+    }
+
+    /**
+     * 更新使用者自己建立的
+     * @param uid 使用者uid
+     * @param id 文檔id
+     * @returns 
+     */
+    async mergeByDocId(uid: string, id: string, data: any) {
+        return await this.accommodationModel.mergeByDocId(uid, id, data)
     }
 }

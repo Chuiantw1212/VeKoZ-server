@@ -55,7 +55,7 @@ export default class OrganizationService {
      * @param id 
      * @returns 
      */
-    async deleteItem(id: string) {
-        return await this.organizationModel.deleteItem(id)
+    async deleteItem(uid: string, id: string) {
+        return await this.organizationModel.deleteItem(uid, id)
     }
 }

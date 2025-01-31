@@ -49,7 +49,7 @@ export default class FirestoreDataAccess {
         }
         const doc = (await targetQuery.get()).docs[0] as any
         const docData = doc.data()
-        delete docData.uid
+        delete docData.uid // IMPORTANT
         return docData
     }
 
@@ -58,12 +58,11 @@ export default class FirestoreDataAccess {
      * @param uid user id
      * @param data 
      */
-    async mergeUniqueDoc(uid: string, data: any) {
+    async mergeUniqueDoc(uid: string, data: any): Promise<void> {
         const singleDocSnapshot = await this.checkUniqueDoc(uid)
         singleDocSnapshot.ref.set(data, {
             merge: true
         })
-        return data
     }
     /**
      * 取代現有的Document某個欄位
@@ -72,12 +71,14 @@ export default class FirestoreDataAccess {
      */
     async mergeUniqueDocField(uid: string, field: string, data: any) {
         const singleDocSnapshot = await this.checkUniqueDoc(uid)
-        const user: { id: string, uid: string, [key: string]: any } = {
+        const docData: any = {
             id: singleDocSnapshot.id,
             uid,
         }
-        user[field] = data
-        singleDocSnapshot.ref.update(user)
+        docData[field] = data
+        singleDocSnapshot.ref.update(docData)
+        delete docData.uid // IMPORTANT
+        return docData
     }
     /**
      * 確保Document uid是唯一的
@@ -95,7 +96,7 @@ export default class FirestoreDataAccess {
             throw '現有資料重複uid'
         }
         const doc = (await targetQuery.get()).docs[0] as any
-        delete doc.uid
+        delete doc.uid // IMPORTANT
         return doc
     }
 
@@ -104,7 +105,7 @@ export default class FirestoreDataAccess {
      * @param uid 使用者uid
      * @returns 
      */
-    async removeUniqueDoc(uid: string) {
+    async removeUniqueDoc(uid: string): Promise<number> {
         const targetQuery = this.collection.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
@@ -117,7 +118,7 @@ export default class FirestoreDataAccess {
         (await targetQuery.get()).forEach(doc => {
             this.collection.doc(doc.id).delete()
         })
-        return count
+        return 1
     }
 
     /**
@@ -126,14 +127,46 @@ export default class FirestoreDataAccess {
      * @param id 文件id
      * @returns 
      */
-    async deleteByDocId(uid: string, id: string) {
+    async deleteByDocId(uid: string, id: string): Promise<number> {
         const targetQuery = this.collection.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
         if (count == 0) {
             throw 'uid不存在'
         }
-        await this.collection.doc(id).delete()
-        return true
+        const targetDoc = (await targetQuery.get()).docs.find(async doc => {
+            return doc.id === id
+        })
+        if (targetDoc) {
+            await this.collection.doc(targetDoc.id).delete()
+            return 1
+        } else {
+            return 0
+        }
+    }
+
+    /**
+     * 更新其中一個由使用者建立的文件
+     * @param uid 使用者uid
+     * @param id 文件id
+     * @returns 
+     */
+    async mergeByDocId(uid: string, id: string, data: any): Promise<number> {
+        const targetQuery = this.collection.where('uid', '==', uid)
+        const countData = await targetQuery.count().get()
+        const count: number = countData.data().count
+        if (count == 0) {
+            throw 'uid不存在'
+        }
+        const targetDoc = (await targetQuery.get()).docs.find(async doc => {
+            return doc.id === id
+        })
+        console.log({
+            data
+        })
+        if (targetDoc) {
+            await this.collection.doc(targetDoc.id).update(data, { merge: true })
+        }
+        return 1
     }
 }
