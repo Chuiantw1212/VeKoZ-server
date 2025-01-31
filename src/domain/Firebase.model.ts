@@ -115,7 +115,7 @@ export default class FirestoreDataAccess {
         return count
     }
 
-    async removeByDocId(id: string) {
+    async deleteByDocId(id: string) {
         await this.collection.doc(id).delete()
         return true
     }

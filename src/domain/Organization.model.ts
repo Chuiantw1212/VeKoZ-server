@@ -49,7 +49,7 @@ export default class Organization extends FirestoreDataAccess {
         await this.publicPucket.deleteFiles({
             prefix: `company/${id}`
         })
-        await this.removeByDocId(id)
+        await this.deleteByDocId(id)
         return true
     }
 }
