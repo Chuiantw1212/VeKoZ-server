@@ -115,7 +115,19 @@ export default class FirestoreDataAccess {
         return count
     }
 
-    async deleteByDocId(id: string) {
+    /**
+     * 
+     * @param uid 使用者uid
+     * @param id 文件id
+     * @returns 
+     */
+    async deleteByDocId(uid: string, id: string) {
+        const targetQuery = this.collection.where('uid', '==', uid)
+        const countData = await targetQuery.count().get()
+        const count: number = countData.data().count
+        if (count == 0) {
+            throw 'uid不存在'
+        }
         await this.collection.doc(id).delete()
         return true
     }

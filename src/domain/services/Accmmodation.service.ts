@@ -51,7 +51,7 @@ export default class AccommodationService {
      * @param id 
      * @returns 
      */
-    async deleteItem(id: string) {
+    async deleteByDocId(uid, id: string) {
         return await this.accommodationModel.deleteByDocId(id)
     }
 }
