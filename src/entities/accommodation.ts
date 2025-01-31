@@ -2,7 +2,7 @@
  * https://schema.org/Organization
  */
 
-export interface IAccomodation {
+export interface IAccommodation {
     [key: string]: any
     name: string;
     uid: string;
