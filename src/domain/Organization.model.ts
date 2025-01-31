@@ -45,11 +45,17 @@ export default class OrganizationModel extends FirestoreDataAccess {
         return publicUrl
     }
 
-    async deleteItem(id: string) {
+    /**
+     * 刪除組織
+     * @param uid 使用者uid
+     * @param id 文件id
+     * @returns 
+     */
+    async deleteItem(uid: string, id: string) {
+        await this.deleteByDocId(uid, id)
         await this.publicPucket.deleteFiles({
             prefix: `company/${id}`
         })
-        await this.deleteByDocId(id)
         return true
     }
 }

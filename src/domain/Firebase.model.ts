@@ -99,6 +99,11 @@ export default class FirestoreDataAccess {
         return doc
     }
 
+    /**
+     * 刪除唯一的文件
+     * @param uid 使用者uid
+     * @returns 
+     */
     async removeUniqueDoc(uid: string) {
         const targetQuery = this.collection.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
@@ -116,7 +121,7 @@ export default class FirestoreDataAccess {
     }
 
     /**
-     * 
+     * 刪除其中一個由使用者建立的文件
      * @param uid 使用者uid
      * @param id 文件id
      * @returns 
