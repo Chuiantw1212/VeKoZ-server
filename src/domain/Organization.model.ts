@@ -7,7 +7,7 @@ interface ILogo {
     buffer: Buffer,
 }
 
-export default class Organization extends FirestoreDataAccess {
+export default class OrganizationModel extends FirestoreDataAccess {
     collection: CollectionReference = null as any
     publicPucket: any = null
 

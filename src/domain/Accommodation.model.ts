@@ -1,7 +1,7 @@
 import { CollectionReference, Firestore } from 'firebase-admin/firestore'
 import FirestoreDataAccess from './Firebase.model'
 
-export default class Accommodation extends FirestoreDataAccess {
+export default class AccommodationModel extends FirestoreDataAccess {
     collection: CollectionReference = null as any
     publicPucket: any = null
 

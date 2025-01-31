@@ -9,6 +9,7 @@ import AccessGlobalService from './entities/app'
 import firebase from './adapters/firebase.out'
 import googleCloud from './adapters/googleCloud.out'
 // models
+import AccommodationModel from './domain/Accommodation.model'
 import SelectModel from './domain/Select.model';
 import EventModel from './domain/Event.model'
 import EventActorModel from './domain/EventActor.model'
