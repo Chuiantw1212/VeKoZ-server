@@ -4,7 +4,7 @@ import type { IOrganization } from '../../entities/organization';
 interface Idependency {
     organizationModel: OrganizationModel;
 }
-export default class EventService {
+export default class OrganizationService {
     protected organizationModel: OrganizationModel = null as any
 
     constructor(dependency: Idependency) {

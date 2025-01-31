@@ -1,15 +1,15 @@
 import type { ISelectMap, ISelectDocData } from '../../entities/select'
 import SelectModel from '../Select.model'
 interface Idependency {
-    model: SelectModel
+    selectModel: SelectModel
 }
 export default class MetaService {
     protected selectModel: SelectModel = null as any
     protected optionsMap: ISelectMap = {}
     protected optionKeys: string[] = ['floorSizes', 'buildingAges', 'buildingTypes', 'genders', 'retirementQuartile', 'insuranceTypes']
     constructor(dependency: Idependency) {
-        const { model } = dependency
-        this.selectModel = model
+        const { selectModel } = dependency
+        this.selectModel = selectModel
     }
     async getOptionsMap() {
         // 如有現成就用現成

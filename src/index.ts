@@ -20,12 +20,14 @@ import MetaService from './domain/services/Meta.service';
 import EventService from './domain/services/Event.service';
 import OrganizationService from './domain/services/Organization.service'
 import AuthService from './domain/services/Auth.service'
+import AccommodationService from './domain/services/Accmmodation.service'
 // services.others
 import { ILocals } from './entities/app';
 // controllers
 import rootController from './adapters/client.in/root.ctrl'
 import eventController from './adapters/client.in/event.ctrl'
 import organizationController from './adapters/client.in/organization.ctrl'
+import accommodationController from './adapters/client.in/accommodation.ctrl'
 
 (async () => {
     const app = new Elysia({ adapter: node() })
@@ -51,13 +53,14 @@ import organizationController from './adapters/client.in/organization.ctrl'
     const eventActorModel = new EventActorModel(firebase.firestore)
     const eventTemplateModel = new EventTemplateModel(firebase.firestore)
     const organizationModel = new OrganizationModel(firebase)
+    const accommodationModel = new AccommodationModel(firebase.firestore)
 
     /**
      * Services
      */
     const allServices: ILocals = {
         MetaService: new MetaService({
-            model: selectModel,
+            selectModel,
         }),
         EventService: new EventService({
             eventModel,
@@ -66,6 +69,9 @@ import organizationController from './adapters/client.in/organization.ctrl'
         }),
         OrganizationService: new OrganizationService({
             organizationModel,
+        }),
+        AccomdationService: new AccommodationService({
+            accommodationModel,
         }),
         AuthService: new AuthService(firebase)
     }
@@ -89,6 +95,7 @@ import organizationController from './adapters/client.in/organization.ctrl'
         .use(rootController)
         .use(eventController)
         .use(organizationController)
+        .use(accommodationController)
 
     // Start Listening
     app.listen(8080, ({ hostname, port }) => {

@@ -3,16 +3,21 @@ import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
 const router = new Elysia()
 router.use(bearer())
-    .post('/accommodation', async function ({ request, bearer }) {
+    .get('/accommodation/list', async ({ request, bearer }) => {
         const { AuthService, AccomdationService } = AccessGlobalService.locals
-        const user = await AuthService.verifyIdToken(bearer)
-        const result = await AccomdationService.newItem()
+        const result = await AccomdationService.getList()
+        return result
+    })
+    .post('/accommodation', async ({ request, bearer }) => {
+        // const { AuthService, AccomdationService } = AccessGlobalService.locals
+        // const user = await AuthService.verifyIdToken(bearer)
+        // const result = await AccomdationService.newItem()
         // const countiesAndTownMap = await MetaService.getTaiwanLocations()
         // const selectOptionsMap = await GetOptionsService.getOptionsMap()
-        const result = {
+        // const result = {
             // ...countiesAndTownMap,
             // ...selectOptionsMap,
-        }
-        return result
+        // }
+        // return result
     })
 export default router

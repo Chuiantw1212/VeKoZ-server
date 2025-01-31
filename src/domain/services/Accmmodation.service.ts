@@ -4,7 +4,7 @@ import type { IAccommodation } from '../../entities/accommodation';
 interface Idependency {
     accommodationModel: AccommodationModel;
 }
-export default class EventService {
+export default class AccommodationService {
     protected accommodationModel: AccommodationModel = null as any
 
     constructor(dependency: Idependency) {
