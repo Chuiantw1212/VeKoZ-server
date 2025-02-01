@@ -15,6 +15,7 @@ import EventModel from './domain/Event.model'
 import EventActorModel from './domain/EventActor.model'
 import EventTemplateModel from './domain/EventTemplate.model'
 import OrganizationModel from './domain/Organization.model'
+import OrganizationMemberModel from './domain/OrganizationMember.model'
 // services
 import MetaService from './domain/services/Meta.service';
 import EventService from './domain/services/Event.service';
@@ -53,6 +54,7 @@ import accommodationController from './adapters/client.in/accommodation.ctrl'
     const eventActorModel = new EventActorModel(firebase.firestore)
     const eventTemplateModel = new EventTemplateModel(firebase.firestore)
     const organizationModel = new OrganizationModel(firebase)
+    const organizationMemberModel = new OrganizationMemberModel(firebase.firestore)
     const accommodationModel = new AccommodationModel(firebase.firestore)
 
     /**
@@ -69,6 +71,7 @@ import accommodationController from './adapters/client.in/accommodation.ctrl'
         }),
         OrganizationService: new OrganizationService({
             organizationModel,
+            organizationMemberModel,
         }),
         AccomdationService: new AccommodationService({
             accommodationModel,

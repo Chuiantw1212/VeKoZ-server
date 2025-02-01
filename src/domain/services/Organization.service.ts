@@ -1,17 +1,23 @@
 import OrganizationModel from '../Organization.model'
-import type { IOrganization } from '../../entities/organization';
+import OrganizationMemberModel from '../OrganizationMember.model';
+import type { IOrganization, IOrganizationMember } from '../../entities/organization';
 
 interface Idependency {
     organizationModel: OrganizationModel;
+    organizationMemberModel: OrganizationMemberModel
 }
+
 export default class OrganizationService {
     protected organizationModel: OrganizationModel = null as any
+    protected organizationMemberModel: OrganizationMemberModel = null as any
 
     constructor(dependency: Idependency) {
         const {
             organizationModel,
+            organizationMemberModel,
         } = dependency
         this.organizationModel = organizationModel
+        this.organizationMemberModel = organizationMemberModel
     }
 
     async storeLogo(id: string, logo: any) {
@@ -47,6 +53,19 @@ export default class OrganizationService {
      */
     async getList() {
         const list: IOrganization[] = await this.organizationModel.getList()
+        return list
+    }
+
+    /**
+     * 取得成員列表
+     * @param uid 使用者uid
+     * @param organizationId 企業文件Id
+     * @returns 
+     */
+    async getMemberList(uid: string, organizationId: string) {
+        const list: IOrganizationMember[] = await this.organizationMemberModel.queryList(uid, {
+            organizationId,
+        })
         return list
     }
 

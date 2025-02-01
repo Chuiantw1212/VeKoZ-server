@@ -21,6 +21,25 @@ export default class FirestoreDataAccess {
         return docDatas as any[]
     }
 
+    async queryList(uid: string, query: Object,) {
+        let targetQuery = this.collection.where('uid', '==', uid)
+        const countData = await targetQuery.count().get()
+        const count: number = countData.data().count
+        if (count == 0) {
+            throw 'uid不存在'
+        }
+        for (let condition in query) {
+            const value = (query as any)[condition]
+            targetQuery = targetQuery.where(condition, '==', value)
+        }
+        const docDatas: any[] = (await targetQuery.get()).docs.map(doc => {
+            const docData = doc.data()
+            delete docData.uid
+            return docData
+        })
+        return docDatas
+    }
+
     /**
      * 新增document
      * @param uid user id
@@ -45,7 +64,7 @@ export default class FirestoreDataAccess {
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
         if (count == 0) {
-            return {}
+            throw 'uid不存在'
         }
         const doc = (await targetQuery.get()).docs[0] as any
         const docData = doc.data()

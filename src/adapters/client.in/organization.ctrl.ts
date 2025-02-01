@@ -1,13 +1,21 @@
 import AccessGlobalService from '../../entities/app'
-import type { IOrganization } from '../../entities/organization'
+import type { IOrganization, IOrganizationMember } from '../../entities/organization'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
+
 const router = new Elysia()
 router.use(bearer())
     .get('/organization/list', async () => {
         const { OrganizationService, } = AccessGlobalService.locals
         const organizations: IOrganization[] = await OrganizationService.getList()
         return organizations
+    })
+    .get('/organization/member/list', async ({ bearer }) => {
+        const { AuthService, OrganizationService, } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const organization = await OrganizationService.getItem(user.uid)
+        const organizationMembers: IOrganizationMember[] = await OrganizationService.getMemberList(user.uid, organization.id)
+        return organizationMembers
     })
     .post('/organization', async ({ request, bearer }) => {
         const { OrganizationService, AuthService } = AccessGlobalService.locals
