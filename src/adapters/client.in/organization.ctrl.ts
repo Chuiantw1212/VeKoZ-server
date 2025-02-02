@@ -10,11 +10,11 @@ router.use(bearer())
         const organizations: IOrganization[] = await OrganizationService.getList()
         return organizations
     })
-    .get('/organization/member/list', async ({ bearer }) => {
+    .get('/organization/:id/member/list', async ({ bearer, params }) => {
         const { AuthService, OrganizationService, } = AccessGlobalService.locals
+        const { id } = params
         const user = await AuthService.verifyIdToken(bearer)
-        const organization = await OrganizationService.getItem(user.uid)
-        const organizationMembers: IOrganizationMember[] = await OrganizationService.getMemberList(user.uid, organization.id)
+        const organizationMembers: IOrganizationMember[] = await OrganizationService.getMemberList(user.uid, id)
         return organizationMembers
     })
     .post('/organization', async ({ request, bearer }) => {
@@ -23,7 +23,7 @@ router.use(bearer())
         const organization: IOrganization = await request.json() as any
         const logo = organization.logo // 暫存logo
         organization.logo = ''
-        let newOrganization: IOrganization = OrganizationService.newItem(user.uid, organization)
+        let newOrganization: IOrganization = await OrganizationService.newItem(user.uid, organization)
         if (logo && typeof logo !== 'string') {
             const publicUrl: string = await OrganizationService.storeLogo(newOrganization.id, logo)
             newOrganization.logo = publicUrl

@@ -46,10 +46,12 @@ export default class FirestoreDataAccess {
      * @param data
      * @returns 
      */
-    createNewDoc(uid: string, data: any) {
+    async createNewDoc(uid: string, data: any): Promise<any> {
         const docRef = this.collection.doc()
+        const lastmod = new Date().toISOString()
         data.id = docRef.id
-        this.collection.doc(data.id).set({
+        data.lastmod = lastmod
+        await this.collection.doc(data.id).set({
             ...data,
             uid // IMPORTANT 否則新資料會是null
         })
@@ -77,11 +79,14 @@ export default class FirestoreDataAccess {
      * @param uid user id
      * @param data 
      */
-    async mergeUniqueDoc(uid: string, data: any): Promise<void> {
+    async mergeUniqueDoc(uid: string, data: any): Promise<string> {
         const singleDocSnapshot = await this.checkUniqueDoc(uid)
+        const lastmod = new Date().toISOString()
+        data.lastmod = lastmod
         singleDocSnapshot.ref.set(data, {
             merge: true
         })
+        return lastmod
     }
     /**
      * 取代現有的Document某個欄位

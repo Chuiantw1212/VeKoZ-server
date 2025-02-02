@@ -1,4 +1,4 @@
-import type { IEventTemplate } from '../../entities/eventTemplate';
+import type { IEventTemplate, } from '../../entities/eventTemplate';
 import type { IEvent } from '../../entities/event';
 import EventModel from '../Event.model'
 import EventActorModel from '../EventActor.model'
@@ -29,7 +29,14 @@ export default class EventService {
         return await this.eventModel.createNewDoc(uid, event)
     }
 
-    async putTemplate(uid: string, template: IEventTemplate) {
+    async putTemplate(uid: string, template: IEventTemplate): Promise<string> {
+        // 為每個design mutable建立自己的uuid
+        template.designs?.forEach((design) => {
+            if (!design.id) {
+                design.id = crypto.randomUUID()
+            }
+        })
+
         if (template.id) {
             return await this.eventTemplateModel.mergeUniqueDoc(uid, template)
         } else {
