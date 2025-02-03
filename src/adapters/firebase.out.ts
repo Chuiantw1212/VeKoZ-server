@@ -5,7 +5,7 @@ import { getStorage, Storage, } from 'firebase-admin/storage'
 export class FirebaseAdapter {
     firestore: Firestore = null as any
     auth: Auth = null as any
-    bucketPublic: ReturnType<Storage['bucket']> = null as any
+    publicBucket: ReturnType<Storage['bucket']> = null as any
     async initializeSync(apiKey: string) {
         const credential = admin.credential.cert(apiKey)
         admin.initializeApp({
@@ -16,7 +16,7 @@ export class FirebaseAdapter {
          * https://firebase.google.com/docs/storage/admin/start
         */
         const firebaseStorage: Storage = getStorage()
-        this.bucketPublic = firebaseStorage.bucket('public.venonia.com')
+        this.publicBucket = firebaseStorage.bucket('public.venonia.com')
         /**
          * 管理Firebase使用者
          * https://firebase.google.com/docs/auth/admin/manage-users

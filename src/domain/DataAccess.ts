@@ -3,9 +3,9 @@ import { IDataAccessAdapters } from "../entities/dataAccess"
  * 檔案的Naming要對應firestore的存取方式
  */
 export default class DataAccess {
-    noSQL: IDataAccessAdapters['noSQL'] = null as any
-    SQL: IDataAccessAdapters['SQL'] = null as any
-    error = {
+    protected noSQL: IDataAccessAdapters['noSQL'] = null as any
+    protected SQL: IDataAccessAdapters['SQL'] = null as any
+    protected error = {
         'noSqlIsNotReady': 'NoSQL instance is not ready.',
         'sqlIsNotReady': 'SQL instance is not ready.'
     }
@@ -26,7 +26,7 @@ export default class DataAccess {
      */
     async getDocList() {
         if (!this.noSQL) {
-            return
+            throw this.error.noSqlIsNotReady
         }
         const snapshot = await this.noSQL.get()
         const docDatas = snapshot.docs.map(doc => {
@@ -68,7 +68,7 @@ export default class DataAccess {
      */
     async createNewDoc(uid: string, data: any): Promise<any> {
         if (!this.noSQL) {
-            return
+            throw this.error.noSqlIsNotReady
         }
         const docRef = this.noSQL.doc()
         const lastmod = new Date().toISOString()
@@ -87,7 +87,7 @@ export default class DataAccess {
      */
     async getUniqueDoc(uid: string): Promise<any> {
         if (!this.noSQL) {
-            return
+            throw this.error.noSqlIsNotReady
         }
         const targetQuery = this.noSQL.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
@@ -138,7 +138,7 @@ export default class DataAccess {
      */
     async checkUniqueDoc(uid: string): Promise<any> {
         if (!this.noSQL) {
-            return
+            throw this.error.noSqlIsNotReady
         }
         const targetQuery = this.noSQL.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
@@ -161,7 +161,7 @@ export default class DataAccess {
      */
     async removeUniqueDoc(uid: string): Promise<number> {
         if (!this.noSQL) {
-            throw 'noSQL is not ready'
+            throw this.error.noSqlIsNotReady
         }
         const targetQuery = this.noSQL.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
@@ -188,7 +188,7 @@ export default class DataAccess {
      */
     async deleteByDocId(uid: string, id: string): Promise<number> {
         if (!this.noSQL) {
-            throw 'noSQL is not ready'
+            throw this.error.noSqlIsNotReady
         }
         const targetQuery = this.noSQL.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
@@ -215,7 +215,7 @@ export default class DataAccess {
      */
     async mergeByDocId(uid: string, id: string, data: any): Promise<number> {
         if (!this.noSQL) {
-            throw 'noSQL is not ready'
+            throw this.error.noSqlIsNotReady
         }
         const targetQuery = this.noSQL.where('uid', '==', uid)
         const countData = await targetQuery.count().get()

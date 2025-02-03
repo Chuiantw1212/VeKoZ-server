@@ -1,9 +1,8 @@
 import { CollectionReference, Firestore } from 'firebase-admin/firestore'
 import DataAccess from './DataAccess'
 
-export default class EventTodoModel extends DataAccess {
-    // collection: CollectionReference = null as any
+export default class EventTodoModel {
     constructor(firestore: Firestore) {
-        super(firestore.collection('eventTodos'))
+        // super(firestore.collection('eventTodos'))
     }
 }

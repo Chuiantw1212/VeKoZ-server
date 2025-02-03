@@ -1,20 +1,16 @@
-import { CollectionReference, } from 'firebase-admin/firestore'
-import Firebase from '../adapters/firebase.out'
 import DataAccess from './DataAccess'
-
+import type { IDataAccessAdapters } from '../entities/dataAccess'
 interface ILogo {
     type: string;
     buffer: Buffer,
 }
 
 export default class OrganizationModel extends DataAccess {
-    collection: CollectionReference = null as any
     publicPucket: any = null
 
-    constructor(firebase: typeof Firebase) {
-        super()
-        this.publicPucket = firebase.bucketPublic
-        this.collection = firebase.firestore.collection('organizations')
+    constructor(data: IDataAccessAdapters) {
+        super(data)
+        this.publicPucket = data.publicBucket
     }
 
     /**
