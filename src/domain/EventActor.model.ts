@@ -1,10 +1,8 @@
-import { CollectionReference, Firestore } from 'firebase-admin/firestore'
 import DataAccess from './DataAccess'
+import type { IDataAccessAdapters } from '../entities/dataAccess'
 
 export default class EventActorModel extends DataAccess {
-    collection: CollectionReference = null as any
-    constructor(firestore: Firestore) {
-        super()
-        this.collection = firestore.collection('eventActors')
+    constructor(data: IDataAccessAdapters) {
+        super(data)
     }
 }

@@ -5,6 +5,10 @@ import { IDataAccessAdapters } from "../entities/dataAccess"
 export default class DataAccess {
     noSQL: IDataAccessAdapters['noSQL'] = null as any
     SQL: IDataAccessAdapters['SQL'] = null as any
+    error = {
+        'noSqlIsNotReady': 'NoSQL instance is not ready.',
+        'sqlIsNotReady': 'SQL instance is not ready.'
+    }
 
     constructor(data: IDataAccessAdapters) {
         const { noSQL, SQL } = data
@@ -221,9 +225,6 @@ export default class DataAccess {
         }
         const targetDoc = (await targetQuery.get()).docs.find(async doc => {
             return doc.id === id
-        })
-        console.log({
-            data
         })
         if (targetDoc) {
             await this.noSQL.doc(targetDoc.id).update(data, { merge: true })

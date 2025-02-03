@@ -1,15 +1,18 @@
 import type { IOptionsItem, } from '../entities/select'
-import { Query, QuerySnapshot, CollectionReference, DocumentReference, DocumentData, Firestore } from 'firebase-admin/firestore'
+import { Query, QuerySnapshot, DocumentReference, DocumentData, } from 'firebase-admin/firestore'
+import type { IDataAccessAdapters } from '../entities/dataAccess'
+import DataAccess from './DataAccess'
 
-export default class SelectModel {
-    collection: CollectionReference = null as any
-    constructor(firestore: Firestore) {
-        this.collection = firestore.collection('selects')
+export default class SelectModel extends DataAccess {
+    constructor(data: IDataAccessAdapters) {
+        super(data)
     }
     async getOptionsByKey(key: string,): Promise<IOptionsItem[]> {
         try {
-            const keyQuery: Query = this.collection.where('key', '==', key).limit(1)
-            const count = await keyQuery.count()
+            if (!this.noSQL) {
+                throw this.error.noSqlIsNotReady
+            }
+            const keyQuery: Query = this.noSQL.where('key', '==', key).limit(1)
             const snapshot: QuerySnapshot = await keyQuery.get()
             if (snapshot.docs.length) {
                 const options: IOptionsItem[] = snapshot.docs[0].data().options
@@ -23,12 +26,15 @@ export default class SelectModel {
         }
     }
     async replaceByKey(key: string, options: IOptionsItem[] = []) {
-        const keyQuery: Query = this.collection.where('key', '==', key)
+        if (!this.noSQL) {
+            throw this.error.noSqlIsNotReady
+        }
+        const keyQuery: Query = this.noSQL.where('key', '==', key)
         const countData: DocumentData = await keyQuery.count().get()
         const count: number = countData.data().count
         switch (count) {
             case 0: {
-                this.collection.add({
+                this.noSQL.add({
                     key,
                     options
                 })
