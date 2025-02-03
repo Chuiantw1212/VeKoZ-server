@@ -1,30 +1,30 @@
 import AccessGlobalService from '../../entities/app'
-import type { IAccommodation } from '../../entities/accommodation'
+import type { IPlace } from '../../entities/place'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
 const router = new Elysia()
 router.use(bearer())
-    .get('/accommodation/list', async ({ request, bearer }) => {
+    .get('/place/list', async ({ request, bearer }) => {
         const { AuthService, AccomdationService } = AccessGlobalService.locals
         const result = await AccomdationService.getList()
         return result
     })
-    .post('/accommodation', async ({ request, bearer }) => {
+    .post('/place', async ({ request, bearer }) => {
         const { AuthService, AccomdationService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const accommodation: IAccommodation = await request.json() as any
-        const result = await AccomdationService.newItem(user.uid, accommodation)
+        const place: IPlace = await request.json() as any
+        const result = await AccomdationService.newItem(user.uid, place)
         return result
     })
-    .put('/accommodation/:id', async ({ request, bearer, params }) => {
+    .put('/place/:id', async ({ request, bearer, params }) => {
         const { id } = params
         const { AuthService, AccomdationService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const accommodation: IAccommodation = await request.json() as any
-        const result = await AccomdationService.mergeByDocId(user.uid, id, accommodation)
+        const place: IPlace = await request.json() as any
+        const result = await AccomdationService.mergeByDocId(user.uid, id, place)
         return result
     })
-    .delete('/accommodation/:id', async ({ request, bearer, params }) => {
+    .delete('/place/:id', async ({ request, bearer, params }) => {
         const { id } = params
         const { AuthService, AccomdationService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)

@@ -9,7 +9,7 @@ import AccessGlobalService from './entities/app'
 import firebase from './adapters/firebase.out'
 import googleCloud from './adapters/googleCloud.out'
 // models
-import AccommodationModel from './domain/Accommodation.model'
+import PlaceModel from './domain/Place.model'
 import SelectModel from './domain/Select.model';
 import EventModel from './domain/Event.model'
 import EventActorModel from './domain/EventActor.model'
@@ -21,14 +21,14 @@ import MetaService from './domain/services/Meta.service';
 import EventService from './domain/services/Event.service';
 import OrganizationService from './domain/services/Organization.service'
 import AuthService from './domain/services/Auth.service'
-import AccommodationService from './domain/services/Accmmodation.service'
+import PlaceService from './domain/services/Place.service'
 // services.others
 import { ILocals } from './entities/app';
 // controllers
 import rootController from './adapters/client.in/root.ctrl'
 import eventController from './adapters/client.in/event.ctrl'
 import organizationController from './adapters/client.in/organization.ctrl'
-import accommodationController from './adapters/client.in/accommodation.ctrl'
+import placeController from './adapters/client.in/place.ctrl'
 
 (async () => {
     const app = new Elysia({ adapter: node() })
@@ -55,7 +55,7 @@ import accommodationController from './adapters/client.in/accommodation.ctrl'
     const eventTemplateModel = new EventTemplateModel(firebase.firestore)
     const organizationModel = new OrganizationModel(firebase)
     const organizationMemberModel = new OrganizationMemberModel(firebase.firestore)
-    const accommodationModel = new AccommodationModel(firebase.firestore)
+    const placeModel = new PlaceModel(firebase.firestore)
 
     /**
      * Services
@@ -73,8 +73,8 @@ import accommodationController from './adapters/client.in/accommodation.ctrl'
             organizationModel,
             organizationMemberModel,
         }),
-        AccomdationService: new AccommodationService({
-            accommodationModel,
+        AccomdationService: new PlaceService({
+            placeModel,
         }),
         AuthService: new AuthService(firebase)
     }
@@ -98,7 +98,7 @@ import accommodationController from './adapters/client.in/accommodation.ctrl'
         .use(rootController)
         .use(eventController)
         .use(organizationController)
-        .use(accommodationController)
+        .use(placeController)
 
     // Start Listening
     app.listen(8080, ({ hostname, port }) => {
