@@ -8,7 +8,7 @@
  */
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager'
 export class GoogleCloudPlugin {
-    sercertManagerServiceClient: SecretManagerServiceClient
+    protected sercertManagerServiceClient: SecretManagerServiceClient
     constructor() {
         const client = new SecretManagerServiceClient()
         this.sercertManagerServiceClient = client

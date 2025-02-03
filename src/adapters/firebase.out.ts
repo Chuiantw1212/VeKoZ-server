@@ -3,9 +3,9 @@ import { getAuth, Auth } from 'firebase-admin/auth'
 import { getFirestore, Firestore } from 'firebase-admin/firestore'
 import { getStorage, Storage, } from 'firebase-admin/storage'
 export class FirebaseAdapter {
-    firestore: Firestore = null as any
-    auth: Auth = null as any
-    publicBucket: ReturnType<Storage['bucket']> = null as any
+    protected firestore: Firestore = null as any
+    protected auth: Auth = null as any
+    protected publicBucket: ReturnType<Storage['bucket']> = null as any
     async initializeSync(apiKey: string) {
         const credential = admin.credential.cert(apiKey)
         admin.initializeApp({
@@ -27,6 +27,12 @@ export class FirebaseAdapter {
          * https://firebase.google.com/docs/firestore/quickstart
          */
         this.firestore = getFirestore();
+    }
+    getPublicBucket() {
+        return this.publicBucket
+    }
+    getFirestore() {
+        return this.firestore
     }
     async verifyIdToken(idToken: string | null) {
         if (!idToken) {

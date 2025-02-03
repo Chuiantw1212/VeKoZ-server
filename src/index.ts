@@ -49,27 +49,28 @@ import placeController from './adapters/client.in/place.ctrl'
     /**
      * Models
      */
+    const firestore = firebase.getFirestore()
     const selectModel = new SelectModel({
-        noSQL: firebase.firestore.collection('selects'),
+        noSQL: firestore.collection('selects'),
     })
     const eventModel = new EventModel({
-        noSQL: firebase.firestore.collection('events'),
+        noSQL: firestore.collection('events'),
     })
     const eventActorModel = new EventActorModel({
-        noSQL: firebase.firestore.collection('eventActors')
+        noSQL: firestore.collection('eventActors')
     })
     const eventTemplateModel = new EventTemplateModel({
-        noSQL: firebase.firestore.collection('eventTemplates')
+        noSQL: firestore.collection('eventTemplates')
     })
     const organizationModel = new OrganizationModel({
-        noSQL: firebase.firestore.collection('organizations'),
-        publicBucket: firebase.publicBucket
+        noSQL: firestore.collection('organizations'),
+        publicBucket: firebase.getPublicBucket()
     })
     const organizationMemberModel = new OrganizationMemberModel({
-        noSQL: firebase.firestore.collection('organizationMembers')
+        noSQL: firestore.collection('organizationMembers')
     })
     const placeModel = new PlaceModel({
-        noSQL: firebase.firestore.collection('places')
+        noSQL: firestore.collection('places')
     })
 
     /**
