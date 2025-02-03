@@ -4,4 +4,6 @@ export interface IEvent {
     uid?: string;
     id?: string; // doc id
     description: string,
+    startDate: string,
+    endDate: string,
 }

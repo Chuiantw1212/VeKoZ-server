@@ -6,16 +6,16 @@ export interface IEventTemplate {
     [key: string]: any
     uid?: string;
     id?: string; // doc id
-    designs?: IDesign[]
+    designs?: ITemplateDesign[]
 }
 
-export interface IDesign {
+export interface ITemplateDesign {
     id?: string,
     type: string,
-    mutable: IDesignMutable
+    mutable: ITemplateDesignMutable
 }
 
-export interface IDesignMutable {
+export interface ITemplateDesignMutable {
     label?: string,
     value?: any,
 }

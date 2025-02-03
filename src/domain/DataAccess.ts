@@ -19,6 +19,17 @@ export default class DataAccess {
             this.SQL = SQL
         }
     }
+
+    /**
+     * 模仿SQL插入語法，未來銜接Cloud SQL使用
+     * @param uid 使用者uid
+     * @param data 任何資料
+     * @returns 
+     */
+    async insertRecord(uid: string, data: any): Promise<any> {
+        return await this.createNewDoc(uid, data)
+    }
+
     /**
      * Get all documents in a collection
      * https://firebase.google.com/docs/firestore/query-data/get-data#node.js_6
