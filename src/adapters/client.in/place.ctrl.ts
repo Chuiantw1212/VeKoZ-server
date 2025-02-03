@@ -6,7 +6,7 @@ const router = new Elysia()
 router.use(bearer())
     .get('/place/list', async ({ request, bearer }) => {
         const { AuthService, AccomdationService } = AccessGlobalService.locals
-        const result = await AccomdationService.getList()
+        const result = await AccomdationService.getDocList()
         return result
     })
     .post('/place', async ({ request, bearer }) => {

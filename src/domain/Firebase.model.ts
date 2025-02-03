@@ -1,9 +1,9 @@
-import { Query, QuerySnapshot, CollectionReference, DocumentReference, DocumentData, Firestore } from 'firebase-admin/firestore'
+import { CollectionReference, } from 'firebase-admin/firestore'
 
 /**
  * 檔案的Naming要對應firestore的存取方式
  */
-export default class FirestoreDataAccess {
+export default class FirebaseDataAccess {
     collection: CollectionReference = null as any
 
     /**
@@ -11,7 +11,7 @@ export default class FirestoreDataAccess {
      * https://firebase.google.com/docs/firestore/query-data/get-data#node.js_6
      * @returns 
      */
-    async getList() {
+    async getDocList() {
         const snapshot = await this.collection.get()
         const docDatas = snapshot.docs.map(doc => {
             const docData = doc.data()
@@ -21,7 +21,7 @@ export default class FirestoreDataAccess {
         return docDatas as any[]
     }
 
-    async queryList(uid: string, query: Object,) {
+    async queryDocList(uid: string, query: Object,) {
         let targetQuery = this.collection.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count

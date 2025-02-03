@@ -41,8 +41,8 @@ export default class PlaceService {
      * 取得列表
      * @returns 
      */
-    async getList() {
-        const list: IPlace[] = await this.placeModel.getList()
+    async getDocList() {
+        const list: IPlace[] = await this.placeModel.getDocList()
         return list
     }
 

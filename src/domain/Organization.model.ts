@@ -1,13 +1,13 @@
 import { CollectionReference, } from 'firebase-admin/firestore'
 import Firebase from '../adapters/firebase.out'
-import FirestoreDataAccess from './Firebase.model'
+import FirebaseDataAccess from './Firebase.model'
 
 interface ILogo {
     type: string;
     buffer: Buffer,
 }
 
-export default class OrganizationModel extends FirestoreDataAccess {
+export default class OrganizationModel extends FirebaseDataAccess {
     collection: CollectionReference = null as any
     publicPucket: any = null
 
