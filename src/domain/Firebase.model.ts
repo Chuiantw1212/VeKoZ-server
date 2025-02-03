@@ -60,8 +60,9 @@ export default class FirestoreDataAccess {
 
     /**
      * 利用user uid取得document
+     * @returns 取得資料
      */
-    async getUniqueDoc(uid: string) {
+    async getUniqueDoc(uid: string): Promise<any> {
         const targetQuery = this.collection.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
@@ -93,7 +94,7 @@ export default class FirestoreDataAccess {
      * @param uid user id
      * @param data 
      */
-    async mergeUniqueDocField(uid: string, field: string, data: any) {
+    async mergeUniqueDocField(uid: string, field: string, data: any): Promise<any> {
         const singleDocSnapshot = await this.checkUniqueDoc(uid)
         const docData: any = {
             id: singleDocSnapshot.id,
@@ -109,7 +110,7 @@ export default class FirestoreDataAccess {
      * @param uid user id
      * @returns 
      */
-    async checkUniqueDoc(uid: string) {
+    async checkUniqueDoc(uid: string): Promise<any> {
         const targetQuery = this.collection.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count

@@ -43,7 +43,7 @@ export default class EventService {
             return await this.eventTemplateModel.createNewDoc(uid, template)
         }
     }
-    async getTemplate(uid: string) {
+    async getTemplate(uid: string): Promise<any> {
         return await this.eventTemplateModel.getUniqueDoc(uid)
     }
 }

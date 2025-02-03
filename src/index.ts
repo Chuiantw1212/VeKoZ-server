@@ -87,7 +87,7 @@ import placeController from './adapters/client.in/place.ctrl'
      */
     app
         .onError(({ error, code }) => {
-            console.trace({
+            console.trace('Venonia Error:', {
                 error
             })
             if (code === 'NOT_FOUND') return

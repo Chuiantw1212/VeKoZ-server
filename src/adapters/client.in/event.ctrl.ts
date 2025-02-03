@@ -8,12 +8,7 @@ router.use(bearer())
         const user = await AuthService.verifyIdToken(bearer)
         const event = await request.json() as any
         const result = await EventService.createNewEvent(user.uid, event)
-
-        // const result = {
-        //     // ...countiesAndTownMap,
-        //     // ...selectOptionsMap,
-        // }
-        // return result
+        return result
     })
     .get('/event/template', async function ({ request, bearer }) {
         const { EventService, AuthService } = AccessGlobalService.locals
