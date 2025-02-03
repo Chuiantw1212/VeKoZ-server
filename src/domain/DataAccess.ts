@@ -30,6 +30,10 @@ export default class DataAccess {
         return await this.createNewDoc(uid, data)
     }
 
+    // async selectRecord(query: Object,) {
+    //     return await this.getDocList(query)
+    // }
+
     /**
      * Get all documents in a collection
      * https://firebase.google.com/docs/firestore/query-data/get-data#node.js_6

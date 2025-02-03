@@ -3,7 +3,7 @@ export interface IEvent {
     name: string;
     uid?: string;
     id?: string; // doc id
-    description: string,
-    startDate: string,
-    endDate: string,
+    description?: string,
+    startDate?: string,
+    endDate?: string,
 }

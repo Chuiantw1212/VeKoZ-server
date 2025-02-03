@@ -32,7 +32,15 @@ export default class EventService {
         this.eventSchemaModel = eventSchemaModel
     }
 
+    async getEventRecords(query: IEvent) {
+        return await this.eventSchemaModel.selectRecords(query)
+    }
+
     async createNewEvent(uid: string, eventTemplate: IEventTemplate) {
+        if (!eventTemplate.designs) {
+            throw 'designs欄位遺失'
+        }
+
         const event: IEvent = {
             name: '',
             startDate: '',
@@ -42,34 +50,33 @@ export default class EventService {
         const eventMembers: IEventMember[] = []
 
         // 標題
-        const header1: ITemplateDesign = eventTemplate.value.designs.find((design: ITemplateDesign) => {
+        const header1: ITemplateDesign = eventTemplate.designs.find((design: ITemplateDesign) => {
             return design.type === 'header1'
-        })
+        }) as ITemplateDesign
         if (header1) {
             event.name = header1.mutable.value
         }
 
         // 時間
-        const dateTimeRange: ITemplateDesign = eventTemplate.value.designs.find((design: ITemplateDesign) => {
+        const dateTimeRange: ITemplateDesign = eventTemplate.designs.find((design: ITemplateDesign) => {
             return design.type === 'dateTimeRange'
-        })
+        }) as ITemplateDesign
         if (dateTimeRange) {
             event.startDate = dateTimeRange.mutable.value[0]
             event.endDate = dateTimeRange.mutable.value[1]
         }
 
         // 描述
-        const description: ITemplateDesign = eventTemplate.value.designs.find((design: ITemplateDesign) => {
+        const description: ITemplateDesign = eventTemplate.designs.find((design: ITemplateDesign) => {
             return design.type === 'textarea'
-        })
+        }) as ITemplateDesign
         if (description) {
             event.description = description.mutable.value
         }
 
         // 這邊取得record uuid
         const insertedEvent: IEvent = await this.eventSchemaModel.insertRecord(uid, event)
-        
-
+        return insertedEvent
     }
 
     async putTemplate(uid: string, template: IEventTemplate): Promise<string> {
