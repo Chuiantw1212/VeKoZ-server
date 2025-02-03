@@ -1,18 +1,30 @@
-import { CollectionReference, } from 'firebase-admin/firestore'
-
+import { IDataAccessAdapters } from "../entities/dataAccess"
 /**
  * 檔案的Naming要對應firestore的存取方式
  */
-export default class FirebaseDataAccess {
-    collection: CollectionReference = null as any
+export default class DataAccess {
+    noSQL: IDataAccessAdapters['noSQL'] = null as any
+    SQL: IDataAccessAdapters['SQL'] = null as any
 
+    constructor(data: IDataAccessAdapters) {
+        const { noSQL, SQL } = data
+        if (noSQL) {
+            this.noSQL = noSQL
+        }
+        if (SQL) {
+            this.SQL = SQL
+        }
+    }
     /**
      * Get all documents in a collection
      * https://firebase.google.com/docs/firestore/query-data/get-data#node.js_6
      * @returns 
      */
     async getDocList() {
-        const snapshot = await this.collection.get()
+        if (!this.noSQL) {
+            return
+        }
+        const snapshot = await this.noSQL.get()
         const docDatas = snapshot.docs.map(doc => {
             const docData = doc.data()
             delete docData.uid
@@ -22,9 +34,12 @@ export default class FirebaseDataAccess {
     }
 
     async queryDocList(uid: string, query: Object,) {
-        let targetQuery = this.collection.where('uid', '==', uid)
+        if (!this.noSQL) {
+            return
+        }
+        let targetQuery = this.noSQL.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
-        const count: number = countData.data().count
+        const count: number = countData.data().count || 0
         if (count == 0) {
             throw 'uid不存在'
         }
@@ -38,6 +53,7 @@ export default class FirebaseDataAccess {
             return docData
         })
         return docDatas
+
     }
 
     /**
@@ -47,11 +63,14 @@ export default class FirebaseDataAccess {
      * @returns 
      */
     async createNewDoc(uid: string, data: any): Promise<any> {
-        const docRef = this.collection.doc()
+        if (!this.noSQL) {
+            return
+        }
+        const docRef = this.noSQL.doc()
         const lastmod = new Date().toISOString()
         data.id = docRef.id
         data.lastmod = lastmod
-        await this.collection.doc(data.id).set({
+        await this.noSQL.doc(data.id).set({
             ...data,
             uid // IMPORTANT 否則新資料會是null
         })
@@ -63,7 +82,10 @@ export default class FirebaseDataAccess {
      * @returns 取得資料
      */
     async getUniqueDoc(uid: string): Promise<any> {
-        const targetQuery = this.collection.where('uid', '==', uid)
+        if (!this.noSQL) {
+            return
+        }
+        const targetQuery = this.noSQL.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
         if (count == 0) {
@@ -111,7 +133,10 @@ export default class FirebaseDataAccess {
      * @returns 
      */
     async checkUniqueDoc(uid: string): Promise<any> {
-        const targetQuery = this.collection.where('uid', '==', uid)
+        if (!this.noSQL) {
+            return
+        }
+        const targetQuery = this.noSQL.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
         if (count == 0) {
@@ -131,7 +156,10 @@ export default class FirebaseDataAccess {
      * @returns 
      */
     async removeUniqueDoc(uid: string): Promise<number> {
-        const targetQuery = this.collection.where('uid', '==', uid)
+        if (!this.noSQL) {
+            throw 'noSQL is not ready'
+        }
+        const targetQuery = this.noSQL.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
         if (count == 0) {
@@ -140,8 +168,10 @@ export default class FirebaseDataAccess {
         if (count > 1) {
             throw '現有資料重複uid'
         }
-        (await targetQuery.get()).forEach(doc => {
-            this.collection.doc(doc.id).delete()
+        (await targetQuery.get()).docs.forEach(doc => {
+            if (this.noSQL) {
+                this.noSQL.doc(doc.id).delete()
+            }
         })
         return 1
     }
@@ -153,7 +183,10 @@ export default class FirebaseDataAccess {
      * @returns 
      */
     async deleteByDocId(uid: string, id: string): Promise<number> {
-        const targetQuery = this.collection.where('uid', '==', uid)
+        if (!this.noSQL) {
+            throw 'noSQL is not ready'
+        }
+        const targetQuery = this.noSQL.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
         if (count == 0) {
@@ -163,7 +196,7 @@ export default class FirebaseDataAccess {
             return doc.id === id
         })
         if (targetDoc) {
-            await this.collection.doc(targetDoc.id).delete()
+            await this.noSQL.doc(targetDoc.id).delete()
             return 1
         } else {
             return 0
@@ -177,7 +210,10 @@ export default class FirebaseDataAccess {
      * @returns 
      */
     async mergeByDocId(uid: string, id: string, data: any): Promise<number> {
-        const targetQuery = this.collection.where('uid', '==', uid)
+        if (!this.noSQL) {
+            throw 'noSQL is not ready'
+        }
+        const targetQuery = this.noSQL.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
         if (count == 0) {
@@ -190,7 +226,7 @@ export default class FirebaseDataAccess {
             data
         })
         if (targetDoc) {
-            await this.collection.doc(targetDoc.id).update(data, { merge: true })
+            await this.noSQL.doc(targetDoc.id).update(data, { merge: true })
         }
         return 1
     }

@@ -8,11 +8,16 @@
 		"@elysiajs/bearer": "^1.2.0",
 		"@elysiajs/cors": "^1.2.0",
 		"@elysiajs/node": "^1.2.5",
+		"@google-cloud/cloud-sql-connector": "^1.6.0",
 		"@google-cloud/secret-manager": "^5.6.0",
 		"@types/node": "^22.13.0",
 		"elysia": "^1.2.11",
 		"firebase-admin": "^13.0.2",
+		"pg": "^8.13.1",
 		"tsx": "^4.19.2",
 		"typescript": "^5.7.3"
+	},
+	"devDependencies": {
+		"@types/pg": "^8.11.11"
 	}
 }

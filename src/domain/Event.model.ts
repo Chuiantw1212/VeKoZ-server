@@ -1,10 +1,12 @@
 import { CollectionReference, Firestore } from 'firebase-admin/firestore'
-import FirebaseDataAccess from './Firebase.model'
+import DataAccess from './DataAccess'
 
-export default class EventModel extends FirebaseDataAccess {
+export default class EventModel extends DataAccess {
     collection: CollectionReference = null as any
     constructor(firestore: Firestore) {
-        super()
+        super({
+            
+        })
         this.collection = firestore.collection('events')
     }
 }

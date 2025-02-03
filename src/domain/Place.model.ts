@@ -1,7 +1,7 @@
 import { CollectionReference, Firestore } from 'firebase-admin/firestore'
-import FirebaseDataAccess from './Firebase.model'
+import DataAccess from './DataAccess'
 
-export default class PlaceModel extends FirebaseDataAccess {
+export default class PlaceModel extends DataAccess {
     collection: CollectionReference = null as any
     publicPucket: any = null
 
