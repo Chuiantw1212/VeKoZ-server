@@ -4,10 +4,8 @@
 
 export interface IEventTemplate {
     [key: string]: any
-    name: string;
     uid?: string;
     id?: string; // doc id
-    description: string,
     designs?: IDesign[]
 }
 

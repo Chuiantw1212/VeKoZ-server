@@ -25,7 +25,7 @@ export default class EventService {
         this.eventTemplateModel = eventTemplateModel
     }
 
-    async createNewEvent(uid: string, event: IEvent) {
+    async createNewEvent(uid: string, event: IEventTemplate) {
         return await this.eventModel.createNewDoc(uid, event)
     }
 
