@@ -112,7 +112,8 @@ export default class DataAccess {
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
         if (count == 0) {
-            throw 'uid不存在'
+            // 需要在不知道資料數量時取資料時就不可throw error
+            return 0
         }
         const doc = (await targetQuery.get()).docs[0] as any
         const docData = doc.data()
@@ -153,11 +154,11 @@ export default class DataAccess {
         return lastmod
     }
     /**
-     * 確保Document uid是唯一的
+     * 確保Document中的數量有限
      * @param uid user id
      * @returns 
      */
-    async checkUniqueDoc(uid: string, limit: number): Promise<any> {
+    async checkUniqueDoc(uid: string, limit: number = 1): Promise<any> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
@@ -165,7 +166,9 @@ export default class DataAccess {
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
         if (count > limit) {
-            throw `資料數量已達上限:${limit}`
+            const message = `資料數量已達上限:${limit}`
+            console.trace(message)
+            throw message
         }
         const doc = (await targetQuery.get()).docs[0] as any
         delete doc.uid // IMPORTANT

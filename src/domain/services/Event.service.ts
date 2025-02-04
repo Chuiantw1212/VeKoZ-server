@@ -38,7 +38,7 @@ export default class EventService {
     }
 
     async addEventTemplate(uid: string, eventTemplate: IEventTemplate) {
-        if (!eventTemplate.designs) {
+        if (!eventTemplate.designs?.length) {
             throw 'designs不存在'
         }
         // 深拷貝designs
