@@ -50,19 +50,21 @@ router.use(bearer())
         const result = await EventTemplateService.addEventTemplate(user.uid, eventTemplate)
         return result
     })
-    .put('/event/template', async function ({ request, bearer }) {
-        const { EventTemplateService, AuthService } = AccessGlobalService.locals
-        const user = await AuthService.verifyIdToken(bearer)
-        const eventTemplate = await request.json() as any
-        const result = await EventTemplateService.putEventTemplate(user.uid, eventTemplate)
-        return result
-    })
     .patch('/event/template', async function ({ request, bearer }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const designIds: string[] = await request.json() as string[]
         const result = await EventTemplateService.patchTemplate(user.uid, designIds)
         return result
+    })
+    .delete('/event/template/:id', async function ({ bearer, params }) {
+        const { EventTemplateService, AuthService } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const { id } = params
+        const lastmod = await EventTemplateService.deleteTemplate(user.uid, id)
+        // const designIds: string[] = await request.json() as string[]
+        // const result = await EventTemplateService.patchTemplate(user.uid, designIds)
+        // return result
     })
     .post('/event/template/design', async function ({ request, bearer }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
@@ -71,7 +73,7 @@ router.use(bearer())
         const desginId = await EventTemplateService.postDesign(user.uid, eventTemplateDesign)
         return desginId
     })
-    .delete('/event/template/design/:id', async function ({ request, bearer, params }) {
+    .delete('/event/template/design/:id', async function ({ bearer, params }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const { id } = params

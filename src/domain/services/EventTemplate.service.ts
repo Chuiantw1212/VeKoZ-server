@@ -20,7 +20,13 @@ export default class EventTemplateService {
         this.eventTemplateDesignModel = eventTemplateDesignModel
     }
 
-    async addEventTemplate(uid: string, eventTemplate: IEventTemplate) {
+    /**
+     * 如果需要取出，使用get取出嗎？
+     * @param uid 
+     * @param eventTemplate 
+     * @returns 
+     */
+    async addEventTemplate(uid: string, eventTemplate: IEventTemplate): Promise<string> {
         if (!eventTemplate.designs?.length) {
             throw 'designs不存在'
         }
@@ -59,14 +65,6 @@ export default class EventTemplateService {
         return lastmod
     }
 
-    async putEventTemplate(uid: string, newTemplate: IEventTemplate) {
-        const oldTemplate: IEventTemplate = await this.eventTemplateModel.queryUidDocList(uid)
-        // const designIds = 
-        // const deletePromises = oldTemplate.designs?.forEach(design => { 
-        //     return this.eventTemplateDesignModel.deleteByDocId(uid, design.id)
-        // })
-    }
-
     async getTemplate(uid: string): Promise<IEventTemplate> {
         const eventTemplate: IEventTemplate = await this.eventTemplateModel.getSingleUidDoc(uid, {
             count: {
@@ -74,18 +72,16 @@ export default class EventTemplateService {
             }
         })
         const designIds = eventTemplate.designIds || []
+        // 自動修正樣板資料
+        const correctedIds = designIds.filter(id => !!id)
+        this.eventTemplateModel.setUidDocField(uid, {
+            designIds: correctedIds,
+        }, { count: { absolute: 1 } })
+        // 取得details並回傳
         const designPromises = await designIds.map((designId: string) => {
             return this.eventTemplateDesignModel.getByDocId(designId)
         })
         const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
-        eventTemplateDesigns.forEach((design, index) => {
-            if (!design) {
-                const errorField = designIds[index]
-                console.log({
-                    errorField
-                })
-            }
-        })
         eventTemplate.designs = eventTemplateDesigns
         return eventTemplate
     }
@@ -97,6 +93,21 @@ export default class EventTemplateService {
         }
         const newDesign = await this.eventTemplateDesignModel.createUidDoc(uid, templateDesign)
         return newDesign.id
+    }
+
+    async deleteTemplate(uid: string, id: string): Promise<number> {
+        const oldTemplate: IEventTemplate = await this.eventTemplateModel.getSingleUidDoc(uid)
+        const designIds = oldTemplate.designIds ?? []
+        const promises = designIds.map(designId => {
+            return this.deleteTemplateDesign(uid, designId)
+        })
+        await Promise.all(promises)
+        const count = await this.eventTemplateModel.removeDocs([['uid', '==', uid]], {
+            count: {
+                absolute: 1
+            }
+        })
+        return count
     }
 
     async patchTemplate(uid: string, designIds: string[]): Promise<string> {
@@ -114,21 +125,6 @@ export default class EventTemplateService {
     async patchTemplateDesign(uid: string, payload: IPatchTemplateDesignReq) {
         const lastmod = await this.eventTemplateDesignModel.patchMutable(uid, payload.id, payload.mutable)
         return lastmod
-    }
-
-    async putTemplate(uid: string, template: IEventTemplate): Promise<string> {
-        // // 為每個design mutable建立自己的uuid
-        // template.designs?.forEach((design) => {
-        //     if (!design.id) {
-        //         design.id = crypto.randomUUID()
-        //     }
-        // })
-
-        // if (template.id) {
-        //     return await this.eventTemplateModel.mergeUniqueDoc(uid, template)
-        // } else {
-        //     return await this.eventTemplateModel.createUidDoc(uid, template)
-        // }
     }
 
     async deleteTemplateDesign(uid: string, id: string): Promise<number> {

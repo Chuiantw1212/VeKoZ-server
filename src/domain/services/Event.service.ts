@@ -96,20 +96,4 @@ export default class EventService {
         const insertedEvent: IEvent = await this.eventSchemaModel.insertRecord(uid, event)
         return insertedEvent
     }
-
-    async putTemplate(uid: string, template: IEventTemplate): Promise<any> {
-        return
-        // // 為每個design mutable建立自己的uuid
-        // template.designs?.forEach((design) => {
-        //     if (!design.id) {
-        //         design.id = crypto.randomUUID()
-        //     }
-        // })
-
-        // if (template.id) {
-        //     return await this.eventTemplateModel.mergeUniqueDoc(uid, template)
-        // } else {
-        //     return await this.eventTemplateModel.createUidDoc(uid, template)
-        // }
-    }
 }
