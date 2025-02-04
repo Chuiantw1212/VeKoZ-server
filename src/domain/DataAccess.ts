@@ -216,12 +216,12 @@ export default class DataAccess {
         }
         const countData = await query.count().get()
         const count: number = countData.data().count
-        if (options.max && count > options.max) {
+        if (options.max && count >= options.max) {
             const message = `資料數量已達上限:${options.max}`
             console.trace(message)
             throw message
         }
-        if (options.min && count < options.min) {
+        if (options.min && count <= options.min) {
             const message = `資料數量低於下限:${options.min}`
             console.trace(message)
             throw message
