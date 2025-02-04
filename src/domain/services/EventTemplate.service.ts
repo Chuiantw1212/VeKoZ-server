@@ -125,7 +125,15 @@ export default class EventTemplateService {
     }
 
     async deleteTemplateDesign(uid: string, deleteReq: IDeleteTemplateDesignReq): Promise<number> {
-        const count = await this.eventTemplateDesignModel.deleteByDocId(uid, deleteReq.id)
+        const query = await this.eventTemplateDesignModel.getQuery([['uid', '==', uid], ['id', '==', deleteReq.id]])
+        const count = await this.eventTemplateDesignModel.checkQueryCount(query, {
+            absolute: 1
+        })
+        const docs = (await query.get()).docs
+        const promises = docs.map(doc => {
+            return doc.ref.delete()
+        })
+        await Promise.all(promises)
         return count
     }
 }
