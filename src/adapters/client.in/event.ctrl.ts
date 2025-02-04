@@ -11,6 +11,13 @@ router.use(bearer())
         const result = await EventService.createNewEvent(user.uid, event)
         return result
     })
+    .patch('/event', async function ({ request, bearer }) {
+        const { AuthService, EventService } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const event = await request.json() as IEventTemplate
+        // const result = await EventService.createNewEvent(user.uid, event)
+        // return result
+    })
     .get('/event/:id', async function ({ params }) {
         const { EventService } = AccessGlobalService.locals
         const { id } = params
