@@ -1,7 +1,7 @@
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
-import type { IEventTemplate } from '../../entities/eventTemplate'
+import type { IEventTemplate, IPostTemplateDesignReq, IDeleteTemplateDesignReq } from '../../entities/eventTemplate'
 const router = new Elysia()
 router.use(bearer())
     .post('/event', async function ({ request, bearer }) {
@@ -31,30 +31,37 @@ router.use(bearer())
         return eventList
     })
     .get('/event/template', async function ({ bearer }) {
-        const { EventService, AuthService } = AccessGlobalService.locals
+        const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const eventTemplate = await EventService.getTemplate(user.uid)
+        const eventTemplate = await EventTemplateService.getTemplate(user.uid)
         return eventTemplate
     })
     .post('/event/template', async function ({ request, bearer }) {
-        const { EventService, AuthService } = AccessGlobalService.locals
+        const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const eventTemplate = await request.json() as any
-        const result = await EventService.addEventTemplate(user.uid, eventTemplate)
+        const result = await EventTemplateService.addEventTemplate(user.uid, eventTemplate)
         return result
     })
     .patch('/event/template', async function ({ request, bearer }) {
-        const { EventService, AuthService } = AccessGlobalService.locals
+        const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const designIds: string[] = await request.json() as string[]
-        const result = await EventService.patchTemplateDesigns(user.uid, designIds)
+        const result = await EventTemplateService.patchTemplate(user.uid, 'designs', designIds)
         return result
     })
     .post('/event/template/design', async function ({ request, bearer }) {
-        const { EventService, AuthService } = AccessGlobalService.locals
+        const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const eventTemplateDesign = await request.json() as any
-        // const result = await EventService.addEventTemplate(user.uid, eventTemplate)
-        // return result
+        const eventTemplateDesign: IPostTemplateDesignReq = await request.json() as any
+        const desginId = await EventTemplateService.postDesign(user.uid, eventTemplateDesign)
+        return desginId
+    })
+    .delete('/event/template/design', async function ({ request, bearer }) {
+        const { EventTemplateService, AuthService } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const deleteRequest: IDeleteTemplateDesignReq = await request.json() as any
+        const lastmod = await EventTemplateService.deleteTemplateDesign(user.uid, deleteRequest)
+        return lastmod
     })
 export default router

@@ -21,6 +21,7 @@ import OrganizationMemberModel from './domain/OrganizationMember.model'
 // services
 import MetaService from './domain/services/Meta.service';
 import EventService from './domain/services/Event.service';
+import EventTemplateService from './domain/services/EventTemplate.service'
 import OrganizationService from './domain/services/Organization.service'
 import AuthService from './domain/services/Auth.service'
 import PlaceService from './domain/services/Place.service'
@@ -91,8 +92,10 @@ import placeController from './adapters/client.in/place.ctrl'
         EventService: new EventService({
             eventModel,
             eventActorModel,
-            eventTemplateModel,
             eventSchemaModel,
+        }),
+        EventTemplateService: new EventTemplateService({
+            eventTemplateModel,
             eventTemplateDesignModel,
         }),
         OrganizationService: new OrganizationService({

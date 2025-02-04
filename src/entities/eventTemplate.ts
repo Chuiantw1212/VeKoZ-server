@@ -13,9 +13,23 @@ export interface ITemplateDesign {
     id?: string,
     type: string,
     mutable: ITemplateDesignMutable,
+    templateId?: string,
 }
 
 export interface ITemplateDesignMutable {
     label?: string,
     value?: any,
+}
+
+export interface IPostTemplateDesignReq {
+    type: string,
+    destination: string,
+    templateId: string,
+    templateDesignIds: string[]
+}
+
+export interface IDeleteTemplateDesignReq {
+    id: string,
+    templateId: string,
+    templateDesignIds: string[]
 }

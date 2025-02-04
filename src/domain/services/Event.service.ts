@@ -3,81 +3,28 @@ import type { IEvent, } from '../../entities/event';
 import type { IEventMember } from '../../entities/eventMember';
 import EventModel from '../Event.model'
 import EventActorModel from '../EventActor.model'
-import EventTemplateModel from '../EventTemplate.model'
 import EventSchemaModel from '../EventSchema.model';
-import EventTemplateDesignModel from '../EventTemplateDesign.model';
 
 interface Idependency {
     eventModel: EventModel;
     eventActorModel: EventActorModel;
-    eventTemplateModel: EventTemplateModel;
     eventSchemaModel: EventSchemaModel;
-    eventTemplateDesignModel: EventTemplateDesignModel
 }
 
 export default class EventService {
     protected eventModel: EventModel = null as any
     protected eventActorModel: EventActorModel = null as any
-    protected eventTemplateModel: EventTemplateModel = null as any
-    protected eventTemplateDesignModel: EventTemplateDesignModel = null as any
     protected eventSchemaModel: EventSchemaModel = null as any
 
     constructor(dependency: Idependency) {
         const {
             eventModel,
             eventActorModel,
-            eventTemplateModel,
             eventSchemaModel,
-            eventTemplateDesignModel,
         } = dependency
         this.eventModel = eventModel
         this.eventActorModel = eventActorModel
-        this.eventTemplateModel = eventTemplateModel
         this.eventSchemaModel = eventSchemaModel
-        this.eventTemplateDesignModel = eventTemplateDesignModel
-    }
-
-    async addEventTemplate(uid: string, eventTemplate: IEventTemplate) {
-        if (!eventTemplate.designs?.length) {
-            throw 'designs不存在'
-        }
-        // 深拷貝designs
-        const designsTemp = structuredClone(eventTemplate.designs)
-        delete eventTemplate.designs
-        // 儲存template
-        const newTemplateDoc: IEventTemplate = await this.eventTemplateModel.createNewDoc(uid, eventTemplate, {
-            limit: 1
-        })
-        // 儲存欄位design
-        const designDocPromises = designsTemp.map((design) => {
-            const templateDesign = design as ITemplateDesign
-            return this.eventTemplateDesignModel.createNewDoc(uid, {
-                ...templateDesign,
-                templateId: newTemplateDoc.id
-            })
-        })
-        const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises)
-        const designDocIds = designDocs.map(doc => doc.id ?? '')
-        eventTemplate.designs = designDocIds
-        // 更新template
-        const lastmod = await this.eventTemplateModel.mergeUniqueDocField(uid, 'designs', designDocIds)
-        return lastmod
-    }
-
-    async getTemplate(uid: string): Promise<IEventTemplate> {
-        const eventTemplate: IEventTemplate = await this.eventTemplateModel.getUniqueDoc(uid)
-        const designIds = eventTemplate.designs as string[]
-        const designPromises = await designIds.map((designId: string) => {
-            return this.eventTemplateDesignModel.getByDocId(designId)
-        })
-        const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
-        eventTemplate.designs = eventTemplateDesigns
-        return eventTemplate
-    }
-
-    async patchTemplateDesigns(uid: string, designIds: string[]): Promise<string> {
-        const lastmod = await this.eventTemplateModel.mergeUniqueDocField(uid, 'designs', designIds)
-        return lastmod
     }
 
     async getEvent(eventId: string): Promise<IEventTemplate> {
@@ -95,20 +42,21 @@ export default class EventService {
         return await this.eventSchemaModel.selectRecords(query) as IEvent[]
     }
 
-    async createNewEvent(uid: string, eventTemplate: IEventTemplate): Promise<IEvent> {
-        // 先儲存sql取得id
-        const event = await this.setEventSchema(uid, eventTemplate)
-        eventTemplate.eventId = event.id
-        // 再用id儲存nosql
-        this.eventModel.createNewDoc(uid, eventTemplate)
-        return event
+    async createNewEvent(uid: string, eventTemplate: IEventTemplate): Promise<any> {
+        return
+        // // 先儲存sql取得id
+        // const event = await this.setEventSchema(uid, eventTemplate)
+        // eventTemplate.eventId = event.id
+        // // 再用id儲存nosql
+        // this.eventModel.createNewDoc(uid, eventTemplate)
+        // return event
     }
 
     private async setEventSchema(uid: string, eventTemplate: IEventTemplate) {
         if (!eventTemplate.designs) {
             throw 'designs欄位遺失'
         }
-
+        return
         const event: IEvent = {
             name: '',
             startDate: '',
@@ -117,8 +65,10 @@ export default class EventService {
         }
         const eventMembers: IEventMember[] = []
 
+        const templateDesigns: ITemplateDesign[] = eventTemplate.designs as ITemplateDesign[]
+
         // 標題
-        const header1: ITemplateDesign = eventTemplate.designs.find((design: ITemplateDesign) => {
+        const header1: ITemplateDesign = templateDesigns.find((design: ITemplateDesign) => {
             return design.type === 'header1'
         }) as ITemplateDesign
         if (header1) {
@@ -126,7 +76,7 @@ export default class EventService {
         }
 
         // 時間
-        const dateTimeRange: ITemplateDesign = eventTemplate.designs.find((design: ITemplateDesign) => {
+        const dateTimeRange: ITemplateDesign = templateDesigns.find((design: ITemplateDesign) => {
             return design.type === 'dateTimeRange'
         }) as ITemplateDesign
         if (dateTimeRange) {
@@ -135,7 +85,7 @@ export default class EventService {
         }
 
         // 描述
-        const description: ITemplateDesign = eventTemplate.designs.find((design: ITemplateDesign) => {
+        const description: ITemplateDesign = templateDesigns.find((design: ITemplateDesign) => {
             return design.type === 'textarea'
         }) as ITemplateDesign
         if (description) {
@@ -147,18 +97,19 @@ export default class EventService {
         return insertedEvent
     }
 
-    async putTemplate(uid: string, template: IEventTemplate): Promise<string> {
-        // 為每個design mutable建立自己的uuid
-        template.designs?.forEach((design) => {
-            if (!design.id) {
-                design.id = crypto.randomUUID()
-            }
-        })
+    async putTemplate(uid: string, template: IEventTemplate): Promise<any> {
+        return
+        // // 為每個design mutable建立自己的uuid
+        // template.designs?.forEach((design) => {
+        //     if (!design.id) {
+        //         design.id = crypto.randomUUID()
+        //     }
+        // })
 
-        if (template.id) {
-            return await this.eventTemplateModel.mergeUniqueDoc(uid, template)
-        } else {
-            return await this.eventTemplateModel.createNewDoc(uid, template)
-        }
+        // if (template.id) {
+        //     return await this.eventTemplateModel.mergeUniqueDoc(uid, template)
+        // } else {
+        //     return await this.eventTemplateModel.createNewDoc(uid, template)
+        // }
     }
 }
