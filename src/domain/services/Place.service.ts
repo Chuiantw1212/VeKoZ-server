@@ -27,7 +27,7 @@ export default class PlaceService {
      * 取得空間
      */
     async getItem(uid: string) {
-        return await this.placeModel.queryUidDocList(uid)
+        return await this.placeModel.queryDocList([['uid', '==', uid]])
     }
 
     /**
