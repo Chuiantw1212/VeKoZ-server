@@ -32,7 +32,7 @@ export default class DataAccess {
      * @param options
      * @returns 
      */
-    async createUidDoc(uid: string, data: any, options?: IDataAccessOptions): Promise<DocumentData> {
+    protected async createUidDoc(uid: string, data: any, options?: IDataAccessOptions): Promise<DocumentData> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
@@ -57,7 +57,7 @@ export default class DataAccess {
      * @param options 
      * @returns 
      */
-    async querySingleDoc(wheres: any[][], options: IDataAccessOptions = {}): Promise<DocumentData> {
+    protected async querySingleDoc(wheres: any[][], options: IDataAccessOptions = {}): Promise<DocumentData> {
         Object.assign(options, {
             count: {
                 absolute: 1
@@ -72,7 +72,7 @@ export default class DataAccess {
      * @param uid 
      * @param options 
      */
-    async queryDocList(wheres: any[][], options?: IDataAccessOptions): Promise<DocumentData[]> {
+    protected async queryDocList(wheres: any[][], options?: IDataAccessOptions): Promise<DocumentData[]> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
@@ -105,7 +105,7 @@ export default class DataAccess {
      * @returns 
      * @deprecated
      */
-    async getDocList() {
+    protected async getDocList() {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
@@ -196,7 +196,7 @@ export default class DataAccess {
      * @param uid 使用者uid
      * @returns 
      */
-    async removeDocs(wheres: any[][], options?: IDataAccessOptions): Promise<number> {
+    protected async removeDocs(wheres: any[][], options?: IDataAccessOptions): Promise<number> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
@@ -217,7 +217,7 @@ export default class DataAccess {
      * @param data 任何資料
      * @returns 
      */
-    async insertRecord(uid: string, data: any): Promise<any> {
+    protected async insertRecord(uid: string, data: any): Promise<any> {
         return await this.createUidDoc(uid, data)
     }
 
@@ -229,7 +229,7 @@ export default class DataAccess {
      * @param data 
      * @deprecated
      */
-    async mergeUniqueDoc(uid: string, data: any): Promise<string> {
+    protected async mergeUniqueDoc(uid: string, data: any): Promise<string> {
         // const singleDocSnapshot = await this.checkQueryCount(uid, 1)
         // const lastmod = new Date().toISOString()
         // data.lastmod = lastmod
@@ -246,7 +246,7 @@ export default class DataAccess {
      * @param id 文件id
      * @returns 
      */
-    async deleteByDocId(uid: string, id: string): Promise<number> {
+    protected async deleteByDocId(uid: string, id: string): Promise<number> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
@@ -274,7 +274,7 @@ export default class DataAccess {
      * @param id 文件id
      * @returns 
      */
-    async mergeByDocId(uid: string, id: string, data: any): Promise<number> {
+    protected async mergeByDocId(uid: string, id: string, data: any): Promise<number> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
