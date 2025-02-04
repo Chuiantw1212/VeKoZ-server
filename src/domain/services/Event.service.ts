@@ -64,6 +64,17 @@ export default class EventService {
         return lastmod
     }
 
+    async getTemplate(uid: string): Promise<IEventTemplate> {
+        const eventTemplate: IEventTemplate = await this.eventTemplateModel.getUniqueDoc(uid)
+        const designIds = eventTemplate.designs as string[]
+        const designPromises = await designIds.map((designId: string) => {
+            return this.eventTemplateDesignModel.getByDocId(designId)
+        })
+        const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
+        eventTemplate.designs = eventTemplateDesigns
+        return eventTemplate
+    }
+
     async getEvent(eventId: string): Promise<IEventTemplate> {
         const result = await this.eventModel.queryByEventId(eventId) as IEventTemplate[]
         return result
@@ -144,8 +155,5 @@ export default class EventService {
         } else {
             return await this.eventTemplateModel.createNewDoc(uid, template)
         }
-    }
-    async getTemplate(uid: string): Promise<IEventTemplate> {
-        return await this.eventTemplateModel.getUniqueDoc(uid)
     }
 }
