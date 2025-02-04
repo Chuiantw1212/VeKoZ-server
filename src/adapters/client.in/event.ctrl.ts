@@ -50,4 +50,11 @@ router.use(bearer())
         const result = await EventService.patchTemplateDesigns(user.uid, designIds)
         return result
     })
+    .post('/event/template/design', async function ({ request, bearer }) {
+        const { EventService, AuthService } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const eventTemplateDesign = await request.json() as any
+        // const result = await EventService.addEventTemplate(user.uid, eventTemplate)
+        // return result
+    })
 export default router
