@@ -37,6 +37,33 @@ export default class EventService {
         this.eventTemplateDesignModel = eventTemplateDesignModel
     }
 
+    async addEventTemplate(uid: string, eventTemplate: IEventTemplate) {
+        if (!eventTemplate.designs) {
+            throw 'designs不存在'
+        }
+        // 深拷貝designs
+        const designsTemp = structuredClone(eventTemplate.designs)
+        delete eventTemplate.designs
+        // 儲存template
+        const newTemplateDoc: IEventTemplate = await this.eventTemplateModel.createNewDoc(uid, eventTemplate, {
+            limit: 1
+        })
+        // 儲存欄位design
+        const designDocPromises = designsTemp.map((design) => {
+            const templateDesign = design as ITemplateDesign
+            return this.eventTemplateDesignModel.createNewDoc(uid, {
+                ...templateDesign,
+                templateId: newTemplateDoc.id
+            })
+        })
+        const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises)
+        const designDocIds = designDocs.map(doc => doc.id ?? '')
+        eventTemplate.designs = designDocIds
+        // 更新template
+        const lastmod = await this.eventTemplateModel.mergeUniqueDocField(uid, 'designs', designDocIds)
+        return lastmod
+    }
+
     async getEvent(eventId: string): Promise<IEventTemplate> {
         const result = await this.eventModel.queryByEventId(eventId) as IEventTemplate[]
         return result

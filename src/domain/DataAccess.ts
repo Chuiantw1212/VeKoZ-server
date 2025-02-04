@@ -76,14 +76,18 @@ export default class DataAccess {
     }
 
     /**
-     * 新增document
+     * 新增document，如果需要確保唯一，call之前先call
      * @param uid user id
      * @param data
      * @returns 
      */
-    async createNewDoc(uid: string, data: any): Promise<any> {
+    async createNewDoc(uid: string, data: any, options: any = {}): Promise<any> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
+        }
+        // 確保資料新增上限，未來屬於付費功能
+        if (options.limit) {
+            this.checkUniqueDoc(uid, options.limit)
         }
         const docRef = this.noSQL.doc()
         const lastmod = new Date().toISOString()
@@ -122,7 +126,7 @@ export default class DataAccess {
      * @param data 
      */
     async mergeUniqueDoc(uid: string, data: any): Promise<string> {
-        const singleDocSnapshot = await this.checkUniqueDoc(uid)
+        const singleDocSnapshot = await this.checkUniqueDoc(uid, 1)
         const lastmod = new Date().toISOString()
         data.lastmod = lastmod
         singleDocSnapshot.ref.set(data, {
@@ -135,34 +139,33 @@ export default class DataAccess {
      * @param uid user id
      * @param data 
      */
-    async mergeUniqueDocField(uid: string, field: string, data: any): Promise<any> {
-        const singleDocSnapshot = await this.checkUniqueDoc(uid)
+    async mergeUniqueDocField(uid: string, field: string, data: any): Promise<string> {
+        const singleDocSnapshot = await this.checkUniqueDoc(uid, 1)
+        const lastmod = new Date().toISOString()
         const docData: any = {
             id: singleDocSnapshot.id,
             uid,
+            lastmod,
         }
         docData[field] = data
         singleDocSnapshot.ref.update(docData)
-        delete docData.uid // IMPORTANT
-        return docData
+        // delete docData.uid // IMPORTANT
+        return lastmod
     }
     /**
      * 確保Document uid是唯一的
      * @param uid user id
      * @returns 
      */
-    async checkUniqueDoc(uid: string): Promise<any> {
+    async checkUniqueDoc(uid: string, limit: number): Promise<any> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
         const targetQuery = this.noSQL.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
-        if (count == 0) {
-            throw 'uid不存在'
-        }
-        if (count > 1) {
-            throw '現有資料重複uid'
+        if (count > limit) {
+            throw `資料數量已達上限:${limit}`
         }
         const doc = (await targetQuery.get()).docs[0] as any
         delete doc.uid // IMPORTANT

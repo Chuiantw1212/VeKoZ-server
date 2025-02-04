@@ -36,6 +36,13 @@ router.use(bearer())
         const eventTemplate = await EventService.getTemplate(user.uid)
         return eventTemplate
     })
+    .post('/event/template', async function ({ request, bearer }) {
+        const { EventService, AuthService } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const eventTemplate = await request.json() as any
+        const result = await EventService.addEventTemplate(user.uid, eventTemplate)
+        return result
+    })
     .put('/event/template', async function ({ request, bearer }) {
         const { EventService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
