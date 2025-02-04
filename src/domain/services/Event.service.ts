@@ -5,18 +5,21 @@ import EventModel from '../Event.model'
 import EventActorModel from '../EventActor.model'
 import EventTemplateModel from '../EventTemplate.model'
 import EventSchemaModel from '../EventSchema.model';
+import EventTemplateDesignModel from '../EventTemplateDesign.model';
 
 interface Idependency {
     eventModel: EventModel;
     eventActorModel: EventActorModel;
     eventTemplateModel: EventTemplateModel;
     eventSchemaModel: EventSchemaModel;
+    eventTemplateDesignModel: EventTemplateDesignModel
 }
 
 export default class EventService {
     protected eventModel: EventModel = null as any
     protected eventActorModel: EventActorModel = null as any
     protected eventTemplateModel: EventTemplateModel = null as any
+    protected eventTemplateDesignModel: EventTemplateDesignModel = null as any
     protected eventSchemaModel: EventSchemaModel = null as any
 
     constructor(dependency: Idependency) {
@@ -25,16 +28,24 @@ export default class EventService {
             eventActorModel,
             eventTemplateModel,
             eventSchemaModel,
+            eventTemplateDesignModel,
         } = dependency
         this.eventModel = eventModel
         this.eventActorModel = eventActorModel
         this.eventTemplateModel = eventTemplateModel
         this.eventSchemaModel = eventSchemaModel
+        this.eventTemplateDesignModel = eventTemplateDesignModel
     }
 
-    async getEvent(id: string): Promise<IEventTemplate> {
-        const result = await this.eventModel.getByDocId(id) as IEventTemplate
+    async getEvent(eventId: string): Promise<IEventTemplate> {
+        const result = await this.eventModel.queryByEventId(eventId) as IEventTemplate[]
         return result
+    }
+
+    async deleteEvent(uid: string, eventId: string): Promise<number> {
+        const noSqlPromise = await this.eventModel.deleteByEventId(uid, eventId)
+        await this.eventSchemaModel.dropRecord(uid, eventId)
+        return noSqlPromise
     }
 
     async getEventRecords(query: IEvent): Promise<IEvent[]> {
@@ -44,6 +55,7 @@ export default class EventService {
     async createNewEvent(uid: string, eventTemplate: IEventTemplate): Promise<IEvent> {
         // 先儲存sql取得id
         const event = await this.setEventSchema(uid, eventTemplate)
+        eventTemplate.eventId = event.id
         // 再用id儲存nosql
         this.eventModel.createNewDoc(uid, eventTemplate)
         return event

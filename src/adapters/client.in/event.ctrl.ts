@@ -17,6 +17,13 @@ router.use(bearer())
         const event = await EventService.getEvent(id)
         return event
     })
+    .delete('/event/:id', async function ({ params, bearer }) {
+        const { EventService, AuthService } = AccessGlobalService.locals
+        const { id } = params
+        const user = await AuthService.verifyIdToken(bearer)
+        const event = await EventService.deleteEvent(user.uid, id)
+        return event
+    })
     .get('/event/list', async function ({ query }) {
         const { EventService } = AccessGlobalService.locals
         const eventQuery = query as any

@@ -15,6 +15,7 @@ import EventModel from './domain/Event.model'
 import EventSchemaModel from './domain/EventSchema.model'
 import EventActorModel from './domain/EventActor.model'
 import EventTemplateModel from './domain/EventTemplate.model'
+import EventTemplateDesignModel from './domain/EventTemplateDesign.model'
 import OrganizationModel from './domain/Organization.model'
 import OrganizationMemberModel from './domain/OrganizationMember.model'
 // services
@@ -66,6 +67,9 @@ import placeController from './adapters/client.in/place.ctrl'
     const eventTemplateModel = new EventTemplateModel({
         noSQL: firestore.collection('eventTemplates')
     })
+    const eventTemplateDesignModel = new EventTemplateDesignModel({
+        noSQL: firestore.collection('eventTemplateDesigns')
+    })
     const organizationModel = new OrganizationModel({
         noSQL: firestore.collection('organizations'),
         publicBucket: firebase.getPublicBucket()
@@ -89,6 +93,7 @@ import placeController from './adapters/client.in/place.ctrl'
             eventActorModel,
             eventTemplateModel,
             eventSchemaModel,
+            eventTemplateDesignModel,
         }),
         OrganizationService: new OrganizationService({
             organizationModel,

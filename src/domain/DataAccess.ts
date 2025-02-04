@@ -7,7 +7,8 @@ export default class DataAccess {
     protected SQL: IDataAccessAdapters['SQL'] = null as any
     protected error = {
         'noSqlIsNotReady': 'NoSQL instance is not ready.',
-        'sqlIsNotReady': 'SQL instance is not ready.'
+        'sqlIsNotReady': 'SQL instance is not ready.',
+        'docNoFound': 'Data not found by given condition',
     }
 
     constructor(data: IDataAccessAdapters) {
@@ -72,7 +73,6 @@ export default class DataAccess {
             return docData
         })
         return docDatas
-
     }
 
     /**
@@ -257,7 +257,6 @@ export default class DataAccess {
             throw this.error.noSqlIsNotReady
         }
         const docData = (await this.noSQL.doc(id).get()).data()
-        console.log(docData)
         return docData
     }
 }

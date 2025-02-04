@@ -24,4 +24,8 @@ export default class EventSchemaModel extends DataAccess {
         })
         return docDatas
     }
+
+    async dropRecord(uid: string, eventId: string) {
+        return await this.deleteByDocId(uid, eventId)
+    }
 }
