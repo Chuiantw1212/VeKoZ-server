@@ -32,11 +32,24 @@ export default class EventService {
         this.eventSchemaModel = eventSchemaModel
     }
 
-    async getEventRecords(query: IEvent) {
-        return await this.eventSchemaModel.selectRecords(query)
+    async getEvent(id: string): Promise<IEventTemplate> {
+        const result = await this.eventModel.getByDocId(id) as IEventTemplate
+        return result
     }
 
-    async createNewEvent(uid: string, eventTemplate: IEventTemplate) {
+    async getEventRecords(query: IEvent): Promise<IEvent[]> {
+        return await this.eventSchemaModel.selectRecords(query) as IEvent[]
+    }
+
+    async createNewEvent(uid: string, eventTemplate: IEventTemplate): Promise<IEvent> {
+        // 先儲存sql取得id
+        const event = await this.setEventSchema(uid, eventTemplate)
+        // 再用id儲存nosql
+        this.eventModel.createNewDoc(uid, eventTemplate)
+        return event
+    }
+
+    private async setEventSchema(uid: string, eventTemplate: IEventTemplate) {
         if (!eventTemplate.designs) {
             throw 'designs欄位遺失'
         }
@@ -93,7 +106,7 @@ export default class EventService {
             return await this.eventTemplateModel.createNewDoc(uid, template)
         }
     }
-    async getTemplate(uid: string): Promise<any> {
+    async getTemplate(uid: string): Promise<IEventTemplate> {
         return await this.eventTemplateModel.getUniqueDoc(uid)
     }
 }

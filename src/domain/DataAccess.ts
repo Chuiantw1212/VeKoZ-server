@@ -246,4 +246,18 @@ export default class DataAccess {
         }
         return 1
     }
+
+    /**
+     * 取得文檔
+     * @param id 文件DocId
+     * @returns 
+     */
+    async getByDocId(id: string) {
+        if (!this.noSQL) {
+            throw this.error.noSqlIsNotReady
+        }
+        const docData = (await this.noSQL.doc(id).get()).data()
+        console.log(docData)
+        return docData
+    }
 }
