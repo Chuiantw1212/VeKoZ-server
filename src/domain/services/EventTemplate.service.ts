@@ -79,7 +79,7 @@ export default class EventTemplateService {
         }, { count: { absolute: 1 } })
         // 取得details並回傳
         const designPromises = await designIds.map((designId: string) => {
-            return this.eventTemplateDesignModel.getByDocId(designId)
+            return this.eventTemplateDesignModel.querySingleDoc([['id', '==', designId]])
         })
         const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
         eventTemplate.designs = eventTemplateDesigns

@@ -204,26 +204,7 @@ export default class DataAccess {
         return await this.createUidDoc(uid, data)
     }
 
-
     // ------------------------------------------------------------------------------------------------以下淘汰中
-
-    /**
-     * 取得文檔
-     * @param id 文件DocId
-     * @returns 
-     */
-    async getByDocId(id: string) {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
-        }
-        const docData = (await this.noSQL.doc(id).get()).data()
-        return docData
-    }
-
-    // async selectRecord(query: Object,) {
-    //     return await this.getDocList(query)
-    // }
-
     /**
      * Get all documents in a collection
      * https://firebase.google.com/docs/firestore/query-data/get-data#node.js_6
