@@ -26,7 +26,7 @@ export default class EventTemplateService {
      * @param eventTemplate 
      * @returns 
      */
-    async addEventTemplate(uid: string, eventTemplate: IEventTemplate): Promise<string> {
+    async addEventTemplate(uid: string, eventTemplate: IEventTemplate): Promise<number> {
         if (!eventTemplate.designs?.length) {
             throw 'designs不存在'
         }
@@ -61,8 +61,8 @@ export default class EventTemplateService {
             },
             merge: true,
         }
-        const lastmod = await this.eventTemplateModel.setUidDocField(uid, data, dataAccessOptions)
-        return lastmod
+        const count = await this.eventTemplateModel.updateDocs([['uid', '==', uid]], data, dataAccessOptions)
+        return count
     }
 
     async getTemplate(uid: string): Promise<IEventTemplate> {
@@ -74,7 +74,7 @@ export default class EventTemplateService {
         const designIds = eventTemplate.designIds || []
         // 自動修正樣板資料
         const correctedIds = designIds.filter(id => !!id)
-        this.eventTemplateModel.setUidDocField(uid, {
+        this.eventTemplateModel.updateDocs([['uid', '==', uid]], {
             designIds: correctedIds,
         }, { count: { absolute: 1 } })
         // 取得details並回傳
@@ -110,7 +110,7 @@ export default class EventTemplateService {
         return count
     }
 
-    async patchTemplate(uid: string, designIds: string[]): Promise<string> {
+    async patchTemplate(uid: string, designIds: string[]): Promise<number> {
         const data = {
             designIds
         }
@@ -119,8 +119,8 @@ export default class EventTemplateService {
                 absolute: 1,
             }
         }
-        const lastmod = await this.eventTemplateModel.setUidDocField(uid, data, options)
-        return lastmod
+        const count = await this.eventTemplateModel.updateDocs([['uid', '==', uid]], data, options)
+        return count
     }
     async patchTemplateDesign(uid: string, payload: IPatchTemplateDesignReq) {
         const lastmod = await this.eventTemplateDesignModel.patchMutable(uid, payload.id, payload.mutable)

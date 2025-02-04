@@ -100,15 +100,32 @@ export default class DataAccess {
     }
 
     /**
+     * Get all documents in a collection
+     * https://firebase.google.com/docs/firestore/query-data/get-data#node.js_6
+     * @returns 
+     * @deprecated
+     */
+    async getDocList() {
+        if (!this.noSQL) {
+            throw this.error.noSqlIsNotReady
+        }
+        const snapshot = await this.noSQL.get()
+        const docDatas = snapshot.docs.map(doc => {
+            const docData = doc.data()
+            delete docData.uid
+            return docData
+        });
+        return docDatas as any[]
+    }
+
+    /**
      * U: 取代現有的Document某個欄位
      * @param uid user id
      * @param data 
      */
-    async setUidDocField(uid: string, data: any, options?: IDataAccessOptions): Promise<string> {
-        const query: Query = await this.getQuery([['uid', '==', uid]])
-        if (options?.count) {
-            await this.checkQueryCount(query, options.count)
-        }
+    async updateDocs(wheres: any[][], data: any, options: IDataAccessOptions = {}): Promise<number> {
+        const query: Query = await this.getQuery(wheres)
+        const count = await this.checkQueryCount(query, options.count ?? {})
         const lastmod = new Date().toISOString()
         data.lastmod = lastmod
         const docs = (await query.get()).docs
@@ -118,7 +135,7 @@ export default class DataAccess {
             })
         })
         await Promise.all(promiese)
-        return lastmod
+        return count
     }
 
     /**
@@ -205,24 +222,6 @@ export default class DataAccess {
     }
 
     // ------------------------------------------------------------------------------------------------以下淘汰中
-    /**
-     * Get all documents in a collection
-     * https://firebase.google.com/docs/firestore/query-data/get-data#node.js_6
-     * @returns 
-     * @deprecated
-     */
-    async getDocList() {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
-        }
-        const snapshot = await this.noSQL.get()
-        const docDatas = snapshot.docs.map(doc => {
-            const docData = doc.data()
-            delete docData.uid
-            return docData
-        });
-        return docDatas as any[]
-    }
 
     /**
      * 合併現有的Document

@@ -12,6 +12,8 @@ export interface IDataAccessOptions {
     slice?: [number, number] | number
     fields?: string[],
     merge?: boolean,
+    limit?: number,
+    sort?: string,
 }
 
 export interface IDataCountOptions {
