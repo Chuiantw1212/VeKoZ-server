@@ -66,7 +66,7 @@ export default class EventTemplateService {
     }
 
     async getTemplate(uid: string): Promise<IEventTemplate> {
-        const eventTemplate: IEventTemplate = await this.eventTemplateModel.getSingleUidDoc(uid, {
+        const eventTemplate: IEventTemplate = await this.eventTemplateModel.querySingleDoc([['uid', '==', uid]], {
             count: {
                 range: [0, 1]
             }
@@ -96,7 +96,7 @@ export default class EventTemplateService {
     }
 
     async deleteTemplate(uid: string, id: string): Promise<number> {
-        const oldTemplate: IEventTemplate = await this.eventTemplateModel.getSingleUidDoc(uid)
+        const oldTemplate: IEventTemplate = await this.eventTemplateModel.querySingleDoc([['uid', '==', uid]])
         const designIds = oldTemplate.designIds ?? []
         const promises = designIds.map(designId => {
             return this.deleteTemplateDesign(uid, designId)

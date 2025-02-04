@@ -26,7 +26,7 @@ export default class DataAccess {
 
 
     /**
-     * 新增document，如果需要確保唯一，call之前先call
+     * C: 新增document，如果需要確保唯一，call之前先call
      * @param uid user id
      * @param data
      * @param options
@@ -52,7 +52,7 @@ export default class DataAccess {
     }
 
     /**
-     * 依據條件取得唯一資料
+     * R: 依據條件取得唯一資料
      * @param wheres 
      * @param options 
      * @returns 
@@ -68,7 +68,7 @@ export default class DataAccess {
     }
 
     /**
-     * 利用條件查詢資料
+     * R: 利用條件查詢資料
      * @param uid 
      * @param options 
      */
@@ -100,7 +100,7 @@ export default class DataAccess {
     }
 
     /**
-     * 取代現有的Document某個欄位
+     * U: 取代現有的Document某個欄位
      * @param uid user id
      * @param data 
      */
@@ -122,7 +122,7 @@ export default class DataAccess {
     }
 
     /**
-     * 取得組合出來的Query，controller不應該知道where語法
+     * Utility: 取得組合出來的Query，controller不應該知道where語法
      * @param wheres 
      * @returns 
      */
@@ -141,7 +141,7 @@ export default class DataAccess {
     }
 
     /**
-     * 確保Document中的數量有限
+     * Utility: 確保Document中的數量有限
      * @param uid user id
      * @returns 
      */
@@ -174,19 +174,8 @@ export default class DataAccess {
         return count
     }
 
-
     /**
-     * 取得唯一的uid document
-     * @param uid 
-     * @param options 
-     * @returns 
-     */
-    async getSingleUidDoc(uid: string, options?: IDataAccessOptions): Promise<DocumentData> {
-        const docsData = await this.queryDocList([['uid', '==', uid]], options)
-        return docsData[0] || {}
-    }
-
-    /**
+     * Delete 刪除符合條件的資料
      * @param uid 使用者uid
      * @returns 
      */
