@@ -20,14 +20,14 @@ export default class PlaceService {
      * @param place 
      */
     newItem(uid: string, place: IPlace) {
-        return this.placeModel.createNewDoc(uid, place)
+        return this.placeModel.createUidDoc(uid, place)
     }
 
     /**
      * 取得空間
      */
     async getItem(uid: string) {
-        return await this.placeModel.getUniqueDoc(uid)
+        return await this.placeModel.queryUidDocList(uid)
     }
 
     /**

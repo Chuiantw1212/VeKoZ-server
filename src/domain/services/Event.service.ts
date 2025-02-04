@@ -48,7 +48,7 @@ export default class EventService {
         // const event = await this.setEventSchema(uid, eventTemplate)
         // eventTemplate.eventId = event.id
         // // 再用id儲存nosql
-        // this.eventModel.createNewDoc(uid, eventTemplate)
+        // this.eventModel.createUidDoc(uid, eventTemplate)
         // return event
     }
 
@@ -109,7 +109,7 @@ export default class EventService {
         // if (template.id) {
         //     return await this.eventTemplateModel.mergeUniqueDoc(uid, template)
         // } else {
-        //     return await this.eventTemplateModel.createNewDoc(uid, template)
+        //     return await this.eventTemplateModel.createUidDoc(uid, template)
         // }
     }
 }

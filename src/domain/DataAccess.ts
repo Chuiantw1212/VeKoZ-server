@@ -1,5 +1,6 @@
+import { isArray } from "util"
 import { IDataAccessAdapters, IDataAccessOptions, IDataCount, IDataCountOptions, IQuery } from "../entities/dataAccess"
-import { CollectionReference, FieldValue, Query } from "firebase-admin/firestore"
+import { CollectionReference, DocumentData, FieldValue, Query } from "firebase-admin/firestore"
 
 /**
  * 檔案的Naming要對應firestore的存取方式
@@ -30,7 +31,7 @@ export default class DataAccess {
      * @returns 
      */
     async insertRecord(uid: string, data: any): Promise<any> {
-        return await this.createNewDoc(uid, data)
+        return await this.createUidDoc(uid, data)
     }
 
     // async selectRecord(query: Object,) {
@@ -84,7 +85,7 @@ export default class DataAccess {
      * @param options
      * @returns 
      */
-    async createNewDoc(uid: string, data: any, options?: IDataAccessOptions): Promise<any> {
+    async createUidDoc(uid: string, data: any, options?: IDataAccessOptions): Promise<any> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
@@ -104,21 +105,44 @@ export default class DataAccess {
     }
 
     /**
-     * 利用user uid取得document
+     * 利用user uid取得多個docuemnt
      * @returns 取得資料
      */
-    async getUniqueDoc(uid: string): Promise<any> {
+    async queryUidDocList(uid: string, options?: IDataAccessOptions): Promise<DocumentData[]> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
-        const targetQuery = this.noSQL.where('uid', '==', uid)
-        /**
-         * 如果需要確保資料數量使用 checkQueryCount
-         */
-        const doc = (await targetQuery.get()).docs[0] as any
-        const docData = doc.data()
-        delete docData.uid // IMPORTANT
-        return docData
+        const query = await this.getQuery([['uid', '==', uid]])
+        if (options?.count) {
+            await this.checkQueryCount(query, options.count)
+        }
+
+        let docs = (await query.get()).docs
+        if (options?.slice) {
+            const slice = options.slice
+            if (slice instanceof Array) {
+                docs = docs.slice(...slice)
+            } else {
+                docs = docs.slice(slice)
+            }
+        }
+        const docsData = docs.map(doc => {
+            const docData = doc.data()
+            delete docData.uid // IMPORTANT
+            return docData
+        })
+        return docsData
+    }
+
+    /**
+     * 取得唯一的uid document
+     * @param uid 
+     * @param options 
+     * @returns 
+     */
+    async getSingleUidDoc(uid: string, options?: IDataAccessOptions): Promise<DocumentData> {
+        const docsData = await this.queryUidDocList(uid, options)
+        return docsData[0]
     }
 
     /**

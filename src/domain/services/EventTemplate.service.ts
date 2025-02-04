@@ -28,7 +28,7 @@ export default class EventTemplateService {
         const designsTemp = structuredClone(eventTemplate.designs)
         delete eventTemplate.designs
         // 儲存template
-        const newTemplateDoc: IEventTemplate = await this.eventTemplateModel.createNewDoc(uid, eventTemplate, {
+        const newTemplateDoc: IEventTemplate = await this.eventTemplateModel.createUidDoc(uid, eventTemplate, {
             count: {
                 max: 1
             }
@@ -36,7 +36,7 @@ export default class EventTemplateService {
         // 儲存欄位design
         const designDocPromises = designsTemp.map((design) => {
             const templateDesign = design as ITemplateDesign
-            return this.eventTemplateDesignModel.createNewDoc(uid, {
+            return this.eventTemplateDesignModel.createUidDoc(uid, {
                 ...templateDesign,
                 templateId: newTemplateDoc.id
             })
@@ -50,7 +50,7 @@ export default class EventTemplateService {
     }
 
     async putEventTemplate(uid: string, newTemplate: IEventTemplate) {
-        const oldTemplate: IEventTemplate = await this.eventTemplateModel.getUniqueDoc(uid)
+        const oldTemplate: IEventTemplate = await this.eventTemplateModel.queryUidDocList(uid)
         // const designIds = 
         // const deletePromises = oldTemplate.designs?.forEach(design => { 
         //     return this.eventTemplateDesignModel.deleteByDocId(uid, design.id)
@@ -59,7 +59,7 @@ export default class EventTemplateService {
 
     async getTemplate(uid: string): Promise<IEventTemplate> {
         // await this.eventTemplateModel.checkQueryCount(uid, 1)
-        const eventTemplate: IEventTemplate = await this.eventTemplateModel.getUniqueDoc(uid)
+        const eventTemplate: IEventTemplate = await this.eventTemplateModel.queryUidDocList(uid)
         const designIds = eventTemplate.designIds || []
         const designPromises = await designIds.map((designId: string) => {
             return this.eventTemplateDesignModel.getByDocId(designId)
@@ -83,7 +83,7 @@ export default class EventTemplateService {
             type: data.type,
             mutable: {}
         }
-        const newDesign = await this.eventTemplateDesignModel.createNewDoc(uid, templateDesign)
+        const newDesign = await this.eventTemplateDesignModel.createUidDoc(uid, templateDesign)
         return newDesign.id
     }
 
@@ -107,7 +107,7 @@ export default class EventTemplateService {
         // if (template.id) {
         //     return await this.eventTemplateModel.mergeUniqueDoc(uid, template)
         // } else {
-        //     return await this.eventTemplateModel.createNewDoc(uid, template)
+        //     return await this.eventTemplateModel.createUidDoc(uid, template)
         // }
     }
 

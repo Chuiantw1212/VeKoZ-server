@@ -8,7 +8,8 @@ export interface IDataAccessAdapters {
 }
 
 export interface IDataAccessOptions {
-    count?: IDataCountOptions
+    count?: IDataCountOptions,
+    slice?: [number, number] | number
 }
 
 export interface IDataCountOptions {
