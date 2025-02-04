@@ -25,11 +25,16 @@ export interface IPostTemplateDesignReq {
     type: string,
     destination: string,
     templateId: string,
-    templateDesignIds: string[]
+    // templateDesignIds: string[]
 }
 
 export interface IDeleteTemplateDesignReq {
     id: string,
     templateId: string,
     templateDesignIds: string[]
+}
+
+export interface IPatchTemplateDesignReq {
+    id: string,
+    mutable: any,
 }

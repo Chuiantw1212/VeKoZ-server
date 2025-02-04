@@ -1,7 +1,7 @@
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
-import type { IEventTemplate, IPostTemplateDesignReq, IDeleteTemplateDesignReq } from '../../entities/eventTemplate'
+import type { IEventTemplate, IPostTemplateDesignReq, IDeleteTemplateDesignReq, IPatchTemplateDesignReq } from '../../entities/eventTemplate'
 const router = new Elysia()
 router.use(bearer())
     .post('/event', async function ({ request, bearer }) {
@@ -62,6 +62,13 @@ router.use(bearer())
         const user = await AuthService.verifyIdToken(bearer)
         const deleteRequest: IDeleteTemplateDesignReq = await request.json() as any
         const lastmod = await EventTemplateService.deleteTemplateDesign(user.uid, deleteRequest)
+        return lastmod
+    })
+    .patch('/event/template/design', async function ({ request, bearer }) {
+        const { EventTemplateService, AuthService } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const patchRequest: IPatchTemplateDesignReq = await request.json() as any
+        const lastmod = await EventTemplateService.patchTemplateDesign(user.uid, patchRequest)
         return lastmod
     })
 export default router

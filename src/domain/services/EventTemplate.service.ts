@@ -1,4 +1,4 @@
-import type { IEventTemplate, ITemplateDesign, IPostTemplateDesignReq, IDeleteTemplateDesignReq } from '../../entities/eventTemplate';
+import type { IEventTemplate, ITemplateDesign, IPostTemplateDesignReq, IDeleteTemplateDesignReq, IPatchTemplateDesignReq } from '../../entities/eventTemplate';
 import EventTemplateModel from '../EventTemplate.model'
 import EventTemplateDesignModel from '../EventTemplateDesign.model';
 
@@ -73,15 +73,15 @@ export default class EventTemplateService {
             mutable: {}
         }
         const newDesign = await this.eventTemplateDesignModel.createNewDoc(uid, templateDesign)
-        const designIds = data.templateDesignIds
-        designIds[Number(data.destination)] = newDesign.id
-
-        await this.eventTemplateModel.mergeUniqueDocField(uid, 'designs', designIds)
         return newDesign.id
     }
 
     async patchTemplate(uid: string, field: string, designIds: string[]): Promise<string> {
         const lastmod = await this.eventTemplateModel.mergeUniqueDocField(uid, field, designIds)
+        return lastmod
+    }
+    async patchTemplateDesign(uid: string, payload: IPatchTemplateDesignReq) {
+        const lastmod = await this.eventTemplateDesignModel.patchMutable(uid, payload.id, payload.mutable)
         return lastmod
     }
 
@@ -100,11 +100,8 @@ export default class EventTemplateService {
         // }
     }
 
-    async deleteTemplateDesign(uid: string, deleteReq: IDeleteTemplateDesignReq): Promise<string> {
-        await Promise.all([
-            this.eventTemplateDesignModel.deleteByDocId(uid, deleteReq.id),
-            this.eventTemplateModel.mergeUniqueDocField(uid, 'designs', deleteReq.templateDesignIds)
-        ])
-        return new Date().toString()
+    async deleteTemplateDesign(uid: string, deleteReq: IDeleteTemplateDesignReq): Promise<number> {
+        const count = await this.eventTemplateDesignModel.deleteByDocId(uid, deleteReq.id)
+        return count
     }
 }
