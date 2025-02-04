@@ -24,59 +24,6 @@ export default class DataAccess {
         }
     }
 
-    /**
-     * 模仿SQL插入語法，未來銜接Cloud SQL使用
-     * @param uid 使用者uid
-     * @param data 任何資料
-     * @returns 
-     */
-    async insertRecord(uid: string, data: any): Promise<any> {
-        return await this.createUidDoc(uid, data)
-    }
-
-    // async selectRecord(query: Object,) {
-    //     return await this.getDocList(query)
-    // }
-
-    /**
-     * Get all documents in a collection
-     * https://firebase.google.com/docs/firestore/query-data/get-data#node.js_6
-     * @returns 
-     */
-    async getDocList() {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
-        }
-        const snapshot = await this.noSQL.get()
-        const docDatas = snapshot.docs.map(doc => {
-            const docData = doc.data()
-            delete docData.uid
-            return docData
-        });
-        return docDatas as any[]
-    }
-
-    async queryDocList(uid: string, query: Object,) {
-        if (!this.noSQL) {
-            return
-        }
-        let targetQuery = this.noSQL.where('uid', '==', uid)
-        const countData = await targetQuery.count().get()
-        const count: number = countData.data().count || 0
-        if (count == 0) {
-            throw 'uid不存在'
-        }
-        for (let condition in query) {
-            const value = (query as any)[condition]
-            targetQuery = targetQuery.where(condition, '==', value)
-        }
-        const docDatas: any[] = (await targetQuery.get()).docs.map(doc => {
-            const docData = doc.data()
-            delete docData.uid
-            return docData
-        })
-        return docDatas
-    }
 
     /**
      * 新增document，如果需要確保唯一，call之前先call
@@ -102,6 +49,54 @@ export default class DataAccess {
             uid // IMPORTANT 否則新資料會是null
         })
         return data
+    }
+
+    /**
+     * 依據條件取得唯一資料
+     * @param wheres 
+     * @param options 
+     * @returns 
+     */
+    async querySingleDoc(wheres: any[][], options: IDataAccessOptions = {}): Promise<DocumentData> {
+        Object.assign(options, {
+            count: {
+                absolute: 1
+            }
+        })
+        const docDatas = await this.queryDocList(wheres, options)
+        return docDatas[0]
+    }
+
+    /**
+     * 利用條件查詢資料
+     * @param uid 
+     * @param options 
+     */
+    async queryDocList(wheres: any[][], options?: IDataAccessOptions): Promise<DocumentData[]> {
+        if (!this.noSQL) {
+            throw this.error.noSqlIsNotReady
+        }
+        // 檢查資料數量
+        const query = await this.getQuery(wheres)
+        if (options?.count) {
+            await this.checkQueryCount(query, options.count)
+        }
+        // 取得資料
+        let docs = (await query.get()).docs
+        if (options?.slice) {
+            const slice = options.slice
+            if (slice instanceof Array) {
+                docs = docs.slice(...slice)
+            } else {
+                docs = docs.slice(slice)
+            }
+        }
+        const docDatas = docs.map(doc => {
+            const docData = doc.data()
+            delete docData.uid // IMPORTANT
+            return docData
+        })
+        return docDatas
     }
 
     /**
@@ -135,32 +130,6 @@ export default class DataAccess {
     }
 
     /**
-     * 取得唯一的uid document
-     * @param uid 
-     * @param options 
-     * @returns 
-     */
-    async getSingleUidDoc(uid: string, options?: IDataAccessOptions): Promise<DocumentData> {
-        const docsData = await this.queryUidDocList(uid, options)
-        return docsData[0] || {}
-    }
-
-    /**
-     * 合併現有的Document
-     * @param uid user id
-     * @param data 
-     */
-    async mergeUniqueDoc(uid: string, data: any): Promise<string> {
-        // const singleDocSnapshot = await this.checkQueryCount(uid, 1)
-        // const lastmod = new Date().toISOString()
-        // data.lastmod = lastmod
-        // singleDocSnapshot.ref.set(data, {
-        //     merge: true
-        // })
-        // return lastmod
-        return ''
-    }
-    /**
      * 取代現有的Document某個欄位
      * @param uid user id
      * @param data 
@@ -183,17 +152,10 @@ export default class DataAccess {
     }
 
     /**
-     * 移除某個欄位
-     * @param uid 
-     * @param field 
+     * 取得組合出來的Query，controller不應該知道where語法
+     * @param wheres 
+     * @returns 
      */
-    async deleteUniqueField(uid: string, field: string) {
-        // const singleDocSnapshot = await this.checkQueryCount(uid, 1)
-        const removeObjec: { [key: string]: any } = {}
-        removeObjec[field] = FieldValue.delete()
-        // await singleDocSnapshot.update(removeObjec);
-    }
-
     protected async getQuery(wheres: any[][]): Promise<Query> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
@@ -242,6 +204,18 @@ export default class DataAccess {
         return count
     }
 
+
+    /**
+     * 取得唯一的uid document
+     * @param uid 
+     * @param options 
+     * @returns 
+     */
+    async getSingleUidDoc(uid: string, options?: IDataAccessOptions): Promise<DocumentData> {
+        const docsData = await this.queryUidDocList(uid, options)
+        return docsData[0] || {}
+    }
+
     /**
      * @param uid 使用者uid
      * @returns 
@@ -258,6 +232,72 @@ export default class DataAccess {
         })
         await Promise.all(promises)
         return count
+    }
+
+
+    // ------------------------------------------------------------------------------------------------以下淘汰中
+
+    /**
+     * 取得文檔
+     * @param id 文件DocId
+     * @returns 
+     */
+    async getByDocId(id: string) {
+        if (!this.noSQL) {
+            throw this.error.noSqlIsNotReady
+        }
+        const docData = (await this.noSQL.doc(id).get()).data()
+        return docData
+    }
+
+    /**
+     * 模仿SQL插入語法，未來銜接Cloud SQL使用
+     * @param uid 使用者uid
+     * @param data 任何資料
+     * @returns 
+     */
+    async insertRecord(uid: string, data: any): Promise<any> {
+        return await this.createUidDoc(uid, data)
+    }
+
+    // async selectRecord(query: Object,) {
+    //     return await this.getDocList(query)
+    // }
+
+    /**
+     * Get all documents in a collection
+     * https://firebase.google.com/docs/firestore/query-data/get-data#node.js_6
+     * @returns 
+     * @deprecated
+     */
+    async getDocList() {
+        if (!this.noSQL) {
+            throw this.error.noSqlIsNotReady
+        }
+        const snapshot = await this.noSQL.get()
+        const docDatas = snapshot.docs.map(doc => {
+            const docData = doc.data()
+            delete docData.uid
+            return docData
+        });
+        return docDatas as any[]
+    }
+
+    /**
+     * 合併現有的Document
+     * @param uid user id
+     * @param data 
+     * @deprecated
+     */
+    async mergeUniqueDoc(uid: string, data: any): Promise<string> {
+        // const singleDocSnapshot = await this.checkQueryCount(uid, 1)
+        // const lastmod = new Date().toISOString()
+        // data.lastmod = lastmod
+        // singleDocSnapshot.ref.set(data, {
+        //     merge: true
+        // })
+        // return lastmod
+        return ''
     }
 
     /**
@@ -310,18 +350,5 @@ export default class DataAccess {
             await this.noSQL.doc(targetDoc.id).update(data, { merge: true })
         }
         return 1
-    }
-
-    /**
-     * 取得文檔
-     * @param id 文件DocId
-     * @returns 
-     */
-    async getByDocId(id: string) {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
-        }
-        const docData = (await this.noSQL.doc(id).get()).data()
-        return docData
     }
 }

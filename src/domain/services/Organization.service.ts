@@ -62,10 +62,9 @@ export default class OrganizationService {
      * @param organizationId 企業文件Id
      * @returns 
      */
-    async getMemberList(uid: string, organizationId: string) {
-        const list = await this.organizationMemberModel.queryDocList(uid, {
-            organizationId,
-        }) as IOrganizationMember[]
+    async getMemberList(uid: string, organizationId: string): Promise<IOrganizationMember[]> {
+        const conditions = [['uid', '==', uid], ['organizationId', '==', organizationId]]
+        const list: IOrganizationMember[] = await this.organizationMemberModel.queryDocList(conditions) as IOrganizationMember[]
         return list
     }
 
