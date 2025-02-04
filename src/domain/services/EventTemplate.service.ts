@@ -100,8 +100,12 @@ export default class EventTemplateService {
         return newDesign.id
     }
 
-    async patchTemplate(uid: string, field: string, designIds: string[]): Promise<string> {
-        const lastmod = await this.eventTemplateModel.setUidDocField(uid, field, designIds)
+    async patchTemplate(uid: string, data: any): Promise<string> {
+        const lastmod = await this.eventTemplateModel.setUidDocField(uid, data, {
+            count: {
+                absolute: 1,
+            }
+        })
         return lastmod
     }
     async patchTemplateDesign(uid: string, payload: IPatchTemplateDesignReq) {

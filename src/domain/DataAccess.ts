@@ -165,7 +165,7 @@ export default class DataAccess {
      * @param uid user id
      * @param data 
      */
-    async setUidDocField(uid: string, data: any, options: IDataAccessOptions): Promise<string> {
+    async setUidDocField(uid: string, data: any, options?: IDataAccessOptions): Promise<string> {
         const query: Query = await this.getQuery([['uid', '==', uid]])
         if (options?.count) {
             await this.checkQueryCount(query, options.count)
@@ -175,7 +175,7 @@ export default class DataAccess {
         const docs = (await query.get()).docs
         const promiese = docs.map(doc => {
             return doc.ref.update(data, {
-                merge: options.merge
+                merge: options?.merge
             })
         })
         await Promise.all(promiese)
@@ -194,7 +194,7 @@ export default class DataAccess {
         // await singleDocSnapshot.update(removeObjec);
     }
 
-    async getQuery(wheres: any[][]): Promise<Query> {
+    protected async getQuery(wheres: any[][]): Promise<Query> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
@@ -213,7 +213,7 @@ export default class DataAccess {
      * @param uid user id
      * @returns 
      */
-    async checkQueryCount(query: Query, options: IDataCountOptions): Promise<number> {
+    protected async checkQueryCount(query: Query, options: IDataCountOptions): Promise<number> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
@@ -243,29 +243,21 @@ export default class DataAccess {
     }
 
     /**
-     * 刪除唯一的文件
      * @param uid 使用者uid
      * @returns 
      */
-    async removeUniqueDoc(uid: string): Promise<number> {
+    async removeUidDocs(uid: string, options: IDataAccessOptions): Promise<number> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
-        const targetQuery = this.noSQL.where('uid', '==', uid)
-        const countData = await targetQuery.count().get()
-        const count: number = countData.data().count
-        if (count == 0) {
-            throw 'uid不存在'
-        }
-        if (count > 1) {
-            throw '現有資料重複uid'
-        }
-        (await targetQuery.get()).docs.forEach(doc => {
-            if (this.noSQL) {
-                this.noSQL.doc(doc.id).delete()
-            }
+        const query = await this.getQuery([['uid', '==', uid]])
+        const count = await this.checkQueryCount(query, options.count ?? {})
+        const docs = (await query.get()).docs
+        const promises = docs.map(doc => {
+            return doc.ref.delete()
         })
-        return 1
+        await Promise.all(promises)
+        return count
     }
 
     /**

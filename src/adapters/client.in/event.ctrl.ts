@@ -61,7 +61,9 @@ router.use(bearer())
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const designIds: string[] = await request.json() as string[]
-        const result = await EventTemplateService.patchTemplate(user.uid, 'designs', designIds)
+        const result = await EventTemplateService.patchTemplate(user.uid, {
+            designIds,
+        })
         return result
     })
     .post('/event/template/design', async function ({ request, bearer }) {
