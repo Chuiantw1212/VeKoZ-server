@@ -43,11 +43,11 @@ router.use(bearer())
         const result = await EventService.addEventTemplate(user.uid, eventTemplate)
         return result
     })
-    .put('/event/template', async function ({ request, bearer }) {
+    .patch('/event/template', async function ({ request, bearer }) {
         const { EventService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const eventTemplate = await request.json() as any
-        const result = await EventService.putTemplate(user.uid, eventTemplate)
+        const designIds: string[] = await request.json() as string[]
+        const result = await EventService.patchTemplateDesigns(user.uid, designIds)
         return result
     })
 export default router
