@@ -1,4 +1,6 @@
-import { IDataAccessAdapters } from "../entities/dataAccess"
+import { IDataAccessAdapters, IDataAccessOptions, IDataCount, IDataCountOptions, IQuery } from "../entities/dataAccess"
+import { CollectionReference, FieldValue, Query } from "firebase-admin/firestore"
+
 /**
  * 檔案的Naming要對應firestore的存取方式
  */
@@ -79,15 +81,16 @@ export default class DataAccess {
      * 新增document，如果需要確保唯一，call之前先call
      * @param uid user id
      * @param data
+     * @param options
      * @returns 
      */
-    async createNewDoc(uid: string, data: any, options: any = {}): Promise<any> {
+    async createNewDoc(uid: string, data: any, options?: IDataAccessOptions): Promise<any> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
-        // 確保資料新增上限，未來屬於付費功能
-        if (options.limit) {
-            this.checkUniqueDoc(uid, options.limit)
+        const query = await this.getQuery([['uid', '==', uid]])
+        if (options?.count) {
+            await this.checkQueryCount(query, options.count)
         }
         const docRef = this.noSQL.doc()
         const lastmod = new Date().toISOString()
@@ -109,12 +112,9 @@ export default class DataAccess {
             throw this.error.noSqlIsNotReady
         }
         const targetQuery = this.noSQL.where('uid', '==', uid)
-        const countData = await targetQuery.count().get()
-        const count: number = countData.data().count
-        if (count == 0) {
-            // 需要在不知道資料數量時取資料時就不可throw error
-            return 0
-        }
+        /**
+         * 如果需要確保資料數量使用 checkQueryCount
+         */
         const doc = (await targetQuery.get()).docs[0] as any
         const docData = doc.data()
         delete docData.uid // IMPORTANT
@@ -127,13 +127,14 @@ export default class DataAccess {
      * @param data 
      */
     async mergeUniqueDoc(uid: string, data: any): Promise<string> {
-        const singleDocSnapshot = await this.checkUniqueDoc(uid, 1)
-        const lastmod = new Date().toISOString()
-        data.lastmod = lastmod
-        singleDocSnapshot.ref.set(data, {
-            merge: true
-        })
-        return lastmod
+        // const singleDocSnapshot = await this.checkQueryCount(uid, 1)
+        // const lastmod = new Date().toISOString()
+        // data.lastmod = lastmod
+        // singleDocSnapshot.ref.set(data, {
+        //     merge: true
+        // })
+        // return lastmod
+        return ''
     }
     /**
      * 取代現有的Document某個欄位
@@ -141,38 +142,72 @@ export default class DataAccess {
      * @param data 
      */
     async mergeUniqueDocField(uid: string, field: string, data: any): Promise<string> {
-        const singleDocSnapshot = await this.checkUniqueDoc(uid, 1)
-        const lastmod = new Date().toISOString()
-        const docData: any = {
-            id: singleDocSnapshot.id,
-            uid,
-            lastmod,
-        }
-        docData[field] = data
-        singleDocSnapshot.ref.update(docData)
-        // delete docData.uid // IMPORTANT
-        return lastmod
+        // const singleDocSnapshot = await this.checkQueryCount(uid, 1)
+        // const lastmod = new Date().toISOString()
+        // const docData: any = {
+        //     id: singleDocSnapshot.id,
+        //     uid,
+        //     lastmod,
+        // }
+        // docData[field] = data
+        // singleDocSnapshot.ref.update(docData)
+        // // delete docData.uid // IMPORTANT
+        // return lastmod
     }
+
+    /**
+     * 移除某個欄位
+     * @param uid 
+     * @param field 
+     */
+    async deleteUniqueField(uid: string, field: string) {
+        // const singleDocSnapshot = await this.checkQueryCount(uid, 1)
+        const removeObjec: { [key: string]: any } = {}
+        removeObjec[field] = FieldValue.delete()
+        // await singleDocSnapshot.update(removeObjec);
+    }
+
+    async getQuery(wheres: any[][]): Promise<Query> {
+        if (!this.noSQL) {
+            throw this.error.noSqlIsNotReady
+        }
+        let query: CollectionReference | Query = this.noSQL
+        wheres.forEach((where: any[]) => {
+            const field = where[0]
+            const operator = where[1]
+            const value = where[2]
+            query = query.where(field, operator, value)
+        })
+        return query
+    }
+
     /**
      * 確保Document中的數量有限
      * @param uid user id
      * @returns 
      */
-    async checkUniqueDoc(uid: string, limit: number = 1): Promise<any> {
+    async checkQueryCount(query: Query, options: IDataCountOptions): Promise<number> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
-        const targetQuery = this.noSQL.where('uid', '==', uid)
-        const countData = await targetQuery.count().get()
+        const countData = await query.count().get()
         const count: number = countData.data().count
-        if (count > limit) {
-            const message = `資料數量已達上限:${limit}`
+        if (options.max && count > options.max) {
+            const message = `資料數量已達上限:${options.max}`
             console.trace(message)
             throw message
         }
-        const doc = (await targetQuery.get()).docs[0] as any
-        delete doc.uid // IMPORTANT
-        return doc
+        if (options.min && count < options.min) {
+            const message = `資料數量低於下限:${options.min}`
+            console.trace(message)
+            throw message
+        }
+        if (options.absolute && count !== options.absolute) {
+            const message = `資料數量不為:${options.absolute}`
+            console.trace(message)
+            throw message
+        }
+        return count
     }
 
     /**

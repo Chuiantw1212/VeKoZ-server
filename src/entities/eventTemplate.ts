@@ -6,7 +6,8 @@ export interface IEventTemplate {
     [key: string]: any
     uid?: string;
     id?: string; // doc id
-    designs?: ITemplateDesign[] | string[]
+    designs?: ITemplateDesign[]
+    designIds?: string[]
 }
 
 export interface ITemplateDesign {

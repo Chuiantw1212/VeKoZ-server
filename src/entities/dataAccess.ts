@@ -7,6 +7,23 @@ export interface IDataAccessAdapters {
     privateBucket?: any,
 }
 
+export interface IDataAccessOptions {
+    count?: IDataCountOptions
+}
+
+export interface IDataCountOptions {
+    min?: number,
+    max?: number,
+    absolute?: number,
+}
+
+export interface IQuery {
+    field: string,
+    operator: string,
+    value: any,
+}
+
+
 export interface INoSQL extends CollectionReference {
 
 }

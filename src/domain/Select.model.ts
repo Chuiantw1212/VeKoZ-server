@@ -12,7 +12,7 @@ export default class SelectModel extends DataAccess {
             if (!this.noSQL) {
                 throw this.error.noSqlIsNotReady
             }
-            const keyQuery: Query = this.noSQL.where('key', '==', key).limit(1)
+            const keyQuery: Query = this.noSQL.where('key', '==', key).max(1)
             const snapshot: QuerySnapshot = await keyQuery.get()
             if (snapshot.docs.length) {
                 const options: IOptionsItem[] = snapshot.docs[0].data().options

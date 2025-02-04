@@ -29,7 +29,9 @@ export default class EventTemplateService {
         delete eventTemplate.designs
         // 儲存template
         const newTemplateDoc: IEventTemplate = await this.eventTemplateModel.createNewDoc(uid, eventTemplate, {
-            limit: 1
+            count: {
+                max: 1
+            }
         })
         // 儲存欄位design
         const designDocPromises = designsTemp.map((design) => {
@@ -40,16 +42,25 @@ export default class EventTemplateService {
             })
         })
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises)
-        const designDocIds = designDocs.map(doc => doc.id ?? '')
-        eventTemplate.designs = designDocIds
+        const designIds = designDocs.map(doc => doc.id ?? '')
+        eventTemplate.designIds = designIds
         // 更新template
-        const lastmod = await this.eventTemplateModel.mergeUniqueDocField(uid, 'designs', designDocIds)
+        const lastmod = await this.eventTemplateModel.mergeUniqueDocField(uid, 'designIds', designIds)
         return lastmod
     }
 
+    async putEventTemplate(uid: string, newTemplate: IEventTemplate) {
+        const oldTemplate: IEventTemplate = await this.eventTemplateModel.getUniqueDoc(uid)
+        // const designIds = 
+        // const deletePromises = oldTemplate.designs?.forEach(design => { 
+        //     return this.eventTemplateDesignModel.deleteByDocId(uid, design.id)
+        // })
+    }
+
     async getTemplate(uid: string): Promise<IEventTemplate> {
+        // await this.eventTemplateModel.checkQueryCount(uid, 1)
         const eventTemplate: IEventTemplate = await this.eventTemplateModel.getUniqueDoc(uid)
-        const designIds = eventTemplate.designs as string[]
+        const designIds = eventTemplate.designIds || []
         const designPromises = await designIds.map((designId: string) => {
             return this.eventTemplateDesignModel.getByDocId(designId)
         })
