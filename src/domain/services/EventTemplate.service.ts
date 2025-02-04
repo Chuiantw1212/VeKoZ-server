@@ -35,17 +35,27 @@ export default class EventTemplateService {
         })
         // 儲存欄位design
         const designDocPromises = designsTemp.map((design) => {
-            const templateDesign = design as ITemplateDesign
+            const templateDesign = design
             return this.eventTemplateDesignModel.createUidDoc(uid, {
                 ...templateDesign,
                 templateId: newTemplateDoc.id
             })
         })
-        const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises)
+        const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
         const designIds = designDocs.map(doc => doc.id ?? '')
         eventTemplate.designIds = designIds
+
         // 更新template
-        const lastmod = await this.eventTemplateModel.mergeUniqueDocField(uid, 'designIds', designIds)
+        const data = {
+            designIds,
+        }
+        const dataAccessOptions = {
+            count: {
+                absolute: 1 // 如果不是1，就是符合條件統一改寫
+            },
+            merge: true,
+        }
+        const lastmod = await this.eventTemplateModel.setUidDocField(uid, data, dataAccessOptions)
         return lastmod
     }
 
@@ -58,8 +68,11 @@ export default class EventTemplateService {
     }
 
     async getTemplate(uid: string): Promise<IEventTemplate> {
-        // await this.eventTemplateModel.checkQueryCount(uid, 1)
-        const eventTemplate: IEventTemplate = await this.eventTemplateModel.queryUidDocList(uid)
+        const eventTemplate: IEventTemplate = await this.eventTemplateModel.getSingleUidDoc(uid, {
+            count: {
+                range: [0, 1]
+            }
+        })
         const designIds = eventTemplate.designIds || []
         const designPromises = await designIds.map((designId: string) => {
             return this.eventTemplateDesignModel.getByDocId(designId)
@@ -88,7 +101,7 @@ export default class EventTemplateService {
     }
 
     async patchTemplate(uid: string, field: string, designIds: string[]): Promise<string> {
-        const lastmod = await this.eventTemplateModel.mergeUniqueDocField(uid, field, designIds)
+        const lastmod = await this.eventTemplateModel.setUidDocField(uid, field, designIds)
         return lastmod
     }
     async patchTemplateDesign(uid: string, payload: IPatchTemplateDesignReq) {

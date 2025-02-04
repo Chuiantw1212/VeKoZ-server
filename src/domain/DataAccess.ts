@@ -85,7 +85,7 @@ export default class DataAccess {
      * @param options
      * @returns 
      */
-    async createUidDoc(uid: string, data: any, options?: IDataAccessOptions): Promise<any> {
+    async createUidDoc(uid: string, data: any, options?: IDataAccessOptions): Promise<DocumentData> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
@@ -142,7 +142,7 @@ export default class DataAccess {
      */
     async getSingleUidDoc(uid: string, options?: IDataAccessOptions): Promise<DocumentData> {
         const docsData = await this.queryUidDocList(uid, options)
-        return docsData[0]
+        return docsData[0] || {}
     }
 
     /**
@@ -165,18 +165,21 @@ export default class DataAccess {
      * @param uid user id
      * @param data 
      */
-    async mergeUniqueDocField(uid: string, field: string, data: any): Promise<string> {
-        // const singleDocSnapshot = await this.checkQueryCount(uid, 1)
-        // const lastmod = new Date().toISOString()
-        // const docData: any = {
-        //     id: singleDocSnapshot.id,
-        //     uid,
-        //     lastmod,
-        // }
-        // docData[field] = data
-        // singleDocSnapshot.ref.update(docData)
-        // // delete docData.uid // IMPORTANT
-        // return lastmod
+    async setUidDocField(uid: string, data: any, options: IDataAccessOptions): Promise<string> {
+        const query: Query = await this.getQuery([['uid', '==', uid]])
+        if (options?.count) {
+            await this.checkQueryCount(query, options.count)
+        }
+        const lastmod = new Date().toISOString()
+        data.lastmod = lastmod
+        const docs = (await query.get()).docs
+        const promiese = docs.map(doc => {
+            return doc.ref.update(data, {
+                merge: options.merge
+            })
+        })
+        await Promise.all(promiese)
+        return lastmod
     }
 
     /**
@@ -217,17 +220,22 @@ export default class DataAccess {
         const countData = await query.count().get()
         const count: number = countData.data().count
         if (options.max && count >= options.max) {
-            const message = `資料數量已達上限:${options.max}`
+            const message = `資料數量已達上限: ${count} > ${options.max}`
             console.trace(message)
             throw message
         }
         if (options.min && count <= options.min) {
-            const message = `資料數量低於下限:${options.min}`
+            const message = `資料數量低於下限: ${count} < ${options.min}`
             console.trace(message)
             throw message
         }
         if (options.absolute && count !== options.absolute) {
-            const message = `資料數量不為:${options.absolute}`
+            const message = `資料數量數值不合: ${count} !== ${options.absolute}`
+            console.trace(message)
+            throw message
+        }
+        if (options.range && !options.range.includes(count)) {
+            const message = `資料數量範圍不合: ${count} 不在 ${options.range} 中`
             console.trace(message)
             throw message
         }

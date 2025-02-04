@@ -10,12 +10,15 @@ export interface IDataAccessAdapters {
 export interface IDataAccessOptions {
     count?: IDataCountOptions,
     slice?: [number, number] | number
+    fields?: string[],
+    merge?: boolean,
 }
 
 export interface IDataCountOptions {
     min?: number,
     max?: number,
     absolute?: number,
+    range?: number[],
 }
 
 export interface IQuery {

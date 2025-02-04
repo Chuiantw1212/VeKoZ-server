@@ -8,6 +8,6 @@ export default class EventTemplateModel extends DataAccess {
     }
 
     // patchDesigns(uid: string, designIds: string[]) {
-    //     this.mergeUniqueDocField
+    //     this.setUidDocField
     // }
 }
