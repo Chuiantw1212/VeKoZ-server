@@ -123,7 +123,7 @@ export default class DataAccess {
      * @param uid user id
      * @param data 
      */
-    async updateDocs(wheres: any[][], data: any, options: IDataAccessOptions = {}): Promise<number> {
+    protected async updateDocs(wheres: any[][], data: any, options: IDataAccessOptions = {}): Promise<number> {
         const query: Query = await this.getQuery(wheres)
         const count = await this.checkQueryCount(query, options.count ?? {})
         const lastmod = new Date().toISOString()

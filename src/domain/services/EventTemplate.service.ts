@@ -52,16 +52,7 @@ export default class EventTemplateService {
         eventTemplate.designIds = designIds
 
         // 更新template
-        const data = {
-            designIds,
-        }
-        const dataAccessOptions = {
-            count: {
-                absolute: 1 // 如果不是1，就是符合條件統一改寫
-            },
-            merge: true,
-        }
-        const count = await this.eventTemplateModel.updateDocs([['uid', '==', uid]], data, dataAccessOptions)
+        const count = await this.eventTemplateModel.updateDesignIds(uid, designIds)
         return count
     }
 
@@ -74,9 +65,7 @@ export default class EventTemplateService {
         const designIds = eventTemplate.designIds || []
         // 自動修正樣板資料
         const correctedIds = designIds.filter(id => !!id)
-        this.eventTemplateModel.updateDocs([['uid', '==', uid]], {
-            designIds: correctedIds,
-        }, { count: { absolute: 1 } })
+        this.eventTemplateModel.updateDesignIds(uid, correctedIds)
         // 取得details並回傳
         const designPromises = await designIds.map((designId: string) => {
             return this.eventTemplateDesignModel.querySingleDoc([['id', '==', designId]])
@@ -111,15 +100,7 @@ export default class EventTemplateService {
     }
 
     async patchTemplate(uid: string, designIds: string[]): Promise<number> {
-        const data = {
-            designIds
-        }
-        const options = {
-            count: {
-                absolute: 1,
-            }
-        }
-        const count = await this.eventTemplateModel.updateDocs([['uid', '==', uid]], data, options)
+        const count = await this.eventTemplateModel.updateDesignIds(uid, designIds)
         return count
     }
     async patchTemplateDesign(uid: string, payload: IPatchTemplateDesignReq) {
