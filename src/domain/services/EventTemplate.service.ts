@@ -94,7 +94,6 @@ export default class EventTemplateService {
         const templateDesign: ITemplateDesign = {
             templateId: data.templateId,
             type: data.type,
-            mutable: {}
         }
         const newDesign = await this.eventTemplateDesignModel.createUidDoc(uid, templateDesign)
         return newDesign.id
