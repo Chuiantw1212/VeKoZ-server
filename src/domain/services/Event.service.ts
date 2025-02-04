@@ -75,6 +75,11 @@ export default class EventService {
         return eventTemplate
     }
 
+    async patchTemplate(uid: string, designIds: string[]): Promise<string> {
+        const lastmod = await this.eventTemplateModel.mergeUniqueDocField(uid, 'designs', designIds)
+        return lastmod
+    }
+
     async getEvent(eventId: string): Promise<IEventTemplate> {
         const result = await this.eventModel.queryByEventId(eventId) as IEventTemplate[]
         return result
