@@ -246,12 +246,12 @@ export default class DataAccess {
      * @param uid 使用者uid
      * @returns 
      */
-    async removeUidDocs(uid: string, options: IDataAccessOptions): Promise<number> {
+    async removeDocs(wheres: any[][], options?: IDataAccessOptions): Promise<number> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
-        const query = await this.getQuery([['uid', '==', uid]])
-        const count = await this.checkQueryCount(query, options.count ?? {})
+        const query = await this.getQuery(wheres)
+        const count = await this.checkQueryCount(query, options?.count ?? {})
         const docs = (await query.get()).docs
         const promises = docs.map(doc => {
             return doc.ref.delete()

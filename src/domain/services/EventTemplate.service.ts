@@ -90,7 +90,7 @@ export default class EventTemplateService {
         return eventTemplate
     }
 
-    async postDesign(uid: string, data: IPostTemplateDesignReq) {
+    async postDesign(uid: string, data: IPostTemplateDesignReq): Promise<string> {
         const templateDesign: ITemplateDesign = {
             templateId: data.templateId,
             type: data.type,
@@ -100,12 +100,16 @@ export default class EventTemplateService {
         return newDesign.id
     }
 
-    async patchTemplate(uid: string, data: any): Promise<string> {
-        const lastmod = await this.eventTemplateModel.setUidDocField(uid, data, {
+    async patchTemplate(uid: string, designIds: string[]): Promise<string> {
+        const data = {
+            designIds
+        }
+        const options = {
             count: {
                 absolute: 1,
             }
-        })
+        }
+        const lastmod = await this.eventTemplateModel.setUidDocField(uid, data, options)
         return lastmod
     }
     async patchTemplateDesign(uid: string, payload: IPatchTemplateDesignReq) {
@@ -128,16 +132,16 @@ export default class EventTemplateService {
         // }
     }
 
-    async deleteTemplateDesign(uid: string, deleteReq: IDeleteTemplateDesignReq): Promise<number> {
-        const query = await this.eventTemplateDesignModel.getQuery([['uid', '==', uid], ['id', '==', deleteReq.id]])
-        const count = await this.eventTemplateDesignModel.checkQueryCount(query, {
-            absolute: 1
-        })
-        const docs = (await query.get()).docs
-        const promises = docs.map(doc => {
-            return doc.ref.delete()
-        })
-        await Promise.all(promises)
+    async deleteTemplateDesign(uid: string, id: string): Promise<number> {
+        const options = {
+            count: {
+                absolute: 1
+            }
+        }
+        const count = await this.eventTemplateDesignModel.removeDocs(
+            [['uid', '==', uid], ['id', '==', id]],
+            options
+        )
         return count
     }
 }
