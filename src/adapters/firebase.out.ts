@@ -26,7 +26,9 @@ export class FirebaseAdapter {
          * 使用Firestore(noSQL)
          * https://firebase.google.com/docs/firestore/quickstart
          */
-        this.firestore = getFirestore();
+        const firestore = getFirestore();
+        firestore.settings({ ignoreUndefinedProperties: true, });
+        this.firestore = firestore
     }
     getPublicBucket() {
         return this.publicBucket

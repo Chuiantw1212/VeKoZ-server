@@ -27,9 +27,9 @@ export default class EventService {
         this.eventSchemaModel = eventSchemaModel
     }
 
-    async getEvent(eventId: string): Promise<IEventTemplate> {
-        const result = await this.eventModel.queryByEventId(eventId) as IEventTemplate[]
-        return result
+    async getEvent(eventId: string): Promise<IEventTemplate | number> {
+        const event = await this.eventModel.queryByEventId(eventId)
+        return event
     }
 
     async deleteEvent(uid: string, eventId: string): Promise<number> {

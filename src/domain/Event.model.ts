@@ -28,9 +28,9 @@ export default class EventModel extends DataAccess {
      * @returns 
      */
     async queryByEventId(eventId: string): Promise<IEventTemplate | number> {
-        const event = await this.queryDocList([['eventId', '==', eventId]])
-        if (event) {
-            return event
+        const events = await this.queryDocList([['eventId', '==', eventId]]) as IEventTemplate[]
+        if (events) {
+            return events[0]
         }
         return 0
     }
