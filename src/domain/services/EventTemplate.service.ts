@@ -56,7 +56,7 @@ export default class EventTemplateService {
         this.eventTemplateModel.mergeDesignIds(uid, correctedIds)
         // 取得details並回傳
         const designPromises = await designIds.map((designId: string) => {
-            return this.eventTemplateDesignModel.querySingleDoc([['id', '==', designId]])
+            return this.eventTemplateDesignModel.getTemplateDesign(designId)
         })
         const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
         eventTemplate.designs = eventTemplateDesigns
@@ -68,22 +68,18 @@ export default class EventTemplateService {
             templateId: data.templateId,
             type: data.type,
         }
-        const newDesign = await this.eventTemplateDesignModel.createUidDoc(uid, templateDesign)
+        const newDesign = await this.eventTemplateDesignModel.createTemplateDesign(uid, templateDesign)
         return newDesign.id
     }
 
     async deleteTemplate(uid: string, id: string): Promise<number> {
-        const oldTemplate: IEventTemplate = await this.eventTemplateModel.querySingleDoc([['uid', '==', uid]])
+        const oldTemplate: IEventTemplate = await this.eventTemplateModel.readTemplate(uid)
         const designIds = oldTemplate.designIds ?? []
         const promises = designIds.map(designId => {
             return this.deleteTemplateDesign(uid, designId)
         })
         await Promise.all(promises)
-        const count = await this.eventTemplateModel.removeDocs([['uid', '==', uid]], {
-            count: {
-                absolute: 1
-            }
-        })
+        const count = await this.eventTemplateModel.deleteTemplate(uid)
         return count
     }
 
@@ -97,15 +93,6 @@ export default class EventTemplateService {
     }
 
     async deleteTemplateDesign(uid: string, id: string): Promise<number> {
-        const options = {
-            count: {
-                absolute: 1
-            }
-        }
-        const count = await this.eventTemplateDesignModel.removeDocs(
-            [['uid', '==', uid], ['id', '==', id]],
-            options
-        )
-        return count
+        return this.eventTemplateDesignModel.deleteTemplateDesign(uid, id)
     }
 }

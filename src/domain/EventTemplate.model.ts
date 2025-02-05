@@ -6,6 +6,7 @@ export default class EventTemplateModel extends DataAccess {
     constructor(data: IDataAccessAdapters) {
         super(data)
     }
+
     /**
      * 新增
      * @param uid 
@@ -51,6 +52,19 @@ export default class EventTemplateModel extends DataAccess {
             merge: true,
         }
         const count = await super.updateDocs([['uid', '==', uid]], data, dataAccessOptions)
+        return count
+    }
+
+    /**
+     * 刪除
+     * @param uid 
+     */
+    async deleteTemplate(uid: string): Promise<number> {
+        const count = await this.removeDocs([['uid', '==', uid]], {
+            count: {
+                absolute: 1
+            }
+        })
         return count
     }
 }

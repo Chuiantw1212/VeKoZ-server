@@ -1,6 +1,5 @@
-import { isArray } from "util"
-import { IDataAccessAdapters, IDataAccessOptions, IDataCount, IDataCountOptions, IQuery } from "../entities/dataAccess"
-import { CollectionReference, DocumentData, FieldValue, Query } from "firebase-admin/firestore"
+import { IDataAccessAdapters, IDataAccessOptions, IDataCountOptions, } from "../entities/dataAccess"
+import { CollectionReference, DocumentData, DocumentSnapshot, Query } from "firebase-admin/firestore"
 
 /**
  * 檔案的Naming要對應firestore的存取方式
@@ -49,6 +48,20 @@ export default class DataAccess {
             uid // IMPORTANT 否則新資料會是null
         })
         return data
+    }
+
+    /**
+     * 利用document id取得唯一資料
+     * @param docId 
+     * @returns 
+     */
+    protected async getDocById(docId: string): Promise<DocumentData | undefined> {
+        if (!this.noSQL) {
+            throw this.error.noSqlIsNotReady
+        }
+        const documentSnapshot: DocumentSnapshot = await this.noSQL.doc(docId).get()
+        const docData = documentSnapshot.data()
+        return docData
     }
 
     /**

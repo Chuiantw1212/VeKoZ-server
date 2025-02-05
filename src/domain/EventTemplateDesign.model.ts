@@ -41,4 +41,32 @@ export default class EventTemplateDesignModel extends DataAccess {
         }, { merge: true })
         return lastmod
     }
+
+    /**
+     * 讀取
+     * @param designId 
+     */
+    async getTemplateDesign(designId: string): Promise<ITemplateDesign> {
+        const templateDesign: ITemplateDesign = await this.getDocById(designId) as ITemplateDesign
+        return templateDesign
+    }
+
+    /**
+     * 刪除
+     * @param uid 
+     * @param id 
+     * @returns 
+     */
+    async deleteTemplateDesign(uid: string, id: string): Promise<number> {
+        const options = {
+            count: {
+                absolute: 1
+            }
+        }
+        const count = await this.removeDocs(
+            [['uid', '==', uid], ['id', '==', id]],
+            options
+        )
+        return count
+    }
 }
