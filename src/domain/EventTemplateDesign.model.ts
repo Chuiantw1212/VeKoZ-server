@@ -25,21 +25,16 @@ export default class EventTemplateDesignModel extends DataAccess {
      * @returns 
      */
     async patchMutable(uid: string, id: string, mutable: any) {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
-        }
-        const query = await this.noSQL.where('id', '==', id).where('uid', '==', uid)
-        const count = (await query.count().get()).data().count
-        if (count !== 1) {
-            throw '資料超出限制'
-        }
-        const doc = (await query.get()).docs[0]
+        const query = await this.getQuery([['uid', '==', uid], ['id', '==', id]],)
+        const count = await this.checkQueryCount(query, {
+            absolute: 1
+        })
         const lastmod = new Date().toISOString()
-        this.noSQL.doc(doc.id).set({
+        await this.setDocById(id, {
             mutable,
             lastmod,
         }, { merge: true })
-        return lastmod
+        return count
     }
 
     /**

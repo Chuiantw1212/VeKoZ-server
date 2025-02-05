@@ -73,7 +73,7 @@ export default class EventTemplateService {
     }
 
     async deleteTemplate(uid: string, id: string): Promise<number> {
-        const oldTemplate: IEventTemplate = await this.eventTemplateModel.readTemplate(uid)
+        const oldTemplate: IEventTemplate = await this.eventTemplateModel.readTemplate(uid, id)
         const designIds = oldTemplate.designIds ?? []
         const promises = designIds.map(designId => {
             return this.deleteTemplateDesign(uid, designId)

@@ -1,12 +1,12 @@
 import { IDataAccessAdapters, IDataAccessOptions, IDataCountOptions, } from "../entities/dataAccess"
-import { CollectionReference, DocumentData, DocumentSnapshot, Query } from "firebase-admin/firestore"
+import { CollectionReference, DocumentData, DocumentSnapshot, Query, SetOptions } from "firebase-admin/firestore"
 
 /**
  * 檔案的Naming要對應firestore的存取方式
  */
 export default class DataAccess {
-    protected noSQL: IDataAccessAdapters['noSQL'] = null as any
-    protected SQL: IDataAccessAdapters['SQL'] = null as any
+    private noSQL: IDataAccessAdapters['noSQL'] = null as any
+    private SQL: IDataAccessAdapters['SQL'] = null as any
     protected error = {
         'noSqlIsNotReady': 'NoSQL instance is not ready.',
         'sqlIsNotReady': 'SQL instance is not ready.',
@@ -113,7 +113,7 @@ export default class DataAccess {
     }
 
     /**
-     * Get all documents in a collection
+     * R: 讀取全部的資料
      * https://firebase.google.com/docs/firestore/query-data/get-data#node.js_6
      * @returns 
      * @deprecated
@@ -149,6 +149,15 @@ export default class DataAccess {
         })
         await Promise.all(promiese)
         return count
+    }
+
+    /**
+     * U: 更新doc
+     * @param docId 
+     */
+    protected async setDocById(docId: string, data: any, options: SetOptions): Promise<number> {
+        await this.noSQL?.doc(docId).set(data, options)
+        return 1
     }
 
     /**

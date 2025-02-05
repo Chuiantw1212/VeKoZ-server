@@ -27,8 +27,12 @@ export default class EventTemplateModel extends DataAccess {
      * @param uid 
      * @returns 
      */
-    async readTemplate(uid: string): Promise<IEventTemplate> {
-        return await this.querySingleDoc([['uid', '==', uid]], {
+    async readTemplate(uid: string, id?: string): Promise<IEventTemplate> {
+        const wheres = [['uid', '==', uid]]
+        if (id) {
+            wheres.push(['id', '==', id])
+        }
+        return await this.querySingleDoc(wheres, {
             count: {
                 range: [0, 1]
             }
