@@ -6,25 +6,34 @@ export default class EventSchemaModel extends DataAccess {
     constructor(data: IDataAccessAdapters) {
         super(data)
     }
-    async selectRecords(query: IEvent) {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
-        }
-        if (!query.startDate) {
-            throw 'startDate未提供'
-        }
-        let targetQuery = this.noSQL.where('startDate', '>=', query.startDate)
-        if (query.endDate) {
-            targetQuery = targetQuery.where('endDate', '<=', query.startDate)
-        }
-        const docDatas: any[] = (await targetQuery.get()).docs.map(doc => {
-            const docData = doc.data()
-            delete docData.uid
-            return docData
-        })
-        return docDatas
+
+    /**
+     * 新增
+     * @param uid 
+     * @param event 
+     * @returns 
+     */
+    async createRecord(uid: string, event: IEvent): Promise<IEvent> {
+        const updatedEvent = await this.createUidDoc(uid, event) as IEvent
+        return updatedEvent
     }
 
+    /**
+     * R
+     * @param condition 
+     * @returns 
+     */
+    async selectRecords(condition: IEvent): Promise<IEvent[]> {
+        const docDatas = await this.queryDocList([['startDate', '>=', condition.startDate], ['endDate', '<=', condition.startDate]])
+        return docDatas as IEvent[]
+    }
+
+    /**
+     * D
+     * @param uid 
+     * @param eventId 
+     * @returns 
+     */
     async dropRecord(uid: string, eventId: string) {
         return await this.deleteByDocId(uid, eventId)
     }

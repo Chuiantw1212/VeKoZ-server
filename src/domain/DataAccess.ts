@@ -184,7 +184,7 @@ export default class DataAccess {
      * @param uid user id
      * @returns 
      */
-    protected async checkQueryCount(query: Query, options: IDataCountOptions): Promise<number> {
+    protected async checkQueryCount(query: Query, options: IDataCountOptions = {}): Promise<number> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }

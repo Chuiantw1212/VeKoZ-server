@@ -6,6 +6,22 @@ export default class EventModel extends DataAccess {
     constructor(data: IDataAccessAdapters) {
         super(data)
     }
+
+    /**
+     * 新增
+     * @param uid 
+     * @param eventTemplate 
+     * @returns 
+     */
+    async createEvent(uid: string, eventTemplate: IEventTemplate): Promise<IEventTemplate> {
+        const newEventDoc: IEventTemplate = await this.createUidDoc(uid, eventTemplate, {
+            count: {
+                absolute: 0
+            }
+        })
+        return newEventDoc
+    }
+
     async queryByEventId(eventId: string): Promise<IEventTemplate> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady

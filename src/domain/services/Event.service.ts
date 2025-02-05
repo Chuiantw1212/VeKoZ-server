@@ -42,21 +42,26 @@ export default class EventService {
         return await this.eventSchemaModel.selectRecords(query) as IEvent[]
     }
 
-    async createNewEvent(uid: string, eventTemplate: IEventTemplate): Promise<any> {
-        return
-        // // 先儲存sql取得id
-        // const event = await this.setEventSchema(uid, eventTemplate)
-        // eventTemplate.eventId = event.id
-        // // 再用id儲存nosql
-        // this.eventModel.createUidDoc(uid, eventTemplate)
-        // return event
+    /**
+     * 新增活動
+     * @param uid 
+     * @param eventTemplate 
+     * @returns 
+     */
+    async createNewEvent(uid: string, eventTemplate: IEventTemplate): Promise<IEvent> {
+        // 先儲存sql取得id
+        const event = await this.setEventSchema(uid, eventTemplate)
+        eventTemplate.eventId = event.id
+        // 再用id儲存nosql
+        const newEvent = await this.eventModel.createEvent(uid, eventTemplate) as IEvent
+        return newEvent
     }
 
     private async setEventSchema(uid: string, eventTemplate: IEventTemplate) {
         if (!eventTemplate.designs) {
             throw 'designs欄位遺失'
         }
-        return
+        // return
         const event: IEvent = {
             name: '',
             startDate: '',
@@ -72,7 +77,7 @@ export default class EventService {
             return design.type === 'header1'
         }) as ITemplateDesign
         if (header1) {
-            event.name = header1.mutable.value
+            event.name = header1.mutable?.value
         }
 
         // 時間
@@ -80,8 +85,8 @@ export default class EventService {
             return design.type === 'dateTimeRange'
         }) as ITemplateDesign
         if (dateTimeRange) {
-            event.startDate = dateTimeRange.mutable.value[0]
-            event.endDate = dateTimeRange.mutable.value[1]
+            event.startDate = dateTimeRange.mutable?.value[0]
+            event.endDate = dateTimeRange.mutable?.value[1]
         }
 
         // 描述
@@ -89,11 +94,11 @@ export default class EventService {
             return design.type === 'textarea'
         }) as ITemplateDesign
         if (description) {
-            event.description = description.mutable.value
+            event.description = description.mutable?.value
         }
 
         // 這邊取得record uuid
-        const insertedEvent: IEvent = await this.eventSchemaModel.insertRecord(uid, event)
+        const insertedEvent = await this.eventSchemaModel.createRecord(uid, event)
         return insertedEvent
     }
 }

@@ -61,6 +61,7 @@ export default class EventTemplateService {
             })
             const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
             eventTemplate.designs = eventTemplateDesigns
+            delete eventTemplate.designIds
             return eventTemplate
         }
         return 0
