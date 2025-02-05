@@ -1,5 +1,6 @@
 import DataAccess from './DataAccess'
 import type { IDataAccessAdapters } from '../entities/dataAccess'
+import { IEventTemplate } from '../entities/eventTemplate'
 
 export default class EventTemplateModel extends DataAccess {
     constructor(data: IDataAccessAdapters) {
@@ -17,5 +18,13 @@ export default class EventTemplateModel extends DataAccess {
         }
         const count = await super.updateDocs([['uid', '==', uid]], data, dataAccessOptions)
         return count
+    }
+    async createTemplate(uid: string, eventTemplate: IEventTemplate): Promise<IEventTemplate> {
+        const newTemplateDoc: IEventTemplate = await this.createUidDoc(uid, eventTemplate, {
+            count: {
+                max: 1
+            }
+        })
+        return newTemplateDoc
     }
 }

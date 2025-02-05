@@ -34,11 +34,7 @@ export default class EventTemplateService {
         const designsTemp = structuredClone(eventTemplate.designs)
         delete eventTemplate.designs
         // 儲存template
-        const newTemplateDoc: IEventTemplate = await this.eventTemplateModel.createUidDoc(uid, eventTemplate, {
-            count: {
-                max: 1
-            }
-        })
+        const newTemplateDoc: IEventTemplate = await this.eventTemplateModel.createTemplate(uid, eventTemplate)
         // 儲存欄位design
         const designDocPromises = designsTemp.map((design) => {
             const templateDesign = design
