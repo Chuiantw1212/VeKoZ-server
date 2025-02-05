@@ -70,14 +70,14 @@ export default class DataAccess {
      * @param options 
      * @returns 
      */
-    protected async querySingleDoc(wheres: any[][], options: IDataAccessOptions = {}): Promise<DocumentData> {
+    protected async querySingleDoc(wheres: any[][], options: IDataAccessOptions = {}): Promise<DocumentData | 0> {
         Object.assign(options, {
             count: {
-                absolute: 1
+                range: [0, 1]
             }
         })
         const docDatas = await this.queryDocList(wheres, options)
-        return docDatas[0]
+        return docDatas[0] ?? 0
     }
 
     /**

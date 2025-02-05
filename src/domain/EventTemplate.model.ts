@@ -16,7 +16,7 @@ export default class EventTemplateModel extends DataAccess {
     async createTemplate(uid: string, eventTemplate: IEventTemplate): Promise<IEventTemplate> {
         const newTemplateDoc: IEventTemplate = await this.createUidDoc(uid, eventTemplate, {
             count: {
-                max: 1
+                absolute: 0
             }
         })
         return newTemplateDoc
@@ -27,16 +27,17 @@ export default class EventTemplateModel extends DataAccess {
      * @param uid 
      * @returns 
      */
-    async readTemplate(uid: string, id?: string): Promise<IEventTemplate> {
+    async readTemplate(uid: string, id?: string): Promise<IEventTemplate | 0> {
         const wheres = [['uid', '==', uid]]
         if (id) {
             wheres.push(['id', '==', id])
         }
-        return await this.querySingleDoc(wheres, {
+        const eventTemplate = await this.querySingleDoc(wheres, {
             count: {
                 range: [0, 1]
             }
         })
+        return eventTemplate
     }
 
     /**

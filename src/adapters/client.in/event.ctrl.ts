@@ -40,8 +40,8 @@ router.use(bearer())
     .get('/event/template', async function ({ bearer }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const eventTemplate = await EventTemplateService.getTemplate(user.uid)
-        return eventTemplate
+        const result = await EventTemplateService.getTemplate(user.uid)
+        return result
     })
     .post('/event/template', async function ({ request, bearer }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
@@ -61,10 +61,8 @@ router.use(bearer())
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const { id } = params
-        const lastmod = await EventTemplateService.deleteTemplate(user.uid, id)
-        // const designIds: string[] = await request.json() as string[]
-        // const result = await EventTemplateService.patchTemplate(user.uid, designIds)
-        // return result
+        const count = await EventTemplateService.deleteTemplate(user.uid, id)
+        return count
     })
     .post('/event/template/design', async function ({ request, bearer }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals

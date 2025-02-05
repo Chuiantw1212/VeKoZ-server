@@ -48,19 +48,22 @@ export default class EventTemplateService {
         return count
     }
 
-    async getTemplate(uid: string): Promise<IEventTemplate> {
-        const eventTemplate: IEventTemplate = await this.eventTemplateModel.readTemplate(uid)
-        const designIds = eventTemplate.designIds || []
-        // 自動修正樣板資料
-        const correctedIds = designIds.filter(id => !!id)
-        this.eventTemplateModel.mergeDesignIds(uid, correctedIds)
-        // 取得details並回傳
-        const designPromises = await designIds.map((designId: string) => {
-            return this.eventTemplateDesignModel.getTemplateDesign(designId)
-        })
-        const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
-        eventTemplate.designs = eventTemplateDesigns
-        return eventTemplate
+    async getTemplate(uid: string): Promise<IEventTemplate | 0> {
+        const eventTemplate: IEventTemplate | 0 = await this.eventTemplateModel.readTemplate(uid)
+        if (eventTemplate) {
+            const designIds = eventTemplate.designIds || []
+            // 自動修正樣板資料
+            const correctedIds = designIds.filter(id => !!id)
+            this.eventTemplateModel.mergeDesignIds(uid, correctedIds)
+            // 取得details並回傳
+            const designPromises = await designIds.map((designId: string) => {
+                return this.eventTemplateDesignModel.getTemplateDesign(designId)
+            })
+            const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
+            eventTemplate.designs = eventTemplateDesigns
+            return eventTemplate
+        }
+        return 0
     }
 
     async postDesign(uid: string, data: IPostTemplateDesignReq): Promise<string> {
@@ -73,14 +76,17 @@ export default class EventTemplateService {
     }
 
     async deleteTemplate(uid: string, id: string): Promise<number> {
-        const oldTemplate: IEventTemplate = await this.eventTemplateModel.readTemplate(uid, id)
-        const designIds = oldTemplate.designIds ?? []
-        const promises = designIds.map(designId => {
-            return this.deleteTemplateDesign(uid, designId)
-        })
-        await Promise.all(promises)
-        const count = await this.eventTemplateModel.deleteTemplate(uid)
-        return count
+        const oldTemplate = await this.eventTemplateModel.readTemplate(uid, id)
+        if (oldTemplate) {
+            const designIds = oldTemplate.designIds ?? []
+            const promises = designIds.map(designId => {
+                return this.deleteTemplateDesign(uid, designId)
+            })
+            await Promise.all(promises)
+            const count = await this.eventTemplateModel.deleteTemplate(uid)
+            return count
+        }
+        return 0
     }
 
     async patchTemplate(uid: string, designIds: string[]): Promise<number> {
