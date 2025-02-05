@@ -30,6 +30,7 @@ import { ILocals } from './entities/app';
 // controllers
 import rootController from './adapters/client.in/root.ctrl'
 import eventController from './adapters/client.in/event.ctrl'
+import eventTemplateController from './adapters/client.in/eventTemplate.ctrl'
 import organizationController from './adapters/client.in/organization.ctrl'
 import placeController from './adapters/client.in/place.ctrl'
 
@@ -126,6 +127,7 @@ import placeController from './adapters/client.in/place.ctrl'
         .use(cors())
         .use(rootController)
         .use(eventController)
+        .use(eventTemplateController)
         .use(organizationController)
         .use(placeController)
 
