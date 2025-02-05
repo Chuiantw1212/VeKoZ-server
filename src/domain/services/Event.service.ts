@@ -33,9 +33,14 @@ export default class EventService {
     }
 
     async deleteEvent(uid: string, eventId: string): Promise<number> {
-        const noSqlPromise = await this.eventModel.deleteByEventId(uid, eventId)
-        await this.eventSchemaModel.dropRecord(uid, eventId)
-        return noSqlPromise
+        const deleteNoSqlCount = await this.eventModel.deleteByEventId(uid, eventId)
+        if (deleteNoSqlCount) {
+            const deleteSqlCount = await this.eventSchemaModel.dropRecord(uid, eventId)
+            if (deleteSqlCount) {
+                return deleteSqlCount
+            }
+        }
+        return 0
     }
 
     async getAvailableEventList(query: IEvent): Promise<IEvent[]> {
