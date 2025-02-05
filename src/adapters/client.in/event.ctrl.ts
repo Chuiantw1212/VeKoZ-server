@@ -46,14 +46,14 @@ router.use(bearer())
     .post('/event/template', async function ({ request, bearer }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const eventTemplate = await request.json() as any
+        const eventTemplate = await request.json()
         const result = await EventTemplateService.addEventTemplate(user.uid, eventTemplate)
         return result
     })
     .patch('/event/template', async function ({ request, bearer }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const designIds: string[] = await request.json() as string[]
+        const designIds: string[] = await request.json()
         const result = await EventTemplateService.patchTemplate(user.uid, designIds)
         return result
     })
@@ -81,7 +81,7 @@ router.use(bearer())
     .patch('/event/template/design', async function ({ request, bearer }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const patchRequest: IPatchTemplateDesignReq = await request.json() as any
+        const patchRequest: IPatchTemplateDesignReq = await request.json()
         const lastmod = await EventTemplateService.patchTemplateDesign(user.uid, patchRequest)
         return lastmod
     })
