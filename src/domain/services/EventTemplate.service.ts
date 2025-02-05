@@ -37,31 +37,23 @@ export default class EventTemplateService {
         const newTemplateDoc: IEventTemplate = await this.eventTemplateModel.createTemplate(uid, eventTemplate)
         // 儲存欄位design
         const designDocPromises = designsTemp.map((design) => {
-            const templateDesign = design
-            return this.eventTemplateDesignModel.createUidDoc(uid, {
-                ...templateDesign,
-                templateId: newTemplateDoc.id
-            })
+            design.templateId = newTemplateDoc.id
+            return this.eventTemplateDesignModel.createTemplateDesign(uid, design)
         })
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
         const designIds = designDocs.map(doc => doc.id ?? '')
         eventTemplate.designIds = designIds
-
         // 更新template
-        const count = await this.eventTemplateModel.updateDesignIds(uid, designIds)
+        const count = await this.eventTemplateModel.mergeDesignIds(uid, designIds)
         return count
     }
 
     async getTemplate(uid: string): Promise<IEventTemplate> {
-        const eventTemplate: IEventTemplate = await this.eventTemplateModel.querySingleDoc([['uid', '==', uid]], {
-            count: {
-                range: [0, 1]
-            }
-        })
+        const eventTemplate: IEventTemplate = await this.eventTemplateModel.readTemplate(uid)
         const designIds = eventTemplate.designIds || []
         // 自動修正樣板資料
         const correctedIds = designIds.filter(id => !!id)
-        this.eventTemplateModel.updateDesignIds(uid, correctedIds)
+        this.eventTemplateModel.mergeDesignIds(uid, correctedIds)
         // 取得details並回傳
         const designPromises = await designIds.map((designId: string) => {
             return this.eventTemplateDesignModel.querySingleDoc([['id', '==', designId]])
@@ -96,7 +88,7 @@ export default class EventTemplateService {
     }
 
     async patchTemplate(uid: string, designIds: string[]): Promise<number> {
-        const count = await this.eventTemplateModel.updateDesignIds(uid, designIds)
+        const count = await this.eventTemplateModel.mergeDesignIds(uid, designIds)
         return count
     }
     async patchTemplateDesign(uid: string, payload: IPatchTemplateDesignReq) {

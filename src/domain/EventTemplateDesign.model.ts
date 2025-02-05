@@ -1,10 +1,29 @@
 import DataAccess from './DataAccess'
 import type { IDataAccessAdapters } from '../entities/dataAccess'
+import { ITemplateDesign } from '../entities/eventTemplate'
 
 export default class EventTemplateDesignModel extends DataAccess {
     constructor(data: IDataAccessAdapters) {
         super(data)
     }
+
+    /**
+     * 建立品項
+     * @param uid 
+     * @param templateDesign 
+     * @returns 
+     */
+    async createTemplateDesign(uid: string, templateDesign: ITemplateDesign) {
+        return await this.createUidDoc(uid, templateDesign)
+    }
+
+    /**
+     * 修改Mutable
+     * @param uid 
+     * @param id 
+     * @param mutable 
+     * @returns 
+     */
     async patchMutable(uid: string, id: string, mutable: any) {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady

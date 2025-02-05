@@ -6,7 +6,41 @@ export default class EventTemplateModel extends DataAccess {
     constructor(data: IDataAccessAdapters) {
         super(data)
     }
-    async updateDesignIds(uid: string, designIds: string[]): Promise<number> {
+    /**
+     * 新增
+     * @param uid 
+     * @param eventTemplate 
+     * @returns 
+     */
+    async createTemplate(uid: string, eventTemplate: IEventTemplate): Promise<IEventTemplate> {
+        const newTemplateDoc: IEventTemplate = await this.createUidDoc(uid, eventTemplate, {
+            count: {
+                max: 1
+            }
+        })
+        return newTemplateDoc
+    }
+
+    /**
+     * 讀取
+     * @param uid 
+     * @returns 
+     */
+    async readTemplate(uid: string): Promise<IEventTemplate> {
+        return await this.querySingleDoc([['uid', '==', uid]], {
+            count: {
+                range: [0, 1]
+            }
+        })
+    }
+
+    /**
+     * 修改
+     * @param uid 
+     * @param eventTemplate 
+     * @returns 
+     */
+    async mergeDesignIds(uid: string, designIds: string[]): Promise<number> {
         const data = {
             designIds,
         }
@@ -18,13 +52,5 @@ export default class EventTemplateModel extends DataAccess {
         }
         const count = await super.updateDocs([['uid', '==', uid]], data, dataAccessOptions)
         return count
-    }
-    async createTemplate(uid: string, eventTemplate: IEventTemplate): Promise<IEventTemplate> {
-        const newTemplateDoc: IEventTemplate = await this.createUidDoc(uid, eventTemplate, {
-            count: {
-                max: 1
-            }
-        })
-        return newTemplateDoc
     }
 }
