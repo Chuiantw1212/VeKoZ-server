@@ -34,7 +34,7 @@ router.use(bearer())
     .get('/event/list', async function ({ query }) {
         const { EventService } = AccessGlobalService.locals
         const eventQuery = query as any
-        const eventList = await EventService.getEventRecords(eventQuery)
+        const eventList = await EventService.getAvailableEventList(eventQuery)
         return eventList
     })
     .get('/event/template', async function ({ bearer }) {

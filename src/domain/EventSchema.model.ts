@@ -23,8 +23,8 @@ export default class EventSchemaModel extends DataAccess {
      * @param condition 
      * @returns 
      */
-    async selectRecords(condition: IEvent): Promise<IEvent[]> {
-        const docDatas = await this.queryDocList([['startDate', '>=', condition.startDate], ['endDate', '<=', condition.startDate]])
+    async getAvailableEventList(condition: IEvent): Promise<IEvent[]> {
+        const docDatas = await this.queryDocList([['startDate', '>=', condition.startDate]])
         return docDatas as IEvent[]
     }
 

@@ -38,8 +38,8 @@ export default class EventService {
         return noSqlPromise
     }
 
-    async getEventRecords(query: IEvent): Promise<IEvent[]> {
-        return await this.eventSchemaModel.selectRecords(query) as IEvent[]
+    async getAvailableEventList(query: IEvent): Promise<IEvent[]> {
+        return await this.eventSchemaModel.getAvailableEventList(query) as IEvent[]
     }
 
     /**
