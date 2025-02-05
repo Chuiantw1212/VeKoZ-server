@@ -55,13 +55,16 @@ export default class DataAccess {
      * @param docId 
      * @returns 
      */
-    protected async getDocById(docId: string): Promise<DocumentData | undefined> {
+    protected async getDocById(docId: string): Promise<DocumentData | number> {
         if (!this.noSQL) {
             throw this.error.noSqlIsNotReady
         }
         const documentSnapshot: DocumentSnapshot = await this.noSQL.doc(docId).get()
         const docData = documentSnapshot.data()
-        return docData
+        if (docData) {
+            return docData
+        }
+        return 0
     }
 
     /**
