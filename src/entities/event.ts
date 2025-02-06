@@ -1,6 +1,6 @@
 export interface IEvent {
     [key: string]: any
-    name: string;
+    name?: string;
     uid?: string;
     id?: string; // doc id
     description?: string,

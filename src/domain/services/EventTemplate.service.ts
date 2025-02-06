@@ -31,7 +31,7 @@ export default class EventTemplateService {
             throw 'designs不存在'
         }
         // 深拷貝designs
-        const designsTemp = structuredClone(eventTemplate.designs)
+        const designsTemp = eventTemplate.designs
         delete eventTemplate.designs
         // 儲存template
         const newTemplateDoc: IEventTemplate = await this.eventTemplateModel.createTemplate(uid, eventTemplate)

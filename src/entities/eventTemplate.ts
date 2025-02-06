@@ -12,6 +12,7 @@ export interface IEventTemplate {
 
 export interface ITemplateDesign {
     id?: string,
+    eventId?: string,
     type: string,
     mutable?: ITemplateDesignMutable,
     templateId?: string,

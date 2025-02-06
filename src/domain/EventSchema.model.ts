@@ -29,6 +29,24 @@ export default class EventSchemaModel extends DataAccess {
     }
 
     /**
+     * 修改欄位
+     * @param uid 
+     * @param id 
+     * @param data 
+     * @returns 
+     */
+    async patchRecordField(uid: string, id: string, data: IEvent) {
+        const dataAccessOptions = {
+            count: {
+                absolute: 1
+            },
+            merge: true,
+        }
+        const count = await super.updateDocs([['uid', '==', uid], ['id', '==', id]], data, dataAccessOptions)
+        return count
+    }
+
+    /**
      * D
      * @param uid 
      * @param eventId 

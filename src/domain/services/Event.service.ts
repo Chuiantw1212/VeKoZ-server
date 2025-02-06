@@ -32,16 +32,50 @@ export default class EventService {
         this.eventSchemaModel = eventSchemaModel
     }
 
-    async patchEvent(uid: string, templateDesign: ITemplateDesign) {
-        // 更新noSQL
-        this.eventModel
-        // 更新SQL
-
+    async patchEvent(uid: string, templateDesign: ITemplateDesign): Promise<number> {
+        if (!templateDesign.id) {
+            throw 'id不存在'
+        }
+        if (!templateDesign.eventId) {
+            throw 'eventId不存在'
+        }
+        // 更新EventDesigns
+        const count = await this.eventDesignModel.patchMutable(uid, templateDesign.id, templateDesign.mutable)
+        // 更新EventSEO
+        switch (templateDesign.sqlField) {
+            case 'description': {
+                this.eventSchemaModel.patchRecordField(uid, templateDesign.eventId, {
+                    description: templateDesign.mutable?.value ?? ''
+                })
+                break;
+            }
+            case 'name': {
+                this.eventSchemaModel.patchRecordField(uid, templateDesign.eventId, {
+                    name: templateDesign.mutable?.value ?? ''
+                })
+                break;
+            }
+            default: {
+                return count
+            }
+        }
+        return count
     }
 
-    async getEvent(eventId: string): Promise<IEventTemplate | number> {
-        const event = await this.eventModel.queryByEventId(eventId)
-        return event
+    async getEvent(eventId: string): Promise<IEventTemplate | 0> {
+        const eventTemplate: IEventTemplate | 0 = await this.eventModel.queryByEventId(eventId)
+        if (eventTemplate) {
+            const designIds = eventTemplate.designIds || []
+            // 取得details並回傳
+            const designPromises = await designIds.map((designId: string) => {
+                return this.eventDesignModel.getTemplateDesign(designId)
+            })
+            const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
+            eventTemplate.designs = eventTemplateDesigns
+            delete eventTemplate.designIds
+            return eventTemplate
+        }
+        return 0
     }
 
     async deleteEvent(uid: string, eventId: string): Promise<number> {
@@ -74,7 +108,7 @@ export default class EventService {
         const insertedEvent = await this.eventSchemaModel.createRecord(uid, result.event)
         result.eventTemplate.eventId = insertedEvent.id
         // 深拷貝designs
-        const designsTemp = structuredClone(eventTemplate.designs)
+        const designsTemp = eventTemplate.designs
         delete eventTemplate.designs
         // 儲存事件
         const newEvent = await this.eventModel.createEvent(uid, result.eventTemplate) as IEvent

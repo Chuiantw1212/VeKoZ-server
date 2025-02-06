@@ -23,7 +23,7 @@ router.use(bearer())
         const user = await AuthService.verifyIdToken(bearer)
         const templateDesign = await request.json() as ITemplateDesign
         const result = await EventService.patchEvent(user.uid, templateDesign)
-        // // return result
+        return result
     })
     .get('/event/:id', async function ({ params }) {
         const { EventService } = AccessGlobalService.locals
