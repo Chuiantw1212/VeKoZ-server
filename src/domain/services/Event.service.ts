@@ -55,6 +55,13 @@ export default class EventService {
                 })
                 break;
             }
+            case 'date': {
+                this.eventSchemaModel.patchRecordField(uid, templateDesign.eventId, {
+                    startDate: templateDesign.mutable?.value[0] ?? '',
+                    endDate: templateDesign.mutable?.value[1] ?? ''
+                })
+                break;
+            }
             default: {
                 return count
             }
@@ -67,7 +74,7 @@ export default class EventService {
             throw 'event.id不存在'
         }
         if (!event.dateDesignId) {
-            throw 'event.dateDesignId'
+            throw 'event.dateDesignId不存在'
         }
         // noSQL
         const dateDesignId = event.dateDesignId
