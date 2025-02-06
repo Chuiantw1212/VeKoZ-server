@@ -36,6 +36,26 @@ export default class EventModel extends DataAccess {
     }
 
     /**
+     * 修改
+     * @param uid 
+     * @param eventTemplate 
+     * @returns 
+     */
+    async mergeDesignIds(uid: string, designIds: string[]): Promise<number> {
+        const data = {
+            designIds,
+        }
+        const dataAccessOptions = {
+            count: {
+                absolute: 1 // 如果不是1，就是符合條件統一改寫
+            },
+            merge: true,
+        }
+        const count = await super.updateDocs([['uid', '==', uid]], data, dataAccessOptions)
+        return count
+    }
+
+    /**
      * 刪除
      * @param uid 
      * @param eventId 

@@ -12,6 +12,7 @@ import googleCloud from './adapters/googleCloud.out'
 import PlaceModel from './domain/Place.model'
 import SelectModel from './domain/Select.model';
 import EventModel from './domain/Event.model'
+import EventDesignModel from './domain/EventDesign.model'
 import EventSchemaModel from './domain/EventSchema.model'
 import EventActorModel from './domain/EventActor.model'
 import EventTemplateModel from './domain/EventTemplate.model'
@@ -60,6 +61,9 @@ import placeController from './adapters/client.in/place.ctrl'
     const eventModel = new EventModel({
         noSQL: firestore.collection('events'),
     })
+    const eventDesignModel = new EventDesignModel({
+        noSQL: firestore.collection('eventDesigns'),
+    })
     const eventSchemaModel = new EventSchemaModel({
         noSQL: firestore.collection('eventSchemas'),
     })
@@ -92,6 +96,7 @@ import placeController from './adapters/client.in/place.ctrl'
         }),
         EventService: new EventService({
             eventModel,
+            eventDesignModel,
             eventActorModel,
             eventSchemaModel,
         }),

@@ -62,6 +62,7 @@ export default class DataAccess {
         const documentSnapshot: DocumentSnapshot = await this.noSQL.doc(docId).get()
         const docData = documentSnapshot.data()
         if (docData) {
+            delete docData.uid
             return docData
         }
         return 0

@@ -4,27 +4,39 @@ import type { IEventMember } from '../../entities/eventMember';
 import EventModel from '../Event.model'
 import EventActorModel from '../EventActor.model'
 import EventSchemaModel from '../EventSchema.model';
+import EventDesignModel from '../EventDesign.model';
 
 interface Idependency {
     eventModel: EventModel;
+    eventDesignModel: EventDesignModel
     eventActorModel: EventActorModel;
     eventSchemaModel: EventSchemaModel;
 }
 
 export default class EventService {
     protected eventModel: EventModel = null as any
+    protected eventDesignModel: EventDesignModel = null as any
     protected eventActorModel: EventActorModel = null as any
     protected eventSchemaModel: EventSchemaModel = null as any
 
     constructor(dependency: Idependency) {
         const {
             eventModel,
+            eventDesignModel,
             eventActorModel,
             eventSchemaModel,
         } = dependency
         this.eventModel = eventModel
+        this.eventDesignModel = eventDesignModel
         this.eventActorModel = eventActorModel
         this.eventSchemaModel = eventSchemaModel
+    }
+
+    async patchEvent(uid: string, templateDesign: ITemplateDesign) {
+        // 更新noSQL
+        this.eventModel
+        // 更新SQL
+
     }
 
     async getEvent(eventId: string): Promise<IEventTemplate | number> {
@@ -54,14 +66,29 @@ export default class EventService {
      * @returns 
      */
     async createNewEvent(uid: string, eventTemplate: IEventTemplate): Promise<IEvent> {
+        if (!eventTemplate.designs?.length) {
+            throw 'designs不存在'
+        }
         // 建立sql與noSql的關聯，修改時，用noSQL資料覆蓋SQL
         const result = await this.createEventSchema(eventTemplate)
-        // 存進SQL方便搜尋，並取得uuid
         const insertedEvent = await this.eventSchemaModel.createRecord(uid, result.event)
         result.eventTemplate.eventId = insertedEvent.id
-        // 再用id儲存nosql
+        // 深拷貝designs
+        const designsTemp = structuredClone(eventTemplate.designs)
+        delete eventTemplate.designs
+        // 儲存事件
         const newEvent = await this.eventModel.createEvent(uid, result.eventTemplate) as IEvent
-        return newEvent
+        // 儲存欄位designs
+        const designDocPromises = designsTemp.map((design) => {
+            design.templateId = newEvent.id
+            return this.eventDesignModel.createDesign(uid, design)
+        })
+        const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
+        const designIds = designDocs.map(doc => doc.id ?? '')
+        // 更新事件
+        await this.eventModel.mergeDesignIds(uid, designIds)
+        eventTemplate.designIds = designIds
+        return newEvent // 回傳完整Event才有機會，未來打開新事件時不用重新get
     }
 
     async createEventSchema(eventTemplate: IEventTemplate) {
