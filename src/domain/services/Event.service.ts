@@ -86,7 +86,7 @@ export default class EventService {
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
         const designIds = designDocs.map(doc => doc.id ?? '')
         // 更新事件
-        await this.eventModel.mergeDesignIds(uid, designIds)
+        await this.eventModel.mergeDesignIds(uid, String(newEvent.id), designIds)
         eventTemplate.designIds = designIds
         return newEvent // 回傳完整Event才有機會，未來打開新事件時不用重新get
     }

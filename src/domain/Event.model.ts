@@ -14,11 +14,7 @@ export default class EventModel extends DataAccess {
      * @returns 
      */
     async createEvent(uid: string, eventTemplate: IEventTemplate): Promise<IEventTemplate> {
-        const newEventDoc: IEventTemplate = await this.createUidDoc(uid, eventTemplate, {
-            count: {
-                absolute: 0
-            }
-        })
+        const newEventDoc: IEventTemplate = await this.createUidDoc(uid, eventTemplate)
         return newEventDoc
     }
 
@@ -41,17 +37,17 @@ export default class EventModel extends DataAccess {
      * @param eventTemplate 
      * @returns 
      */
-    async mergeDesignIds(uid: string, designIds: string[]): Promise<number> {
+    async mergeDesignIds(uid: string, eventId: string, designIds: string[]): Promise<number> {
         const data = {
             designIds,
         }
         const dataAccessOptions = {
             count: {
-                absolute: 1 // 如果不是1，就是符合條件統一改寫
+                min: 0,
             },
             merge: true,
         }
-        const count = await super.updateDocs([['uid', '==', uid]], data, dataAccessOptions)
+        const count = await super.updateDocs([['uid', '==', uid], ['id', '==', eventId]], data, dataAccessOptions)
         return count
     }
 
