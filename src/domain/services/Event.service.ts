@@ -54,26 +54,27 @@ export default class EventService {
      * @returns 
      */
     async createNewEvent(uid: string, eventTemplate: IEventTemplate): Promise<IEvent> {
-        // 先儲存sql取得id
-        const event = await this.setEventSchema(uid, eventTemplate)
-        eventTemplate.eventId = event.id
+        // 建立sql與noSql的關聯，修改時，用noSQL資料覆蓋SQL
+        const result = await this.createEventSchema(eventTemplate)
+        // 存進SQL方便搜尋，並取得uuid
+        const insertedEvent = await this.eventSchemaModel.createRecord(uid, result.event)
+        result.eventTemplate.eventId = insertedEvent.id
         // 再用id儲存nosql
-        const newEvent = await this.eventModel.createEvent(uid, eventTemplate) as IEvent
+        const newEvent = await this.eventModel.createEvent(uid, result.eventTemplate) as IEvent
         return newEvent
     }
 
-    private async setEventSchema(uid: string, eventTemplate: IEventTemplate) {
+    async createEventSchema(eventTemplate: IEventTemplate) {
         if (!eventTemplate.designs) {
             throw 'designs欄位遺失'
         }
-        // return
+
         const event: IEvent = {
             name: '',
             startDate: '',
             endDate: '',
             description: '',
         }
-        const eventMembers: IEventMember[] = []
 
         const templateDesigns: ITemplateDesign[] = eventTemplate.designs as ITemplateDesign[]
 
@@ -83,6 +84,7 @@ export default class EventService {
         }) as ITemplateDesign
         if (header1) {
             event.name = header1.mutable?.value
+            header1.sqlField = 'name'
         }
 
         // 時間
@@ -92,6 +94,7 @@ export default class EventService {
         if (dateTimeRange) {
             event.startDate = dateTimeRange.mutable?.value[0]
             event.endDate = dateTimeRange.mutable?.value[1]
+            dateTimeRange.sqlField = 'date'
         }
 
         // 描述
@@ -100,10 +103,12 @@ export default class EventService {
         }) as ITemplateDesign
         if (description) {
             event.description = description.mutable?.value
+            description.sqlField = 'description'
         }
 
-        // 這邊取得record uuid
-        const insertedEvent = await this.eventSchemaModel.createRecord(uid, event)
-        return insertedEvent
+        return {
+            event,
+            eventTemplate,
+        }
     }
 }

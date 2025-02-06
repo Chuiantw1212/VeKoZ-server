@@ -71,6 +71,9 @@ export default class EventTemplateService {
         const templateDesign: ITemplateDesign = {
             templateId: data.templateId,
             type: data.type,
+            mutable: { // 必要的，不然會顯示出錯
+                label: ''
+            }
         }
         const newDesign = await this.eventTemplateDesignModel.createTemplateDesign(uid, templateDesign)
         return newDesign.id

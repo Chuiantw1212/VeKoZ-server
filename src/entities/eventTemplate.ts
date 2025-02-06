@@ -15,6 +15,7 @@ export interface ITemplateDesign {
     type: string,
     mutable?: ITemplateDesignMutable,
     templateId?: string,
+    sqlField?: string, // 讓連動更新欄位
 }
 
 export interface ITemplateDesignMutable {
