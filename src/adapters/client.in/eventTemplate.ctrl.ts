@@ -42,7 +42,7 @@ router.use(bearer())
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const { id } = params
-        const lastmod = await EventTemplateService.deleteTemplateDesign(user.uid, id)
+        const lastmod = await EventTemplateService.deleteDesignById(user.uid, id)
         return lastmod
     })
     .patch('/event/template/design', async function ({ request, bearer }) {

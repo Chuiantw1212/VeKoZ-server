@@ -52,7 +52,7 @@ export default class EventTemplateDesignModel extends DataAccess {
      * @param id 
      * @returns 
      */
-    async deleteTemplateDesign(uid: string, id: string): Promise<number> {
+    async deleteDesignById(uid: string, id: string): Promise<number> {
         const options = {
             count: {
                 absolute: 1

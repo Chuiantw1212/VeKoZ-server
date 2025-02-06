@@ -32,7 +32,7 @@ export default class EventService {
         this.eventSchemaModel = eventSchemaModel
     }
 
-    async patchEvent(uid: string, templateDesign: ITemplateDesign): Promise<number> {
+    async patchEventForm(uid: string, templateDesign: ITemplateDesign): Promise<number> {
         if (!templateDesign.id) {
             throw 'id不存在'
         }
@@ -62,13 +62,33 @@ export default class EventService {
         return count
     }
 
+    async patchEventCalendar(uid: string, event: IEvent): Promise<number> {
+        if (!event.id) {
+            throw 'event.id不存在'
+        }
+        if (!event.dateDesignId) {
+            throw 'event.dateDesignId'
+        }
+        // noSQL
+        const dateDesignId = event.dateDesignId
+        const count = await this.eventDesignModel.patchMutable(uid, dateDesignId, {
+            value: [event.startDate, event.endDate]
+        })
+        // SQL
+        await this.eventSchemaModel.patchRecordField(uid, event.id, {
+            startDate: event.startDate,
+            endDate: event.endDate
+        })
+        return count
+    }
+
     async getEvent(eventId: string): Promise<IEventTemplate | 0> {
         const eventTemplate: IEventTemplate | 0 = await this.eventModel.queryByEventId(eventId)
         if (eventTemplate) {
             const designIds = eventTemplate.designIds || []
             // 取得details並回傳
             const designPromises = await designIds.map((designId: string) => {
-                return this.eventDesignModel.getTemplateDesign(designId)
+                return this.eventDesignModel.getEventDesign(designId)
             })
             const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
             eventTemplate.designs = eventTemplateDesigns
@@ -79,18 +99,30 @@ export default class EventService {
     }
 
     async deleteEvent(uid: string, eventId: string): Promise<number> {
-        const deleteNoSqlCount = await this.eventModel.deleteByEventId(uid, eventId)
-        if (deleteNoSqlCount) {
-            const deleteSqlCount = await this.eventSchemaModel.dropRecord(uid, eventId)
-            if (deleteSqlCount) {
-                return deleteSqlCount
-            }
+        const event: IEventTemplate | 0 = await this.eventModel.queryByEventId(eventId)
+        if (!event) {
+            return 0
         }
-        return 0
+        const designIds = event.designIds
+        if (!designIds) {
+            throw '資料有誤, event.designIds不存在'
+        }
+        const deleteNoSqlPromise = this.eventModel.deleteByEventId(uid, eventId)
+        const deleteSqlPromise = this.eventSchemaModel.dropRecord(uid, eventId)
+        const detailPromises = designIds?.map(designId => {
+            return this.eventDesignModel.deleteDesignById(uid, designId)
+        })
+        const ones = await Promise.all([deleteNoSqlPromise, deleteSqlPromise, ...detailPromises])
+        const isSuccess = ones.every((value: number) => value == 1)
+        if (isSuccess) {
+            return 1
+        }
+        throw `刪除途中出錯, ${[eventId, eventId, ...designIds]}`
     }
 
     async getAvailableEventList(query: IEvent): Promise<IEvent[]> {
-        return await this.eventSchemaModel.getAvailableEventList(query) as IEvent[]
+        const events = await this.eventSchemaModel.getAvailableEventList(query) as IEvent[]
+        return events
     }
 
     /**
@@ -107,7 +139,7 @@ export default class EventService {
         const result = await this.createEventSchema(eventTemplate)
         const insertedEvent = await this.eventSchemaModel.createRecord(uid, result.event)
         result.eventTemplate.eventId = insertedEvent.id
-        // 深拷貝designs
+        // 拷貝designs
         const designsTemp = eventTemplate.designs
         delete eventTemplate.designs
         // 儲存事件
@@ -121,11 +153,14 @@ export default class EventService {
         const designIds = designDocs.map(doc => doc.id ?? '')
         // 更新事件
         await this.eventModel.mergeDesignIds(uid, String(newEvent.id), designIds)
-        eventTemplate.designIds = designIds
+        const dateDesignId = designIds[result.dateTimeRangeIndex]
+        await this.eventSchemaModel.patchRecordField(uid, String(insertedEvent.id), {
+            dateDesignId
+        })
         return newEvent // 回傳完整Event才有機會，未來打開新事件時不用重新get
     }
 
-    async createEventSchema(eventTemplate: IEventTemplate) {
+    private async createEventSchema(eventTemplate: IEventTemplate) {
         if (!eventTemplate.designs) {
             throw 'designs欄位遺失'
         }
@@ -135,6 +170,7 @@ export default class EventService {
             startDate: '',
             endDate: '',
             description: '',
+            dateDesignId: '', // 這邊需要另外更新
         }
 
         const templateDesigns: ITemplateDesign[] = eventTemplate.designs as ITemplateDesign[]
@@ -149,12 +185,14 @@ export default class EventService {
         }
 
         // 時間
-        const dateTimeRange: ITemplateDesign = templateDesigns.find((design: ITemplateDesign) => {
+        const dateTimeRangeIndex: number = templateDesigns.findIndex((design: ITemplateDesign) => {
             return design.type === 'dateTimeRange'
-        }) as ITemplateDesign
+        })
+        const dateTimeRange = templateDesigns[dateTimeRangeIndex]
         if (dateTimeRange) {
             event.startDate = dateTimeRange.mutable?.value[0]
             event.endDate = dateTimeRange.mutable?.value[1]
+            // event.dateDesignId = dateTimeRange.id // 這邊需要另外更新
             dateTimeRange.sqlField = 'date'
         }
 
@@ -170,6 +208,7 @@ export default class EventService {
         return {
             event,
             eventTemplate,
+            dateTimeRangeIndex,
         }
     }
 }

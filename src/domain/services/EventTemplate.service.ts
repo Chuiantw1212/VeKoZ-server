@@ -84,7 +84,7 @@ export default class EventTemplateService {
         if (oldTemplate) {
             const designIds = oldTemplate.designIds ?? []
             const promises = designIds.map(designId => {
-                return this.deleteTemplateDesign(uid, designId)
+                return this.deleteDesignById(uid, designId)
             })
             await Promise.all(promises)
             const count = await this.eventTemplateModel.deleteTemplate(uid)
@@ -102,7 +102,7 @@ export default class EventTemplateService {
         return lastmod
     }
 
-    async deleteTemplateDesign(uid: string, id: string): Promise<number> {
-        return this.eventTemplateDesignModel.deleteTemplateDesign(uid, id)
+    async deleteDesignById(uid: string, id: string): Promise<number> {
+        return this.eventTemplateDesignModel.deleteDesignById(uid, id)
     }
 }

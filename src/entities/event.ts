@@ -6,4 +6,5 @@ export interface IEvent {
     description?: string,
     startDate?: string,
     endDate?: string,
+    dateDesignId?: string,
 }

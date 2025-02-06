@@ -41,9 +41,35 @@ export default class EventDesignModel extends DataAccess {
      * 讀取
      * @param designId 
      */
-    async getTemplateDesign(designId: string): Promise<ITemplateDesign> {
+    async getEventDesign(designId: string): Promise<ITemplateDesign> {
         const templateDesign: ITemplateDesign = await this.getDocById(designId) as ITemplateDesign
         return templateDesign
+    }
+
+    // /**
+    //  * 
+    //  */
+    // async getDate(designId: string): Promise<ITemplateDesign> {
+    //     // const date = await this.getDocField(designId, 'startDate')
+    // }
+
+    /**
+     * 刪除
+     * @param uid 
+     * @param id 
+     * @returns 
+     */
+    async deleteDesignById(uid: string, id: string): Promise<number> {
+        const options = {
+            count: {
+                absolute: 1
+            }
+        }
+        const count = await this.removeDocs(
+            [['uid', '==', uid], ['id', '==', id]],
+            options
+        )
+        return count
     }
 
     /**
@@ -52,14 +78,14 @@ export default class EventDesignModel extends DataAccess {
      * @param id 
      * @returns 
      */
-    async deleteTemplateDesign(uid: string, id: string): Promise<number> {
+    async deleteDesignByEventId(uid: string, eventId: string): Promise<number> {
         const options = {
             count: {
                 absolute: 1
             }
         }
         const count = await this.removeDocs(
-            [['uid', '==', uid], ['id', '==', id]],
+            [['uid', '==', uid], ['eventId', '==', eventId]],
             options
         )
         return count

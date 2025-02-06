@@ -51,7 +51,7 @@ export default class DataAccess {
     }
 
     /**
-     * 利用document id取得唯一資料
+     * R: 利用document id取得唯一資料
      * @param docId 
      * @returns 
      */
@@ -67,6 +67,20 @@ export default class DataAccess {
         }
         return 0
     }
+
+    // /**
+    //  * R: 利用document id取得特定欄位的資料
+    //  * @param docId 
+    //  * @returns 
+    //  */
+    // protected async getDocField(docId: string, field: string): Promise<any> {
+    //     if (!this.noSQL) {
+    //         throw this.error.noSqlIsNotReady
+    //     }
+    //     const docReference = await this.noSQL?.doc(docId).get()
+    //     const fieldValue = docReference.get(field)
+    //     return fieldValue
+    // }
 
     /**
      * R: 依據條件取得唯一資料
