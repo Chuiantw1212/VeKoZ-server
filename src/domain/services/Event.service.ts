@@ -1,6 +1,5 @@
 import type { IEventTemplate, ITemplateDesign, } from '../../entities/eventTemplate';
 import type { IEvent, } from '../../entities/event';
-import type { IEventMember } from '../../entities/eventMember';
 import EventModel from '../Event.model'
 import EventActorModel from '../EventActor.model'
 import EventSchemaModel from '../EventSchema.model';

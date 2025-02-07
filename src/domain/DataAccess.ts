@@ -210,22 +210,18 @@ export default class DataAccess {
         const count: number = countData.data().count
         if (options.max && count >= options.max) {
             const message = `資料數量已達上限: ${count} > ${options.max}`
-            console.trace(message)
             throw message
         }
         if (options.min && count <= options.min) {
             const message = `資料數量低於下限: ${count} < ${options.min}`
-            console.trace(message)
             throw message
         }
         if (options.absolute && count !== options.absolute) {
             const message = `資料數量數值不合: ${count} !== ${options.absolute}`
-            console.trace(message)
             throw message
         }
         if (options.range && !options.range.includes(count)) {
             const message = `資料數量範圍不合: ${count} 不在 ${options.range} 中`
-            console.trace(message)
             throw message
         }
         return count
