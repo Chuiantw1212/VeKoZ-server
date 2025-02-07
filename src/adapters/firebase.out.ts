@@ -48,5 +48,4 @@ export class FirebaseAdapter {
         return decodedToken
     }
 }
-const firebase = new FirebaseAdapter()
-export default firebase
+export default new FirebaseAdapter()

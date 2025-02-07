@@ -7,9 +7,11 @@
  * https://cloud.google.com/docs/authentication/provide-credentials-adc
  */
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager'
+
 export class GoogleCloudPlugin {
     protected sercertManagerServiceClient: SecretManagerServiceClient
     constructor() {
+        // Secret
         const client = new SecretManagerServiceClient()
         this.sercertManagerServiceClient = client
     }

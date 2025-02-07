@@ -8,6 +8,7 @@ import AccessGlobalService from './entities/app'
 // adapters
 import firebase from './adapters/firebase.out'
 import googleCloud from './adapters/googleCloud.out'
+import googleCalendar from './adapters/googleCalendar.out'
 // models
 import PlaceModel from './domain/Place.model'
 import SelectModel from './domain/Select.model';
@@ -50,6 +51,11 @@ import placeController from './adapters/client.in/place.ctrl'
         FIREBASE_SERVICE_ACCOUNT_KEY_JSON = require(keyPath);
     }
     await firebase.initializeSync(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
+
+    // Load GCP
+    await googleCalendar.setClient(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
+    await googleCalendar.list()
+    // googleCloud.setClient(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
 
     /**
      * Models
