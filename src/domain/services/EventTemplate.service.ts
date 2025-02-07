@@ -26,7 +26,7 @@ export default class EventTemplateService {
      * @param eventTemplate 
      * @returns 
      */
-    async addEventTemplate(uid: string, eventTemplate: IEventTemplate): Promise<number> {
+    async addEventTemplate(uid: string, eventTemplate: IEventTemplate): Promise<IEventTemplate> {
         if (!eventTemplate.designs?.length) {
             throw 'designs不存在'
         }
@@ -34,18 +34,22 @@ export default class EventTemplateService {
         const designsTemp = eventTemplate.designs
         delete eventTemplate.designs
         // 儲存template
-        const newTemplateDoc: IEventTemplate = await this.eventTemplateModel.createTemplate(uid, eventTemplate)
+        const insertedEventTemplate: IEventTemplate = await this.eventTemplateModel.createTemplate(uid, eventTemplate)
         // 儲存欄位design
         const designDocPromises = designsTemp.map((design) => {
-            design.templateId = newTemplateDoc.id
+            design.templateId = insertedEventTemplate.id
             return this.eventTemplateDesignModel.createTemplateDesign(uid, design)
         })
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
         const designIds = designDocs.map(doc => doc.id ?? '')
-        eventTemplate.designIds = designIds
         // 更新template
-        const count = await this.eventTemplateModel.mergeDesignIds(uid, designIds)
-        return count
+        await this.eventTemplateModel.mergeDesignIds(uid, designIds)
+        // 取得新的Template
+        const newTemplateDoc = await this.getTemplate(uid)
+        if (newTemplateDoc) {
+            return newTemplateDoc
+        }
+        throw '創建樣板過程有錯誤'
     }
 
     async getTemplate(uid: string): Promise<IEventTemplate | 0> {
@@ -72,7 +76,7 @@ export default class EventTemplateService {
             templateId: data.templateId,
             type: data.type,
             mutable: { // 必要的，不然會顯示出錯
-                label: ''
+                label: '',
             }
         }
         const newDesign = await this.eventTemplateDesignModel.createTemplateDesign(uid, templateDesign)
