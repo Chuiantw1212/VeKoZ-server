@@ -53,8 +53,8 @@ import placeController from './adapters/client.in/place.ctrl'
     await firebase.initializeSync(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
 
     // Load GCP
-    await googleCalendar.setClient(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
-    await googleCalendar.list()
+    // await googleCalendar.setClient(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
+    // await googleCalendar.list()
     // googleCloud.setClient(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
 
     /**
