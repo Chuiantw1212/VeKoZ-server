@@ -1,25 +1,20 @@
-import { IDataAccessAdapters, IDataAccessOptions, IDataCountOptions, } from "../entities/dataAccess"
+import { IFirestoreAdapters, IFirestoreOptions, IDataCountOptions, } from "../entities/firestore"
 import { CollectionReference, DocumentData, DocumentSnapshot, Query, SetOptions } from "firebase-admin/firestore"
 
 /**
  * 檔案的Naming要對應firestore的存取方式
  */
-export default class DataAccess {
-    private noSQL: IDataAccessAdapters['noSQL'] = null as any
-    private SQL: IDataAccessAdapters['SQL'] = null as any
+export default class Firestore {
+    private collection: IFirestoreAdapters['collection'] = null as any
     protected error = {
-        'noSqlIsNotReady': 'NoSQL instance is not ready.',
-        'sqlIsNotReady': 'SQL instance is not ready.',
+        'collectionIsNotReady': 'Collection is not ready.',
         'docNoFound': 'Data not found by given condition',
     }
 
-    constructor(data: IDataAccessAdapters) {
-        const { noSQL, SQL } = data
-        if (noSQL) {
-            this.noSQL = noSQL
-        }
-        if (SQL) {
-            this.SQL = SQL
+    constructor(data: IFirestoreAdapters) {
+        const { collection, } = data
+        if (collection) {
+            this.collection = collection
         }
     }
 
@@ -31,19 +26,19 @@ export default class DataAccess {
      * @param options
      * @returns 
      */
-    protected async createUidDoc(uid: string, data: any, options?: IDataAccessOptions): Promise<DocumentData> {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
+    protected async createUidDoc(uid: string, data: any, options?: IFirestoreOptions): Promise<DocumentData> {
+        if (!this.collection) {
+            throw this.error.collectionIsNotReady
         }
         const query = await this.getQuery([['uid', '==', uid]])
         if (options?.count) {
             await this.checkQueryCount(query, options.count)
         }
-        const docRef = this.noSQL.doc()
+        const docRef = this.collection.doc()
         const lastmod = new Date().toISOString()
         data.id = docRef.id
         data.lastmod = lastmod
-        await this.noSQL.doc(data.id).set({
+        await this.collection.doc(data.id).set({
             ...data,
             uid // IMPORTANT 否則新資料會是null
         })
@@ -56,10 +51,10 @@ export default class DataAccess {
      * @returns 
      */
     protected async getDocById(docId: string): Promise<DocumentData | number> {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
+        if (!this.collection) {
+            throw this.error.collectionIsNotReady
         }
-        const documentSnapshot: DocumentSnapshot = await this.noSQL.doc(docId).get()
+        const documentSnapshot: DocumentSnapshot = await this.collection.doc(docId).get()
         const docData = documentSnapshot.data()
         if (docData) {
             delete docData.uid
@@ -68,27 +63,13 @@ export default class DataAccess {
         return 0
     }
 
-    // /**
-    //  * R: 利用document id取得特定欄位的資料
-    //  * @param docId 
-    //  * @returns 
-    //  */
-    // protected async getDocField(docId: string, field: string): Promise<any> {
-    //     if (!this.noSQL) {
-    //         throw this.error.noSqlIsNotReady
-    //     }
-    //     const docReference = await this.noSQL?.doc(docId).get()
-    //     const fieldValue = docReference.get(field)
-    //     return fieldValue
-    // }
-
     /**
      * R: 依據條件取得唯一資料
      * @param wheres 
      * @param options 
      * @returns 
      */
-    protected async querySingleDoc(wheres: any[][], options: IDataAccessOptions = {}): Promise<DocumentData | 0> {
+    protected async querySingleDoc(wheres: any[][], options: IFirestoreOptions = {}): Promise<DocumentData | 0> {
         Object.assign(options, {
             count: {
                 range: [0, 1]
@@ -103,9 +84,9 @@ export default class DataAccess {
      * @param uid 
      * @param options 
      */
-    protected async queryDocList(wheres: any[][], options?: IDataAccessOptions): Promise<DocumentData[]> {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
+    protected async queryDocList(wheres: any[][], options?: IFirestoreOptions): Promise<DocumentData[]> {
+        if (!this.collection) {
+            throw this.error.collectionIsNotReady
         }
         // 檢查資料數量
         const query = await this.getQuery(wheres)
@@ -137,10 +118,10 @@ export default class DataAccess {
      * @deprecated
      */
     protected async getDocList() {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
+        if (!this.collection) {
+            throw this.error.collectionIsNotReady
         }
-        const snapshot = await this.noSQL.get()
+        const snapshot = await this.collection.get()
         const docDatas = snapshot.docs.map(doc => {
             const docData = doc.data()
             delete docData.uid
@@ -154,7 +135,7 @@ export default class DataAccess {
      * @param uid user id
      * @param data 
      */
-    protected async updateDocs(wheres: any[][], data: any, options: IDataAccessOptions = {}): Promise<number> {
+    protected async updateDocs(wheres: any[][], data: any, options: IFirestoreOptions = {}): Promise<number> {
         const query: Query = await this.getQuery(wheres)
         const count = await this.checkQueryCount(query, options.count ?? {})
         const lastmod = new Date().toISOString()
@@ -174,7 +155,7 @@ export default class DataAccess {
      * @param docId 
      */
     protected async setDocById(docId: string, data: any, options: SetOptions): Promise<number> {
-        await this.noSQL?.doc(docId).set(data, options)
+        await this.collection?.doc(docId).set(data, options)
         return 1
     }
 
@@ -184,10 +165,10 @@ export default class DataAccess {
      * @returns 
      */
     protected async getQuery(wheres: any[][]): Promise<Query> {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
+        if (!this.collection) {
+            throw this.error.collectionIsNotReady
         }
-        let query: CollectionReference | Query = this.noSQL
+        let query: CollectionReference | Query = this.collection
         wheres.forEach((where: any[]) => {
             const field = where[0]
             const operator = where[1]
@@ -203,8 +184,8 @@ export default class DataAccess {
      * @returns 
      */
     protected async checkQueryCount(query: Query, options: IDataCountOptions = {}): Promise<number> {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
+        if (!this.collection) {
+            throw this.error.collectionIsNotReady
         }
         const countData = await query.count().get()
         const count: number = countData.data().count
@@ -232,9 +213,9 @@ export default class DataAccess {
      * @param uid 使用者uid
      * @returns 
      */
-    protected async removeDocs(wheres: any[][], options?: IDataAccessOptions): Promise<number> {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
+    protected async removeDocs(wheres: any[][], options?: IFirestoreOptions): Promise<number> {
+        if (!this.collection) {
+            throw this.error.collectionIsNotReady
         }
         const query = await this.getQuery(wheres)
         const count = await this.checkQueryCount(query, options?.count ?? {})
@@ -283,10 +264,10 @@ export default class DataAccess {
      * @returns 
      */
     protected async deleteByDocId(uid: string, id: string): Promise<number> {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
+        if (!this.collection) {
+            throw this.error.collectionIsNotReady
         }
-        const targetQuery = this.noSQL.where('uid', '==', uid)
+        const targetQuery = this.collection.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
         if (count == 0) {
@@ -296,7 +277,7 @@ export default class DataAccess {
             return doc.id === id
         })
         if (targetDoc) {
-            await this.noSQL.doc(targetDoc.id).delete()
+            await this.collection.doc(targetDoc.id).delete()
             return 1
         } else {
             return 0
@@ -311,10 +292,10 @@ export default class DataAccess {
      * @returns 
      */
     protected async mergeByDocId(uid: string, id: string, data: any): Promise<number> {
-        if (!this.noSQL) {
-            throw this.error.noSqlIsNotReady
+        if (!this.collection) {
+            throw this.error.collectionIsNotReady
         }
-        const targetQuery = this.noSQL.where('uid', '==', uid)
+        const targetQuery = this.collection.where('uid', '==', uid)
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
         if (count == 0) {
@@ -324,7 +305,7 @@ export default class DataAccess {
             return doc.id === id
         })
         if (targetDoc) {
-            await this.noSQL.doc(targetDoc.id).update(data, { merge: true })
+            await this.collection.doc(targetDoc.id).update(data, { merge: true })
         }
         return 1
     }

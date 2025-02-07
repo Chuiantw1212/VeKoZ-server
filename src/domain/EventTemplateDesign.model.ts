@@ -1,9 +1,9 @@
-import DataAccess from './DataAccess'
-import type { IDataAccessAdapters } from '../entities/dataAccess'
+import Firestore from './Firestore.out'
+import type { IFirestoreAdapters } from '../entities/firestore'
 import { ITemplateDesign } from '../entities/eventTemplate'
 
-export default class EventTemplateDesignModel extends DataAccess {
-    constructor(data: IDataAccessAdapters) {
+export default class EventTemplateDesignModel extends Firestore {
+    constructor(data: IFirestoreAdapters) {
         super(data)
     }
 

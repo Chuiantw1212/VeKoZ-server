@@ -1,14 +1,14 @@
-import DataAccess from './DataAccess'
-import type { IDataAccessAdapters } from '../entities/dataAccess'
+import Firestore from './Firestore.out'
+import type { IFirestoreAdapters } from '../entities/firestore'
 interface ILogo {
     type: string;
     buffer: Buffer,
 }
 
-export default class OrganizationModel extends DataAccess {
+export default class OrganizationModel extends Firestore {
     publicPucket: any = null
 
-    constructor(data: IDataAccessAdapters) {
+    constructor(data: IFirestoreAdapters) {
         super(data)
         this.publicPucket = data.publicBucket
     }

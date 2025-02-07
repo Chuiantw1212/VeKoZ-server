@@ -1,8 +1,8 @@
-import DataAccess from './DataAccess'
-import type { IDataAccessAdapters } from '../entities/dataAccess'
+import Firestore from './Firestore.out'
+import type { IFirestoreAdapters } from '../entities/firestore'
 
-export default class PlaceModel extends DataAccess {
-    constructor(data: IDataAccessAdapters) {
+export default class PlaceModel extends Firestore {
+    constructor(data: IFirestoreAdapters) {
         super(data)
     }
 }

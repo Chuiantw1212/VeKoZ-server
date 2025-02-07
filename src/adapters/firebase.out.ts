@@ -23,7 +23,7 @@ export class FirebaseAdapter {
         */
         this.auth = getAuth()
         /**
-         * 使用Firestore(noSQL)
+         * 使用Firestore(collection)
          * https://firebase.google.com/docs/firestore/quickstart
          */
         const firestore = getFirestore();

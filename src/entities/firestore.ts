@@ -1,13 +1,12 @@
 import type { CollectionReference, } from 'firebase-admin/firestore'
 
-export interface IDataAccessAdapters {
-    noSQL?: CollectionReference,
-    SQL?: any,
+export interface IFirestoreAdapters {
+    collection?: CollectionReference,
     publicBucket?: any,
     privateBucket?: any,
 }
 
-export interface IDataAccessOptions {
+export interface IFirestoreOptions {
     count?: IDataCountOptions,
     slice?: [number, number] | number
     fields?: string[],

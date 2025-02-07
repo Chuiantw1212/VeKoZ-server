@@ -7,7 +7,7 @@ import EventDesignModel from '../EventDesign.model';
 
 interface Idependency {
     eventModel: EventModel;
-    eventDesignModel: EventDesignModel
+    eventDesignModel: EventDesignModel;
     eventActorModel: EventActorModel;
     eventSchemaModel: EventSchemaModel;
 }
@@ -75,7 +75,7 @@ export default class EventService {
         if (!event.dateDesignId) {
             throw 'event.dateDesignId不存在'
         }
-        // noSQL
+        // collection
         const dateDesignId = event.dateDesignId
         const count = await this.eventDesignModel.patchMutable(uid, dateDesignId, {
             value: [event.startDate, event.endDate]
@@ -141,7 +141,7 @@ export default class EventService {
         if (!eventTemplate.designs?.length) {
             throw 'designs不存在'
         }
-        // 建立sql與noSql的關聯，修改時，用noSQL資料覆蓋SQL
+        // 建立sql與noSql的關聯，修改時，用collection資料覆蓋SQL
         const result = await this.createEventSchema(eventTemplate)
         const insertedEvent = await this.eventSchemaModel.createRecord(uid, result.event)
         result.eventTemplate.eventId = insertedEvent.id

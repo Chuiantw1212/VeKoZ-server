@@ -1,8 +1,8 @@
-import DataAccess from './DataAccess'
-import type { IDataAccessAdapters } from '../entities/dataAccess'
+import Firestore from './Firestore.out'
+import type { IFirestoreAdapters } from '../entities/firestore'
 
-export default class OrganizationMemberModel extends DataAccess {
-    constructor(data: IDataAccessAdapters) {
+export default class OrganizationMemberModel extends Firestore {
+    constructor(data: IFirestoreAdapters) {
         super(data)
     }
 }
