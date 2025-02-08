@@ -1,5 +1,5 @@
 import Firestore from '../adapters/Firestore.out'
-import type { IFirestoreAdapters } from '../entities/firestore'
+import type { IFirestoreAdapters } from '../entities/dataAccess'
 import type { IEvent } from '../entities/event'
 
 export default class EventSchemaModel extends Firestore {
@@ -42,7 +42,7 @@ export default class EventSchemaModel extends Firestore {
             },
             merge: true,
         }
-        const count = await super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], data, dataAccessOptions)
+        const count = await this.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], data, dataAccessOptions)
         return count
     }
 
@@ -53,6 +53,6 @@ export default class EventSchemaModel extends Firestore {
      * @returns 
      */
     async dropRecord(uid: string, eventId: string) {
-        return await this.deleteByDocId(uid, eventId)
+        return await this.deleteItemById(uid, eventId)
     }
 }

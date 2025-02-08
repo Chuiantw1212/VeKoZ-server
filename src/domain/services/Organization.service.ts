@@ -36,8 +36,10 @@ export default class OrganizationService {
     /**
      * 取得組織
      */
-    async getItem(uid: string) {
-        return await this.organizationModel.querySingleDoc([['uid', '==', uid]])
+    async getItem(uid: string, id: string) {
+        // return await this.organizationModel.querySingleDoc([['uid', '==', uid]])
+        const organizationList = await this.organizationModel.getItemsByQuery([['uid', '==', uid]],)
+        return organizationList
     }
 
     /**

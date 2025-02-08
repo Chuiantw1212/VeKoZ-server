@@ -1,5 +1,5 @@
 import Firestore from '../adapters/Firestore.out'
-import type { IFirestoreAdapters } from '../entities/firestore'
+import type { IFirestoreAdapters } from '../entities/dataAccess'
 interface ILogo {
     type: string;
     buffer: Buffer,
@@ -48,10 +48,14 @@ export default class OrganizationModel extends Firestore {
      * @returns 
      */
     async deleteItem(uid: string, id: string) {
-        await this.deleteByDocId(uid, id)
+        await this.deleteItemById(uid, id)
         await this.publicPucket.deleteFiles({
             prefix: `company/${id}`
         })
         return true
+    }
+
+    async getItemById(uid: string, id: string) {
+        const organization = this.getItemById()
     }
 }

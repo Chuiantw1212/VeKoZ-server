@@ -1,5 +1,5 @@
 import Firestore from '../adapters/Firestore.out'
-import type { IFirestoreAdapters } from '../entities/firestore'
+import type { IFirestoreAdapters } from '../entities/dataAccess'
 import { ITemplateDesign } from '../entities/eventTemplate'
 
 export default class EventDesignModel extends Firestore {
@@ -46,13 +46,6 @@ export default class EventDesignModel extends Firestore {
         return templateDesign
     }
 
-    // /**
-    //  * 
-    //  */
-    // async getDate(designId: string): Promise<ITemplateDesign> {
-    //     // const date = await this.getDocField(designId, 'startDate')
-    // }
-
     /**
      * 刪除
      * @param uid 
@@ -65,7 +58,7 @@ export default class EventDesignModel extends Firestore {
                 absolute: 1
             }
         }
-        const count = await this.removeDocs(
+        const count = await this.deleteItemsByQuery(
             [['uid', '==', uid], ['id', '==', id]],
             options
         )
@@ -84,7 +77,7 @@ export default class EventDesignModel extends Firestore {
                 absolute: 1
             }
         }
-        const count = await this.removeDocs(
+        const count = await this.deleteItemsByQuery(
             [['uid', '==', uid], ['eventId', '==', eventId]],
             options
         )

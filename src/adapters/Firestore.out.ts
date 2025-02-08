@@ -1,4 +1,4 @@
-import { IFirestoreAdapters, IFirestoreOptions, IDataCountOptions, } from "../entities/firestore"
+import { IFirestoreAdapters, ICrudOptions, IDataCountOptions, } from "../entities/dataAccess"
 import { CollectionReference, DocumentData, DocumentSnapshot, Query, SetOptions } from "firebase-admin/firestore"
 import VenoniaCRUD from "../entities/crud"
 /**
@@ -27,7 +27,7 @@ export default class Firestore extends VenoniaCRUD {
      * @param options
      * @returns 
      */
-    protected async createItem(uid: string, data: any, options?: IFirestoreOptions): Promise<DocumentData> {
+    protected async createItem(uid: string, data: any, options?: ICrudOptions): Promise<DocumentData> {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }
@@ -70,7 +70,7 @@ export default class Firestore extends VenoniaCRUD {
      * @param options 
      * @returns 
      */
-    protected async querySingleDoc(wheres: any[][], options: IFirestoreOptions = {}): Promise<DocumentData | 0> {
+    protected async querySingleDoc(wheres: any[][], options: ICrudOptions = {}): Promise<DocumentData | 0> {
         Object.assign(options, {
             count: {
                 range: [0, 1]
@@ -85,7 +85,7 @@ export default class Firestore extends VenoniaCRUD {
      * @param uid 
      * @param options 
      */
-    private async getItemsByQuery(wheres: any[][], options?: IFirestoreOptions): Promise<DocumentData[]> {
+    protected async getItemsByQuery(wheres: any[][], options?: ICrudOptions): Promise<DocumentData[]> {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }
@@ -136,7 +136,7 @@ export default class Firestore extends VenoniaCRUD {
      * @param uid user id
      * @param data 
      */
-    protected async setItemsByQuery(wheres: any[][], data: any, options: IFirestoreOptions = {}): Promise<number> {
+    protected async setItemsByQuery(wheres: any[][], data: any, options: ICrudOptions = {}): Promise<number> {
         const query: Query = await this.getQuery(wheres)
         const count = await this.checkQueryCount(query, options.count ?? {})
         const lastmod = new Date().toISOString()
@@ -214,7 +214,7 @@ export default class Firestore extends VenoniaCRUD {
      * @param uid 使用者uid
      * @returns 
      */
-    protected async removeDocs(wheres: any[][], options?: IFirestoreOptions): Promise<number> {
+    protected async deleteItemsByQuery(wheres: any[][], options?: ICrudOptions): Promise<number> {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }
@@ -264,7 +264,7 @@ export default class Firestore extends VenoniaCRUD {
      * @param id 文件id
      * @returns 
      */
-    protected async deleteByDocId(uid: string, id: string): Promise<number> {
+    protected async deleteItemById(uid: string, id: string,options:FireStr): Promise<number> {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }

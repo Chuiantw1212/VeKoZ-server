@@ -51,8 +51,8 @@ export default class PlaceService {
      * @param id 
      * @returns 
      */
-    async deleteByDocId(uid: string, id: string) {
-        return await this.placeModel.deleteByDocId(uid, id)
+    async deleteItemById(uid: string, id: string) {
+        return await this.placeModel.deleteItemById(uid, id)
     }
 
     /**

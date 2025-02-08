@@ -30,10 +30,11 @@ router.use(bearer())
         }
         await OrganizationService.mergeUniqueDoc(user.uid, newOrganization)
     })
-    .put('/organization', async ({ request, bearer }) => {
+    .put('/organization/:id', async ({ request, bearer, params }) => {
         const { OrganizationService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const organization: IOrganization = await OrganizationService.getItem(user.uid)
+        const { id } = params
+        const organization: IOrganization = await OrganizationService.getItem(user.uid, id)
         let newOrganization: IOrganization = await request.json() as any
         Object.assign(organization, {
             ...newOrganization

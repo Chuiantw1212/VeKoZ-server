@@ -28,7 +28,7 @@ router.use(bearer())
         const { id } = params
         const { AuthService, AccomdationService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const result = await AccomdationService.deleteByDocId(user.uid, id)
+        const result = await AccomdationService.deleteItemById(user.uid, id)
         return result
     })
 export default router

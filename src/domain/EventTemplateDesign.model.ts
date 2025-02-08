@@ -1,5 +1,5 @@
 import Firestore from '../adapters/Firestore.out'
-import type { IFirestoreAdapters } from '../entities/firestore'
+import type { IFirestoreAdapters } from '../entities/dataAccess'
 import { ITemplateDesign } from '../entities/eventTemplate'
 
 export default class EventTemplateDesignModel extends Firestore {
@@ -58,7 +58,7 @@ export default class EventTemplateDesignModel extends Firestore {
                 absolute: 1
             }
         }
-        const count = await this.removeDocs(
+        const count = await this.deleteItemsByQuery(
             [['uid', '==', uid], ['id', '==', id]],
             options
         )
