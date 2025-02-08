@@ -14,7 +14,7 @@ export default abstract class VenoniaCRUD {
     /**
      * 用條件查詢資料列表
      * @param wheres 查詢條件
-     * @param options 裡面通常包含uid
+     * @param options 通常包含uid權限管控用，但現在放在wheres比較簡單
      * @returns 
      */
     protected async getItemsByQuery(wheres: any[][], options?: ICrudOptions): Promise<any[]> {
@@ -24,7 +24,7 @@ export default abstract class VenoniaCRUD {
      * 用id取得一筆資料
      * @param id 
      * @param data 
-     * @param options 裡面通常包含uid
+     * @param options 通常包含uid權限管控用，但現在放在wheres比較簡單
      * @returns 
      */
     protected async getItemById(id: string, data: any, options?: ICrudOptions): Promise<any> {
@@ -33,7 +33,7 @@ export default abstract class VenoniaCRUD {
     /**
      * 用條件更新資料列表
      * @param wheres 
-     * @param options 裡面通常包含uid
+     * @param options 通常包含uid權限管控用，但現在放在wheres比較簡單
      * @returns 
      */
     protected async setItemsByQuery(wheres: any[][], data: any, options: ICrudOptions): Promise<number> {
@@ -43,7 +43,7 @@ export default abstract class VenoniaCRUD {
      * 用id更新一筆資料
      * @param id 
      * @param data 
-     * @param options 裡面通常包含uid
+     * @param options 通常包含uid權限管控用，但現在放在wheres比較簡單
      * @returns 
      */
     protected async setItemById(id: string, data: any, options: ICrudOptions): Promise<number> {
@@ -52,7 +52,7 @@ export default abstract class VenoniaCRUD {
     /**
      * 用條件刪除資料
      * @param wheres 
-     * @param options 裡面通常包含uid
+     * @param options 通常包含uid權限管控用，但現在放在wheres比較簡單
      * @returns 
      */
     protected async deleteItemsByQuery(wheres: any[][], options: ICrudOptions): Promise<number> {
@@ -62,7 +62,7 @@ export default abstract class VenoniaCRUD {
      * 用id刪除資料
      * @param id 
      * @param data 
-     * @param options 裡面通常包含uid
+     * @param options 通常包含uid權限管控用
      * @returns 
      */
     protected async deleteItemById(id: string, data: any, options: ICrudOptions): Promise<number> {
