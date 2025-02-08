@@ -29,24 +29,23 @@ export default class OrganizationService {
      * @param uid UserUid
      * @param organization 
      */
-    newItem(uid: string, organization: IOrganization) {
-        return this.organizationModel.createItem(uid, organization)
+    async newItem(uid: string, organization: IOrganization) {
+        return await this.organizationModel.createOrganization(uid, organization) as IOrganization
     }
 
     /**
      * 取得組織
      */
-    async getItem(uid: string, id: string) {
-        // return await this.organizationModel.querySingleDoc([['uid', '==', uid]])
-        const organizationList = await this.organizationModel.getItemsByQuery([['uid', '==', uid]],)
+    async getItem(id: string) {
+        const organizationList = await this.organizationModel.getOrganizationById(id) as IOrganization
         return organizationList
     }
 
     /**
      * 更新組織
      */
-    async mergeUniqueDoc(uid: string, organization: IOrganization) {
-        return await this.organizationModel.mergeUniqueDoc(uid, organization)
+    async mergeUniqueDoc(uid: string, id: string, organization: IOrganization) {
+        return await this.organizationModel.mergeOrganizationById(uid, organization.id, organization)
     }
 
     /**

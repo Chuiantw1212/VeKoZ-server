@@ -153,6 +153,7 @@ export default class Firestore extends VenoniaCRUD {
 
     /**
      * U: 更新doc
+     * @deprecated
      * @param docId 
      */
     protected async setItemById(docId: string, data: any, options: SetOptions): Promise<number> {
@@ -264,7 +265,7 @@ export default class Firestore extends VenoniaCRUD {
      * @param id 文件id
      * @returns 
      */
-    protected async deleteItemById(uid: string, id: string,options:FireStr): Promise<number> {
+    protected async deleteItemById(uid: string, id: string, options?: ICrudOptions): Promise<number> {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }

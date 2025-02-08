@@ -1,5 +1,6 @@
 import Firestore from '../adapters/Firestore.out'
 import type { IFirestoreAdapters } from '../entities/dataAccess'
+import { IOrganization } from '../entities/organization';
 interface ILogo {
     type: string;
     buffer: Buffer,
@@ -11,6 +12,11 @@ export default class OrganizationModel extends Firestore {
     constructor(data: IFirestoreAdapters) {
         super(data)
         this.publicPucket = data.publicBucket
+    }
+
+    async createOrganization(uid: string, organization: IOrganization) {
+        const newOrganization = await super.createItem(uid, organization)
+        return newOrganization
     }
 
     /**
@@ -55,7 +61,15 @@ export default class OrganizationModel extends Firestore {
         return true
     }
 
-    async getItemById(uid: string, id: string) {
-        const organization = this.getItemById()
+    async getOrganizationById(id: string) {
+        const organization = await super.getItemById(id)
+        return organization
+    }
+
+    async mergeOrganizationById(uid: string, id: string, organization: IOrganization): Promise<number> {
+        const count = super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], organization, {
+            merge: true,
+        })
+        return count
     }
 }
