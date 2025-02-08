@@ -1,5 +1,5 @@
 import Firestore from '../adapters/Firestore.out'
-import type { IFirestoreAdapters } from '../entities/dataAccess'
+import type { ICrudOptions, IFirestoreAdapters } from '../entities/dataAccess'
 import { ITemplateDesign } from '../entities/eventTemplate'
 
 export default class EventDesignModel extends Firestore {
@@ -14,7 +14,7 @@ export default class EventDesignModel extends Firestore {
      * @returns 
      */
     async createDesign(uid: string, templateDesign: ITemplateDesign) {
-        return await this.createItem(uid, templateDesign)
+        return await super.createItem(uid, templateDesign)
     }
 
     /**
@@ -25,15 +25,15 @@ export default class EventDesignModel extends Firestore {
      * @returns 
      */
     async patchMutable(uid: string, id: string, mutable: any) {
-        const query = await this.getQuery([['uid', '==', uid], ['id', '==', id]],)
-        const count = await this.checkQueryCount(query, {
-            absolute: 1
-        })
-        const lastmod = new Date().toISOString()
-        await this.setItemById(id, {
+        const options: ICrudOptions = {
+            merge: true,
+            count: {
+                absolute: 1
+            }
+        }
+        const count = await super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], {
             mutable,
-            lastmod,
-        }, { merge: true })
+        }, options)
         return count
     }
 
@@ -42,7 +42,7 @@ export default class EventDesignModel extends Firestore {
      * @param designId 
      */
     async getEventDesign(designId: string): Promise<ITemplateDesign> {
-        const templateDesign: ITemplateDesign = await this.getItemById(designId) as ITemplateDesign
+        const templateDesign: ITemplateDesign = await super.getItemById(designId) as ITemplateDesign
         return templateDesign
     }
 
@@ -58,7 +58,7 @@ export default class EventDesignModel extends Firestore {
                 absolute: 1
             }
         }
-        const count = await this.deleteItemsByQuery(
+        const count = await super.deleteItemsByQuery(
             [['uid', '==', uid], ['id', '==', id]],
             options
         )
@@ -77,7 +77,7 @@ export default class EventDesignModel extends Firestore {
                 absolute: 1
             }
         }
-        const count = await this.deleteItemsByQuery(
+        const count = await super.deleteItemsByQuery(
             [['uid', '==', uid], ['eventId', '==', eventId]],
             options
         )
