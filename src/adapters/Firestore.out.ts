@@ -1,10 +1,10 @@
 import { IFirestoreAdapters, IFirestoreOptions, IDataCountOptions, } from "../entities/firestore"
 import { CollectionReference, DocumentData, DocumentSnapshot, Query, SetOptions } from "firebase-admin/firestore"
-
+import VenoniaCRUD from "../entities/crud"
 /**
  * 檔案的Naming要對應firestore的存取方式
  */
-export default class Firestore {
+export default class Firestore extends VenoniaCRUD {
     private collection: IFirestoreAdapters['collection'] = null as any
     protected error = {
         'collectionIsNotReady': 'Collection is not ready.',
@@ -12,6 +12,7 @@ export default class Firestore {
     }
 
     constructor(data: IFirestoreAdapters) {
+        super()
         const { collection, } = data
         if (collection) {
             this.collection = collection
@@ -26,7 +27,7 @@ export default class Firestore {
      * @param options
      * @returns 
      */
-    protected async createUidDoc(uid: string, data: any, options?: IFirestoreOptions): Promise<DocumentData> {
+    protected async createItem(uid: string, data: any, options?: IFirestoreOptions): Promise<DocumentData> {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }
@@ -47,14 +48,14 @@ export default class Firestore {
 
     /**
      * R: 利用document id取得唯一資料
-     * @param docId 
+     * @param id 
      * @returns 
      */
-    protected async getDocById(docId: string): Promise<DocumentData | number> {
+    protected async getItemById(id: string): Promise<DocumentData | number> {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }
-        const documentSnapshot: DocumentSnapshot = await this.collection.doc(docId).get()
+        const documentSnapshot: DocumentSnapshot = await this.collection.doc(id).get()
         const docData = documentSnapshot.data()
         if (docData) {
             delete docData.uid
@@ -75,7 +76,7 @@ export default class Firestore {
                 range: [0, 1]
             }
         })
-        const docDatas = await this.queryDocList(wheres, options)
+        const docDatas = await this.getItemsByQuery(wheres, options)
         return docDatas[0] ?? 0
     }
 
@@ -84,7 +85,7 @@ export default class Firestore {
      * @param uid 
      * @param options 
      */
-    protected async queryDocList(wheres: any[][], options?: IFirestoreOptions): Promise<DocumentData[]> {
+    private async getItemsByQuery(wheres: any[][], options?: IFirestoreOptions): Promise<DocumentData[]> {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }
@@ -135,7 +136,7 @@ export default class Firestore {
      * @param uid user id
      * @param data 
      */
-    protected async updateDocs(wheres: any[][], data: any, options: IFirestoreOptions = {}): Promise<number> {
+    protected async setItemsByQuery(wheres: any[][], data: any, options: IFirestoreOptions = {}): Promise<number> {
         const query: Query = await this.getQuery(wheres)
         const count = await this.checkQueryCount(query, options.count ?? {})
         const lastmod = new Date().toISOString()
@@ -154,7 +155,7 @@ export default class Firestore {
      * U: 更新doc
      * @param docId 
      */
-    protected async setDocById(docId: string, data: any, options: SetOptions): Promise<number> {
+    protected async setItemById(docId: string, data: any, options: SetOptions): Promise<number> {
         await this.collection?.doc(docId).set(data, options)
         return 1
     }
@@ -235,7 +236,7 @@ export default class Firestore {
      * @returns 
      */
     protected async insertRecord(uid: string, data: any): Promise<any> {
-        return await this.createUidDoc(uid, data)
+        return await this.createItem(uid, data)
     }
 
     // ------------------------------------------------------------------------------------------------以下淘汰中

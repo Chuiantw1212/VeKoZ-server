@@ -1,4 +1,4 @@
-import Firestore from './Firestore.out'
+import Firestore from '../adapters/Firestore.out'
 import type { IFirestoreAdapters } from '../entities/firestore'
 import { IEventTemplate } from '../entities/eventTemplate'
 
@@ -14,7 +14,7 @@ export default class EventModel extends Firestore {
      * @returns 
      */
     async createEvent(uid: string, eventTemplate: IEventTemplate): Promise<IEventTemplate> {
-        const newEventDoc: IEventTemplate = await this.createUidDoc(uid, eventTemplate)
+        const newEventDoc: IEventTemplate = await this.createItem(uid, eventTemplate)
         return newEventDoc
     }
 
@@ -24,7 +24,7 @@ export default class EventModel extends Firestore {
      * @returns 
      */
     async queryByEventId(eventId: string): Promise<IEventTemplate | 0> {
-        const events = await this.queryDocList([['eventId', '==', eventId]]) as IEventTemplate[]
+        const events = await this.getItemsByQuery([['eventId', '==', eventId]]) as IEventTemplate[]
         if (events) {
             return events[0]
         }
@@ -47,7 +47,7 @@ export default class EventModel extends Firestore {
             },
             merge: true,
         }
-        const count = await super.updateDocs([['uid', '==', uid], ['id', '==', eventId]], data, dataAccessOptions)
+        const count = await super.setItemsByQuery([['uid', '==', uid], ['id', '==', eventId]], data, dataAccessOptions)
         return count
     }
 

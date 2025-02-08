@@ -1,4 +1,4 @@
-import Firestore from './Firestore.out'
+import Firestore from '../adapters/Firestore.out'
 import type { IFirestoreAdapters } from '../entities/firestore'
 import { IEventTemplate } from '../entities/eventTemplate'
 
@@ -14,7 +14,7 @@ export default class EventTemplateModel extends Firestore {
      * @returns 
      */
     async createTemplate(uid: string, eventTemplate: IEventTemplate): Promise<IEventTemplate> {
-        const newTemplateDoc: IEventTemplate = await this.createUidDoc(uid, eventTemplate, {
+        const newTemplateDoc: IEventTemplate = await this.createItem(uid, eventTemplate, {
             count: {
                 absolute: 0
             }
@@ -56,7 +56,7 @@ export default class EventTemplateModel extends Firestore {
             },
             merge: true,
         }
-        const count = await super.updateDocs([['uid', '==', uid]], data, dataAccessOptions)
+        const count = await super.setItemsByQuery([['uid', '==', uid]], data, dataAccessOptions)
         return count
     }
 

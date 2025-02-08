@@ -1,4 +1,4 @@
-import Firestore from './Firestore.out'
+import Firestore from '../adapters/Firestore.out'
 import type { IFirestoreAdapters } from '../entities/firestore'
 import type { IEvent } from '../entities/event'
 
@@ -14,7 +14,7 @@ export default class EventSchemaModel extends Firestore {
      * @returns 
      */
     async createRecord(uid: string, event: IEvent): Promise<IEvent> {
-        const updatedEvent = await this.createUidDoc(uid, event) as IEvent
+        const updatedEvent = await this.createItem(uid, event) as IEvent
         return updatedEvent
     }
 
@@ -24,7 +24,7 @@ export default class EventSchemaModel extends Firestore {
      * @returns 
      */
     async getAvailableEventList(condition: IEvent): Promise<IEvent[]> {
-        const docDatas = await this.queryDocList([['startDate', '>=', condition.startDate]])
+        const docDatas = await this.getItemsByQuery([['startDate', '>=', condition.startDate]])
         return docDatas as IEvent[]
     }
 
@@ -42,7 +42,7 @@ export default class EventSchemaModel extends Firestore {
             },
             merge: true,
         }
-        const count = await super.updateDocs([['uid', '==', uid], ['id', '==', id]], data, dataAccessOptions)
+        const count = await super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], data, dataAccessOptions)
         return count
     }
 

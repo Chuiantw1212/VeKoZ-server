@@ -1,4 +1,4 @@
-import Firestore from './Firestore.out'
+import Firestore from '../adapters/Firestore.out'
 import type { IFirestoreAdapters } from '../entities/firestore'
 import { ITemplateDesign } from '../entities/eventTemplate'
 
@@ -14,7 +14,7 @@ export default class EventTemplateDesignModel extends Firestore {
      * @returns 
      */
     async createTemplateDesign(uid: string, templateDesign: ITemplateDesign) {
-        return await this.createUidDoc(uid, templateDesign)
+        return await this.createItem(uid, templateDesign)
     }
 
     /**
@@ -30,7 +30,7 @@ export default class EventTemplateDesignModel extends Firestore {
             absolute: 1
         })
         const lastmod = new Date().toISOString()
-        await this.setDocById(id, {
+        await this.setItemById(id, {
             mutable,
             lastmod,
         }, { merge: true })
@@ -42,7 +42,7 @@ export default class EventTemplateDesignModel extends Firestore {
      * @param designId 
      */
     async getTemplateDesign(designId: string): Promise<ITemplateDesign> {
-        const templateDesign: ITemplateDesign = await this.getDocById(designId) as ITemplateDesign
+        const templateDesign: ITemplateDesign = await this.getItemById(designId) as ITemplateDesign
         return templateDesign
     }
 

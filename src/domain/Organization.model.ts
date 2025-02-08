@@ -1,4 +1,4 @@
-import Firestore from './Firestore.out'
+import Firestore from '../adapters/Firestore.out'
 import type { IFirestoreAdapters } from '../entities/firestore'
 interface ILogo {
     type: string;

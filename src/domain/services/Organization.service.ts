@@ -30,7 +30,7 @@ export default class OrganizationService {
      * @param organization 
      */
     newItem(uid: string, organization: IOrganization) {
-        return this.organizationModel.createUidDoc(uid, organization)
+        return this.organizationModel.createItem(uid, organization)
     }
 
     /**
@@ -64,7 +64,7 @@ export default class OrganizationService {
      */
     async getMemberList(uid: string, organizationId: string): Promise<IOrganizationMember[]> {
         const conditions = [['uid', '==', uid], ['organizationId', '==', organizationId]]
-        const list: IOrganizationMember[] = await this.organizationMemberModel.queryDocList(conditions) as IOrganizationMember[]
+        const list: IOrganizationMember[] = await this.organizationMemberModel.getItemsByQuery(conditions) as IOrganizationMember[]
         return list
     }
 
