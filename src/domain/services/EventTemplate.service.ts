@@ -45,15 +45,15 @@ export default class EventTemplateService {
         // 更新template
         await this.eventTemplateModel.mergeDesignIds(uid, designIds)
         // 取得新的Template
-        const newTemplateDoc = await this.getTemplate(uid)
+        const newTemplateDoc = await this.getTemplate(uid, String(insertedEventTemplate.id))
         if (newTemplateDoc) {
             return newTemplateDoc
         }
         throw '創建樣板過程有錯誤'
     }
 
-    async getTemplate(uid: string): Promise<IEventTemplate | 0> {
-        const eventTemplate: IEventTemplate | 0 = await this.eventTemplateModel.readTemplate(uid)
+    async getTemplate(uid: string, id: string): Promise<IEventTemplate | 0> {
+        const eventTemplate: IEventTemplate | 0 = await this.eventTemplateModel.readTemplateById(uid, id)
         if (eventTemplate) {
             const designIds = eventTemplate.designIds || []
             // 自動修正樣板資料
@@ -84,7 +84,7 @@ export default class EventTemplateService {
     }
 
     async deleteTemplate(uid: string, id: string): Promise<number> {
-        const oldTemplate = await this.eventTemplateModel.readTemplate(uid, id)
+        const oldTemplate = await this.eventTemplateModel.readTemplateById(uid, id)
         if (oldTemplate) {
             const designIds = oldTemplate.designIds ?? []
             const promises = designIds.map(designId => {

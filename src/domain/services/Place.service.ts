@@ -19,7 +19,7 @@ export default class PlaceService {
      * @param uid UserUid
      * @param place 
      */
-    newItem(uid: string, place: IPlace) {
+    addPlace(uid: string, place: IPlace) {
         return this.placeModel.createItem(uid, place)
     }
 
@@ -34,8 +34,8 @@ export default class PlaceService {
      * 取得列表
      * @returns 
      */
-    async getDocList() {
-        const list: IPlace[] = await this.placeModel.getDocList()
+    async getPlaceList() {
+        const list: IPlace[] = await this.placeModel.getPlaceList()
         return list
     }
 
@@ -44,8 +44,8 @@ export default class PlaceService {
      * @param id 
      * @returns 
      */
-    async deleteItemById(uid: string, id: string) {
-        return await this.placeModel.deleteItemById(uid, id)
+    async deletePlaceById(uid: string, id: string) {
+        return await this.placeModel.deletePlaceById(uid, id)
     }
 
     /**

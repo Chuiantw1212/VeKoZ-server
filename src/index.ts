@@ -114,7 +114,7 @@ import placeController from './adapters/client.in/place.ctrl'
             organizationModel,
             organizationMemberModel,
         }),
-        AccomdationService: new PlaceService({
+        PlaceService: new PlaceService({
             placeModel,
         }),
         AuthService: new AuthService(firebase)

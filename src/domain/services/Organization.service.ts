@@ -52,8 +52,8 @@ export default class OrganizationService {
      * 取得列表
      * @returns 
      */
-    async getDocList() {
-        const list: IOrganization[] = await this.organizationModel.getDocList()
+    async getOrganizationList() {
+        const list: IOrganization[] = await this.organizationModel.getOrganizationList()
         return list
     }
 
@@ -64,8 +64,7 @@ export default class OrganizationService {
      * @returns 
      */
     async getMemberList(uid: string, organizationId: string): Promise<IOrganizationMember[]> {
-        const conditions = [['uid', '==', uid], ['organizationId', '==', organizationId]]
-        const list: IOrganizationMember[] = await this.organizationMemberModel.getItemsByQuery(conditions) as IOrganizationMember[]
+        const list: IOrganizationMember[] = await this.organizationMemberModel.getMemberList(uid, organizationId) as IOrganizationMember[]
         return list
     }
 

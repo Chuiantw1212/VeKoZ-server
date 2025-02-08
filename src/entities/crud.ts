@@ -40,16 +40,6 @@ export default abstract class VenoniaCRUD {
         return new Promise(() => { })
     }
     /**
-     * 用id更新一筆資料
-     * @param id 
-     * @param data 
-     * @param options 通常包含uid權限管控用，但現在放在wheres比較簡單
-     * @returns 
-     */
-    protected async setItemById(id: string, data: any, options: ICrudOptions): Promise<number> {
-        return new Promise(() => { })
-    }
-    /**
      * 用條件刪除資料
      * @param wheres 
      * @param options 通常包含uid權限管控用，但現在放在wheres比較簡單

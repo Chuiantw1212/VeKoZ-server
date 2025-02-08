@@ -6,7 +6,7 @@ import EventService from "../domain/services/Event.service"
 import EventTemplateService from "../domain/services/EventTemplate.service"
 import OrganizationService from '../domain/services/Organization.service'
 import AuthService from '../domain/services/Auth.service'
-import AccomdationService from '../domain/services/Place.service'
+import PlaceService from '../domain/services/Place.service'
 
 export interface ILocals {
     [key: string]: any
@@ -15,7 +15,7 @@ export interface ILocals {
     EventService: EventService,
     OrganizationService: OrganizationService,
     AuthService: AuthService,
-    AccomdationService: AccomdationService,
+    PlaceService: PlaceService,
     EventTemplateService: EventTemplateService
 }
 

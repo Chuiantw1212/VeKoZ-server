@@ -65,22 +65,6 @@ export default class Firestore extends VenoniaCRUD {
     }
 
     /**
-     * R: 依據條件取得唯一資料
-     * @param wheres 
-     * @param options 
-     * @returns 
-     */
-    protected async querySingleDoc(wheres: any[][], options: ICrudOptions = {}): Promise<DocumentData | 0> {
-        Object.assign(options, {
-            count: {
-                range: [0, 1]
-            }
-        })
-        const docDatas = await this.getItemsByQuery(wheres, options)
-        return docDatas[0] ?? 0
-    }
-
-    /**
      * R: 利用條件查詢資料
      * @param uid 
      * @param options 
@@ -152,13 +136,48 @@ export default class Firestore extends VenoniaCRUD {
     }
 
     /**
-     * U: 更新doc
-     * @deprecated
-     * @param docId 
+     * Delete 刪除符合條件的資料
+     * @param uid 使用者uid
+     * @returns 
      */
-    protected async setItemById(docId: string, data: any, options: SetOptions): Promise<number> {
-        await this.collection?.doc(docId).set(data, options)
-        return 1
+    protected async deleteItemsByQuery(wheres: any[][], options?: ICrudOptions): Promise<number> {
+        if (!this.collection) {
+            throw this.error.collectionIsNotReady
+        }
+        const query = await this.getQuery(wheres)
+        const count = await this.checkQueryCount(query, options?.count ?? {})
+        const docs = (await query.get()).docs
+        const promises = docs.map(doc => {
+            return doc.ref.delete()
+        })
+        await Promise.all(promises)
+        return count
+    }
+    /**
+     * 刪除其中一個由使用者建立的文件
+     * @param uid 使用者uid
+     * @param id 文件id
+     * @returns 
+     */
+    protected async deleteItemById(uid: string, id: string, options?: ICrudOptions): Promise<number> {
+        if (!this.collection) {
+            throw this.error.collectionIsNotReady
+        }
+        const targetQuery = this.collection.where('uid', '==', uid)
+        const countData = await targetQuery.count().get()
+        const count: number = countData.data().count
+        if (count == 0) {
+            throw 'uid不存在'
+        }
+        const targetDoc = (await targetQuery.get()).docs.find(async doc => {
+            return doc.id === id
+        })
+        if (targetDoc) {
+            await this.collection.doc(targetDoc.id).delete()
+            return 1
+        } else {
+            return 0
+        }
     }
 
     /**
@@ -211,26 +230,6 @@ export default class Firestore extends VenoniaCRUD {
     }
 
     /**
-     * Delete 刪除符合條件的資料
-     * @param uid 使用者uid
-     * @returns 
-     */
-    protected async deleteItemsByQuery(wheres: any[][], options?: ICrudOptions): Promise<number> {
-        if (!this.collection) {
-            throw this.error.collectionIsNotReady
-        }
-        const query = await this.getQuery(wheres)
-        const count = await this.checkQueryCount(query, options?.count ?? {})
-        const docs = (await query.get()).docs
-        const promises = docs.map(doc => {
-            return doc.ref.delete()
-        })
-        await Promise.all(promises)
-        return count
-    }
-
-
-    /**
      * 模仿SQL插入語法，未來銜接Cloud SQL使用
      * @param uid 使用者uid
      * @param data 任何資料
@@ -257,32 +256,5 @@ export default class Firestore extends VenoniaCRUD {
         // })
         // return lastmod
         return ''
-    }
-
-    /**
-     * 刪除其中一個由使用者建立的文件
-     * @param uid 使用者uid
-     * @param id 文件id
-     * @returns 
-     */
-    protected async deleteItemById(uid: string, id: string, options?: ICrudOptions): Promise<number> {
-        if (!this.collection) {
-            throw this.error.collectionIsNotReady
-        }
-        const targetQuery = this.collection.where('uid', '==', uid)
-        const countData = await targetQuery.count().get()
-        const count: number = countData.data().count
-        if (count == 0) {
-            throw 'uid不存在'
-        }
-        const targetDoc = (await targetQuery.get()).docs.find(async doc => {
-            return doc.id === id
-        })
-        if (targetDoc) {
-            await this.collection.doc(targetDoc.id).delete()
-            return 1
-        } else {
-            return 0
-        }
     }
 }
