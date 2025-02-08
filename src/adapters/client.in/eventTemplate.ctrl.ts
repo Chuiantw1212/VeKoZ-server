@@ -4,7 +4,7 @@ import { bearer } from '@elysiajs/bearer'
 import type { IPostTemplateDesignReq, IPatchTemplateDesignReq } from '../../entities/eventTemplate'
 const router = new Elysia()
 router.use(bearer())
-    .get('/event/template/list', async function ({ bearer }) {
+    .get('/event/template', async function ({ bearer }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const result = await EventTemplateService.getTemplate(user.uid)

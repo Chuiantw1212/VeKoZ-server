@@ -52,7 +52,13 @@ export default class EventTemplateService {
         throw '創建樣板過程有錯誤'
     }
 
-    async getTemplate(uid: string, id: string): Promise<IEventTemplate | 0> {
+    /**
+     * 因為目前一個人只會有一個樣板可編輯，所以id是可選的
+     * @param uid 
+     * @param id 
+     * @returns 
+     */
+    async getTemplate(uid: string, id?: string): Promise<IEventTemplate | 0> {
         const eventTemplate: IEventTemplate | 0 = await this.eventTemplateModel.readTemplateById(uid, id)
         if (eventTemplate) {
             const designIds = eventTemplate.designIds || []

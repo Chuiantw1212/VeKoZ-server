@@ -27,8 +27,12 @@ export default class EventTemplateModel extends Firestore {
      * @param uid 
      * @returns 
      */
-    async readTemplateById(uid: string, id: string): Promise<IEventTemplate | 0> {
-        const eventTemplates = await this.getItemsByQuery([['uid', '==', uid], ['id', '==', id]], {
+    async readTemplateById(uid: string, id?: string): Promise<IEventTemplate | 0> {
+        const wheres = [['uid', '==', uid], ['id', '==', id]]
+        if (id) {
+            wheres.push(['id', '==', id])
+        }
+        const eventTemplates = await this.getItemsByQuery(wheres, {
             count: {
                 absolute: 1
             }
