@@ -26,8 +26,8 @@ export default class PlaceService {
     /**
      * 取得空間
      */
-    async getItem(uid: string) {
-        return await this.placeModel.getItemsByQuery([['uid', '==', uid]])
+    async getItem(uid: string, id: string) {
+        return await this.placeModel.getPlaceById(uid, id)
     }
 
     /**
