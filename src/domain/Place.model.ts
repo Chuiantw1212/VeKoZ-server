@@ -17,5 +17,14 @@ export default class PlaceModel extends Firestore {
         }) as IPlace[]
         return items[0]
     }
+    async mergePlaceById(uid: string, id: string, place: IPlace) {
+        const count = await super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], place, {
+            merge: true,
+            count: {
+                absolute: 1
+            }
+        })
+        return count
+    }
 
 }

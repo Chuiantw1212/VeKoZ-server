@@ -284,30 +284,4 @@ export default class Firestore extends VenoniaCRUD {
             return 0
         }
     }
-
-    /**
-     * 更新其中一個由使用者建立的文件
-     * @deprecated
-     * @param uid 使用者uid
-     * @param id 文件id
-     * @returns 
-     */
-    protected async mergeByDocId(uid: string, id: string, data: any): Promise<number> {
-        if (!this.collection) {
-            throw this.error.collectionIsNotReady
-        }
-        const targetQuery = this.collection.where('uid', '==', uid)
-        const countData = await targetQuery.count().get()
-        const count: number = countData.data().count
-        if (count == 0) {
-            throw 'uid不存在'
-        }
-        const targetDoc = (await targetQuery.get()).docs.find(async doc => {
-            return doc.id === id
-        })
-        if (targetDoc) {
-            await this.collection.doc(targetDoc.id).update(data, { merge: true })
-        }
-        return 1
-    }
 }

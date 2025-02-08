@@ -21,7 +21,7 @@ router.use(bearer())
         const { AuthService, AccomdationService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const place: IPlace = await request.json() as any
-        const result = await AccomdationService.mergeByDocId(user.uid, id, place)
+        const result = await AccomdationService.mergePlaceById(user.uid, id, place)
         return result
     })
     .delete('/place/:id', async ({ request, bearer, params }) => {

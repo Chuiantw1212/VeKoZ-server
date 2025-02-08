@@ -31,13 +31,6 @@ export default class PlaceService {
     }
 
     /**
-     * 更新空間
-     */
-    async mergeUniqueDoc(uid: string, place: IPlace) {
-        return await this.placeModel.mergeUniqueDoc(uid, place)
-    }
-
-    /**
      * 取得列表
      * @returns 
      */
@@ -61,7 +54,7 @@ export default class PlaceService {
      * @param id 文檔id
      * @returns 
      */
-    async mergeByDocId(uid: string, id: string, data: any) {
-        return await this.placeModel.mergeByDocId(uid, id, data)
+    async mergePlaceById(uid: string, id: string, data: any) {
+        return await this.placeModel.mergePlaceById(uid, id, data)
     }
 }
