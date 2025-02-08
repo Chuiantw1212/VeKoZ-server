@@ -20,11 +20,11 @@ export default class EventModel extends Firestore {
 
     /**
      * 查詢
-     * @param eventId 
+     * @param id 
      * @returns 
      */
-    async queryByEventId(eventId: string): Promise<IEventTemplate | 0> {
-        const events = await this.getItemsByQuery([['eventId', '==', eventId]]) as IEventTemplate[]
+    async getEventById(id: string): Promise<IEventTemplate | 0> {
+        const events = await this.getItemsByQuery([['id', '==', id]]) as IEventTemplate[]
         if (events) {
             return events[0]
         }
@@ -37,7 +37,7 @@ export default class EventModel extends Firestore {
      * @param eventTemplate 
      * @returns 
      */
-    async mergeDesignIds(uid: string, eventId: string, designIds: string[]): Promise<number> {
+    async mergeDesignIds(uid: string, id: string, designIds: string[]): Promise<number> {
         const data = {
             designIds,
         }
@@ -47,18 +47,18 @@ export default class EventModel extends Firestore {
             },
             merge: true,
         }
-        const count = await this.setItemsByQuery([['uid', '==', uid], ['id', '==', eventId]], data, dataAccessOptions)
+        const count = await this.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], data, dataAccessOptions)
         return count
     }
 
     /**
      * 刪除
      * @param uid 
-     * @param eventId 
+     * @param id 
      * @returns 
      */
-    async deleteByEventId(uid: string, eventId: string): Promise<number> {
-        const count = await this.deleteItemsByQuery([['uid', '==', uid], ['eventId', '==', eventId]])
+    async deleteByEventId(uid: string, id: string): Promise<number> {
+        const count = await this.deleteItemsByQuery([['uid', '==', uid], ['id', '==', id]])
         return count
     }
 }
