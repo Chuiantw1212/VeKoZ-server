@@ -37,7 +37,9 @@ export default class Firestore extends VenoniaCRUD {
         }
         const docRef = this.collection.doc()
         const lastmod = new Date().toISOString()
-        data.id = docRef.id
+        if (!data.id) {
+            data.id = docRef.id
+        }
         data.lastmod = lastmod
         await this.collection.doc(data.id).set({
             ...data,
