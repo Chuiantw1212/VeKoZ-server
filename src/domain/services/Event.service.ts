@@ -74,9 +74,12 @@ export default class EventService {
         }
         // collection
         const dateDesignId = event.dateDesignId
-        const count = await this.eventDesignModel.patchMutable(uid, dateDesignId, {
+        const originEventDesign: ITemplateDesign = await this.eventDesignModel.getEventDesignById(event.dateDesignId)
+        const originMutable = originEventDesign.mutable ?? {}
+        Object.assign(originMutable, {
             value: [event.startDate, event.endDate]
         })
+        const count = await this.eventDesignModel.patchMutable(uid, dateDesignId, originMutable)
         // SQL
         await this.eventSchemaModel.patchRecordField(uid, event.id, {
             startDate: event.startDate,
@@ -91,7 +94,7 @@ export default class EventService {
             const designIds = eventTemplate.designIds || []
             // 取得details並回傳
             const designPromises = await designIds.map((designId: string) => {
-                return this.eventDesignModel.getEventDesign(designId)
+                return this.eventDesignModel.getEventDesignById(designId)
             })
             const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
             eventTemplate.designs = eventTemplateDesigns

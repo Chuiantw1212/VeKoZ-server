@@ -41,7 +41,7 @@ export default class EventDesignModel extends Firestore {
      * 讀取
      * @param designId 
      */
-    async getEventDesign(designId: string): Promise<ITemplateDesign> {
+    async getEventDesignById(designId: string): Promise<ITemplateDesign> {
         const templateDesign: ITemplateDesign = await super.getItemById(designId) as ITemplateDesign
         return templateDesign
     }
