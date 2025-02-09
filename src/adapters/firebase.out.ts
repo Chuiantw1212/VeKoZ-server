@@ -1,9 +1,9 @@
 import admin from "firebase-admin"
 import { getAuth, Auth } from 'firebase-admin/auth'
-import { getFirestore, Firestore } from 'firebase-admin/firestore'
+import { getFirestore,FirestoreAdapter} from 'firebase-admin/firestore'
 import { getStorage, Storage, } from 'firebase-admin/storage'
 export class FirebaseAdapter {
-    protected firestore: Firestore = null as any
+    protected firestore:FirestoreAdapter= null as any
     protected auth: Auth = null as any
     protected publicBucket: ReturnType<Storage['bucket']> = null as any
     async initializeSync(apiKey: string) {

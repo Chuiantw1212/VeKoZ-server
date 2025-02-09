@@ -1,4 +1,4 @@
-import Firestore from '../adapters/Firestore.out'
+import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { IFirestoreAdapters } from '../entities/dataAccess'
 import { IOrganization } from '../entities/organization';
 interface ILogo {
@@ -6,7 +6,7 @@ interface ILogo {
     buffer: Buffer,
 }
 
-export default class OrganizationModel extends Firestore {
+export default class OrganizationModel extends FirestoreAdapter{
     publicPucket: any = null
 
     constructor(data: IFirestoreAdapters) {

@@ -1,8 +1,8 @@
-import Firestore from '../adapters/Firestore.out'
+import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { ICrudOptions, IFirestoreAdapters } from '../entities/dataAccess'
 import { ITemplateDesign } from '../entities/eventTemplate'
 
-export default class EventTemplateDesignModel extends Firestore {
+export default class EventTemplateDesignModel extends FirestoreAdapter{
     constructor(data: IFirestoreAdapters) {
         super(data)
     }

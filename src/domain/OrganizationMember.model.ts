@@ -1,7 +1,7 @@
-import Firestore from '../adapters/Firestore.out'
+import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { IFirestoreAdapters } from '../entities/dataAccess'
 
-export default class OrganizationMemberModel extends Firestore {
+export default class OrganizationMemberModel extends FirestoreAdapter{
     constructor(data: IFirestoreAdapters) {
         super(data)
     }

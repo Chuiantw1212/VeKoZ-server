@@ -4,7 +4,7 @@ import VenoniaCRUD from "../entities/crud"
 /**
  * 檔案的Naming要對應firestore的存取方式
  */
-export default class Firestore extends VenoniaCRUD {
+export default class FirestoreAdapter extends VenoniaCRUD {
     private collection: IFirestoreAdapters['collection'] = null as any
     protected error = {
         'collectionIsNotReady': 'Collection is not ready.',

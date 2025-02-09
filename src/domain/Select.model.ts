@@ -1,9 +1,9 @@
 import type { IOptionsItem, } from '../entities/select'
 import { Query, QuerySnapshot, DocumentReference, DocumentData, } from 'firebase-admin/firestore'
 import type { IFirestoreAdapters } from '../entities/dataAccess'
-import Firestore from '../adapters/Firestore.out'
+import FirestoreAdapter from '../adapters/Firestore.adapter'
 
-export default class SelectModel extends Firestore {
+export default class SelectModel extends FirestoreAdapter{
     constructor(data: IFirestoreAdapters) {
         super(data)
     }
