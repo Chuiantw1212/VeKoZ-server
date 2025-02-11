@@ -2,7 +2,7 @@ import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { IModelPorts } from '../ports/out.model'
 import { IEventTemplate } from '../entities/eventTemplate'
 
-export default class EventTemplateModel extends FirestoreAdapter{
+export default class EventTemplateModel extends FirestoreAdapter {
     constructor(data: IModelPorts) {
         super(data)
     }
@@ -14,12 +14,13 @@ export default class EventTemplateModel extends FirestoreAdapter{
      * @returns 
      */
     async createTemplate(uid: string, eventTemplate: IEventTemplate): Promise<IEventTemplate> {
-        const newTemplateDoc: IEventTemplate = await this.createItem(uid, eventTemplate, {
-            count: {
-                absolute: 0
-            }
-        })
+        const newTemplateDoc: IEventTemplate = await this.createItem(uid, eventTemplate)
         return newTemplateDoc
+    }
+
+    async getTemplateList(uid: string,) {
+        const templateList = await super.getItemsByQuery([['uid', '==', uid]])
+        return templateList
     }
 
     /**

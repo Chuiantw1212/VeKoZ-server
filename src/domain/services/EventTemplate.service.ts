@@ -21,6 +21,19 @@ export default class EventTemplateService {
     }
 
     /**
+     * 取得列表
+     * @param uid 
+     * @returns 
+     */
+    async getEventTemplateList(uid: string) {
+        const eventTemplateMasterList: IEventTemplate[] = await this.eventTemplateModel.getTemplateList(uid)
+        // const eventTemplateList = eventTemplateMasterList.map((eventTemplate: IEventTemplate) => {
+        //     return this.getTemplate(uid, eventTemplate.id)
+        // })
+        return eventTemplateMasterList
+    }
+
+    /**
      * 如果需要取出，使用get取出嗎？
      * @param uid 
      * @param eventTemplate 
