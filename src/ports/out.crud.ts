@@ -1,4 +1,4 @@
-import { ICrudOptions } from "./dataAccess"
+import { ICrudOptions } from "../entities/dataAccess"
 
 export default abstract class VenoniaCRUD {
     /**

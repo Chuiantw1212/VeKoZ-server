@@ -1,6 +1,6 @@
 import { IFirestoreAdapters, ICrudOptions, IDataCountOptions, } from "../entities/dataAccess"
 import { CollectionReference, DocumentData, DocumentSnapshot, Query, SetOptions } from "firebase-admin/firestore"
-import VenoniaCRUD from "../entities/crud"
+import VenoniaCRUD from "../ports/crud"
 /**
  * 檔案的Naming要對應firestore的存取方式
  */
