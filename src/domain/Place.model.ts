@@ -31,7 +31,7 @@ export default class PlaceModel extends FirestoreAdapter {
         return placeList
     }
     async deletePlaceById(uid: string, id: string) {
-        const count = await super.deleteItemsByQuery([['uid', '==', uid], ['id', '==', id]], {
+        const count = await super.deleteItemById(uid, id, {
             count: {
                 range: [0, 1]
             }
