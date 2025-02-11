@@ -176,7 +176,8 @@ export default class FirestoreAdapter extends VenoniaCRUD {
             return doc.id === id
         })
         if (targetDoc) {
-            await this.collection.doc(targetDoc.id).delete()
+            console.log(targetDoc.id)
+            // await this.collection.doc(targetDoc.id).delete()
             return 1
         } else {
             return 0

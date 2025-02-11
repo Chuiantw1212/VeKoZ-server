@@ -8,4 +8,4 @@
 2. 經過長時間的迭代，service與model會不可避免的有混亂的對應關係。
 
 ## 個人見解 
-如果嚴謹使用RESTUFUL的API設計，很自然一個Entiry.service底下的method就是DDD中Service的用法，保持一個api對到一個service.method的原則。只要restful api的設計原則嚴格把控，很難出現service與model產生混亂對應的狀況。
+1. 如果嚴謹使用RESTUFUL的API設計，很自然一個Entiry.service底下的method就是DDD中Service的用法，保持一個api對到一個service.method的原則。只要restful api的設計原則嚴格把控，很難出現service與model產生混亂對應的狀況。

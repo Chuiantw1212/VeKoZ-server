@@ -2,7 +2,7 @@ import FirestoreAdapter from '../adapters/Firestore.adapter'
 import { IPlace } from '../entities/place'
 import type { IModelPorts } from '../ports/out.model'
 
-export default class PlaceModel extends FirestoreAdapter{
+export default class PlaceModel extends FirestoreAdapter {
     constructor(data: IModelPorts) {
         super(data)
     }
@@ -31,7 +31,7 @@ export default class PlaceModel extends FirestoreAdapter{
         return placeList
     }
     async deletePlaceById(uid: string, id: string) {
-        const count = await super.deleteItemById(uid, id, {
+        const count = await super.deleteItemsByQuery([['uid', '==', uid], ['id', '==', id]], {
             count: {
                 range: [0, 1]
             }
