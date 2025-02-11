@@ -172,12 +172,12 @@ export default class FirestoreAdapter extends VenoniaCRUD {
         if (count == 0) {
             throw 'uid不存在'
         }
-        const targetDoc = (await targetQuery.get()).docs.find(async (doc: DocumentData) => {
+        const docDatas: DocumentData = await targetQuery.get()
+        const targetDoc = docDatas.docs.find(async (doc: DocumentData) => {
             return doc.id === id
         })
         if (targetDoc) {
-            console.log(targetDoc.id)
-            // await this.collection.doc(targetDoc.id).delete()
+            await this.collection.doc(targetDoc.id).delete()
             return 1
         } else {
             return 0
