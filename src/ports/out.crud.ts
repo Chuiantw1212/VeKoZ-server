@@ -1,5 +1,3 @@
-import { ICrudOptions } from "../entities/dataAccess"
-
 export default abstract class VenoniaCRUD {
     /**
      * 創造一筆資料
@@ -58,4 +56,21 @@ export default abstract class VenoniaCRUD {
     protected async deleteItemById(id: string, data: any, options: ICrudOptions): Promise<number> {
         return new Promise(() => { })
     }
+}
+
+export interface ICrudOptions {
+    uid?: string, // 資料權限控制
+    count?: IDataCountOptions,
+    slice?: [number, number] | number
+    fields?: string[],
+    merge?: boolean,
+    limit?: number,
+    sort?: string,
+}
+
+export interface IDataCountOptions {
+    min?: number,
+    max?: number,
+    absolute?: number,
+    range?: number[],
 }
