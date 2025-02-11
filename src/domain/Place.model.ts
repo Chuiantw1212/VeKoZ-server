@@ -1,8 +1,8 @@
-import Firestore from '../adapters/Firestore.out'
+import FirestoreAdapter from '../adapters/Firestore.adapter'
 import { IPlace } from '../entities/place'
 import type { IFirestoreAdapters } from '../entities/dataAccess'
 
-export default class PlaceModel extends Firestore {
+export default class PlaceModel extends FirestoreAdapter{
     constructor(data: IFirestoreAdapters) {
         super(data)
     }
