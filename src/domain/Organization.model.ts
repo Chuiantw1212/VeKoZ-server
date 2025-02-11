@@ -1,5 +1,5 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
-import type { IFirestoreAdapters } from '../entities/dataAccess'
+import type { IModelPorts } from '../ports/out.model'
 import { IOrganization } from '../entities/organization';
 interface ILogo {
     type: string;
@@ -9,7 +9,7 @@ interface ILogo {
 export default class OrganizationModel extends FirestoreAdapter{
     publicPucket: any = null
 
-    constructor(data: IFirestoreAdapters) {
+    constructor(data: IModelPorts) {
         super(data)
         this.publicPucket = data.publicBucket
     }

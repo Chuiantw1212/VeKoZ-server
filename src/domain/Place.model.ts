@@ -1,9 +1,9 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
 import { IPlace } from '../entities/place'
-import type { IFirestoreAdapters } from '../entities/dataAccess'
+import type { IModelPorts } from '../ports/out.model'
 
 export default class PlaceModel extends FirestoreAdapter{
-    constructor(data: IFirestoreAdapters) {
+    constructor(data: IModelPorts) {
         super(data)
     }
     async createItem(uid: string, place: IPlace) {

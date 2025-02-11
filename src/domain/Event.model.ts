@@ -1,9 +1,9 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
-import type { IFirestoreAdapters } from '../entities/dataAccess'
+import type { IModelPorts } from '../ports/out.model'
 import { IEventTemplate } from '../entities/eventTemplate'
 
-export default class EventModel extends FirestoreAdapter{
-    constructor(data: IFirestoreAdapters) {
+export default class EventModel extends FirestoreAdapter {
+    constructor(data: IModelPorts) {
         super(data)
     }
 

@@ -1,9 +1,9 @@
-import Firestore from '../adapters/Firestore.out'
+import Firestore from '../adapters/Firestore.adapter'
 import { IUser } from '../entities/user'
-import type { IFirestoreAdapters } from '../entities/dataAccess'
+import type { IModelPorts } from '../ports/out.model'
 
 export default class UserModel extends Firestore {
-    constructor(data: IFirestoreAdapters) {
+    constructor(data: IModelPorts) {
         super(data)
     }
     async createUser(uid: string, user: IUser) {

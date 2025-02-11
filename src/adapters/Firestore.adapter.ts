@@ -1,17 +1,18 @@
-import { IFirestoreAdapters, ICrudOptions, IDataCountOptions, } from "../entities/dataAccess"
+import { IModelPorts, } from "../ports/out.model"
+import type { ICrudOptions, IDataCountOptions } from "../ports/out.crud"
 import { CollectionReference, DocumentData, DocumentSnapshot, Query, SetOptions } from "firebase-admin/firestore"
-import VenoniaCRUD from "../ports/crud"
+import VenoniaCRUD from "../ports/out.crud"
 /**
  * 檔案的Naming要對應firestore的存取方式
  */
 export default class FirestoreAdapter extends VenoniaCRUD {
-    private collection: IFirestoreAdapters['collection'] = null as any
+    private collection: IModelPorts['collection'] = null as any
     protected error = {
         'collectionIsNotReady': 'Collection is not ready.',
         'docNoFound': 'Data not found by given condition',
     }
 
-    constructor(data: IFirestoreAdapters) {
+    constructor(data: IModelPorts) {
         super()
         const { collection, } = data
         if (collection) {

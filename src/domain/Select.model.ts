@@ -1,10 +1,10 @@
 import type { IOptionsItem, } from '../entities/select'
 import { Query, QuerySnapshot, DocumentReference, DocumentData, } from 'firebase-admin/firestore'
-import type { IFirestoreAdapters } from '../entities/dataAccess'
+import type { IModelPorts } from '../ports/out.model'
 import FirestoreAdapter from '../adapters/Firestore.adapter'
 
 export default class SelectModel extends FirestoreAdapter{
-    constructor(data: IFirestoreAdapters) {
+    constructor(data: IModelPorts) {
         super(data)
     }
     async getOptionsByKey(key: string,): Promise<IOptionsItem[]> {
