@@ -6,7 +6,7 @@ import VenoniaCRUD from "../ports/out.crud"
  * 檔案的Naming要對應firestore的存取方式
  */
 export default class FirestoreAdapter extends VenoniaCRUD {
-    private collection: IModelPorts['collection'] = null as any
+    protected collection: IModelPorts['collection'] = null as any
     protected error = {
         'collectionIsNotReady': 'Collection is not ready.',
         'docNoFound': 'Data not found by given condition',
@@ -110,7 +110,7 @@ export default class FirestoreAdapter extends VenoniaCRUD {
             throw this.error.collectionIsNotReady
         }
         const snapshot = await this.collection.get()
-        const docDatas = snapshot.docs.map(doc => {
+        const docDatas = snapshot.docs.map((doc: DocumentData) => {
             const docData = doc.data()
             delete docData.uid
             return docData
@@ -172,7 +172,7 @@ export default class FirestoreAdapter extends VenoniaCRUD {
         if (count == 0) {
             throw 'uid不存在'
         }
-        const targetDoc = (await targetQuery.get()).docs.find(async doc => {
+        const targetDoc = (await targetQuery.get()).docs.find(async (doc: DocumentData) => {
             return doc.id === id
         })
         if (targetDoc) {

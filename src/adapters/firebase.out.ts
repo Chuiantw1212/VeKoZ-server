@@ -1,12 +1,11 @@
 import admin from "firebase-admin"
 import { getAuth, Auth } from 'firebase-admin/auth'
-import { getFirestore, } from 'firebase-admin/firestore'
-import type FirestoreAdapter from "./Firestore.adapter"
+import { Firestore, getFirestore, } from 'firebase-admin/firestore'
 import { getStorage, Storage, } from 'firebase-admin/storage'
 export class FirebaseAdapter {
-    protected firestore: FirestoreAdapter = null as any
-    protected auth: Auth = null as any
-    protected publicBucket: ReturnType<Storage['bucket']> = null as any
+    private firestore: Firestore = null as any
+    private auth: Auth = null as any
+    private publicBucket: ReturnType<Storage['bucket']> = null as any
     async initializeSync(apiKey: string) {
         const credential = admin.credential.cert(apiKey)
         admin.initializeApp({
@@ -36,6 +35,9 @@ export class FirebaseAdapter {
     }
     getFirestore() {
         return this.firestore
+    }
+    getCollection(collectionName: string) {
+        return this.firestore.collection(collectionName)
     }
     async verifyIdToken(idToken: string | null) {
         if (!idToken) {
