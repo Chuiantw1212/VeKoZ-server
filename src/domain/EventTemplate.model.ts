@@ -35,7 +35,6 @@ export default class EventTemplateModel extends FirestoreAdapter {
             count: {
                 range: [0, 1]
             },
-            orderBy: ['lastmod'],
         })
         return eventTemplates[0]
     }
