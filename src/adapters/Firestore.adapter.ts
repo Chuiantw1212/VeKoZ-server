@@ -241,8 +241,9 @@ export default class FirestoreAdapter extends VenoniaCRUD {
             query = query.where(field, operator, value)
         })
         if (options?.orderBy) {
-            const orderByDirection = options.orderBy[1] as any
-            query.orderBy(options.orderBy[0], orderByDirection)
+            const fieldPath = options.orderBy[0]
+            const orderByDirection = options.orderBy[1] as 'desc' | 'asc'
+            query = query.orderBy(fieldPath, orderByDirection)
         }
         return query
     }

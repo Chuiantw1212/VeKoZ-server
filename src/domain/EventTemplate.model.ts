@@ -20,7 +20,7 @@ export default class EventTemplateModel extends FirestoreAdapter {
 
     async getTemplateList(uid: string,) {
         const templateList = await super.getItemsByQuery([['uid', '==', uid]], {
-            orderBy: ['lastmod'],
+            orderBy: ['lastmod', 'desc'],
         })
         return templateList
     }
