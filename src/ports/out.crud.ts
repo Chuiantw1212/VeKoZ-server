@@ -66,6 +66,7 @@ export interface ICrudOptions {
     merge?: boolean,
     limit?: number,
     sort?: string,
+    orderBy?: string[],
 }
 
 export interface IDataCountOptions {

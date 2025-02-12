@@ -19,7 +19,9 @@ export default class EventTemplateModel extends FirestoreAdapter {
     }
 
     async getTemplateList(uid: string,) {
-        const templateList = await super.getItemsByQuery([['uid', '==', uid]])
+        const templateList = await super.getItemsByQuery([['uid', '==', uid]], {
+            orderBy: ['lastmod'],
+        })
         return templateList
     }
 
@@ -35,8 +37,9 @@ export default class EventTemplateModel extends FirestoreAdapter {
         }
         const eventTemplates = await this.getItemsByQuery(wheres, {
             count: {
-                absolute: 1
-            }
+                range: [0, 1]
+            },
+            orderBy: 'lastmod',
         })
         return eventTemplates[0]
     }

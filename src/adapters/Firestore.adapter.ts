@@ -1,6 +1,6 @@
 import { IModelPorts, } from "../ports/out.model"
 import type { ICrudOptions, IDataCountOptions } from "../ports/out.crud"
-import { CollectionReference, DocumentData, DocumentSnapshot, Query, SetOptions } from "firebase-admin/firestore"
+import { CollectionReference, DocumentData, DocumentSnapshot, Query, Timestamp } from "firebase-admin/firestore"
 import VenoniaCRUD from "../ports/out.crud"
 /**
  * 檔案的Naming要對應firestore的存取方式
@@ -32,12 +32,12 @@ export default class FirestoreAdapter extends VenoniaCRUD {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }
-        const query = await this.getQuery([['uid', '==', uid]])
+        const query = await this.getQuery([['uid', '==', uid]], options)
         if (options?.count) {
             await this.checkQueryCount(query, options.count)
         }
         const docRef = this.collection.doc()
-        const lastmod = new Date().toISOString()
+        const lastmod = Timestamp.fromDate(new Date())
         if (!data.id) {
             data.id = docRef.id
         }
@@ -77,7 +77,7 @@ export default class FirestoreAdapter extends VenoniaCRUD {
             throw this.error.collectionIsNotReady
         }
         // 檢查資料數量
-        const query = await this.getQuery(wheres)
+        const query = await this.getQuery(wheres, options)
         if (options?.count) {
             await this.checkQueryCount(query, options.count)
         }
@@ -96,6 +96,7 @@ export default class FirestoreAdapter extends VenoniaCRUD {
             delete docData.uid // IMPORTANT
             return docData
         })
+        console.log(docDatas)
         return docDatas
     }
 
@@ -126,7 +127,7 @@ export default class FirestoreAdapter extends VenoniaCRUD {
     protected async setItemsByQuery(wheres: any[][], data: any, options: ICrudOptions = {}): Promise<number> {
         const query: Query = await this.getQuery(wheres)
         const count = await this.checkQueryCount(query, options.count ?? {})
-        const lastmod = new Date().toISOString()
+        const lastmod = Timestamp.fromDate(new Date())
         data.lastmod = lastmod
         const docs = (await query.get()).docs
         const promiese = docs.map(doc => {
@@ -189,7 +190,7 @@ export default class FirestoreAdapter extends VenoniaCRUD {
      * @param wheres 
      * @returns 
      */
-    protected async getQuery(wheres: any[][]): Promise<Query> {
+    protected async getQuery(wheres: any[][], options?: ICrudOptions): Promise<Query> {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }
@@ -200,6 +201,11 @@ export default class FirestoreAdapter extends VenoniaCRUD {
             const value = where[2]
             query = query.where(field, operator, value)
         })
+        if (options?.orderBy) {
+            console.log(options.orderBy)
+            const orderByDirection = options.orderBy[1] as any
+            query.orderBy(options.orderBy[0], orderByDirection)
+        }
         return query
     }
 
@@ -214,20 +220,21 @@ export default class FirestoreAdapter extends VenoniaCRUD {
         }
         const countData = await query.count().get()
         const count: number = countData.data().count
+        let message = ''
         if (options.max && count >= options.max) {
-            const message = `資料數量已達上限: ${count} > ${options.max}`
-            throw message
+            message = `資料數量已達上限: ${count} > ${options.max}`
         }
         if (options.min && count <= options.min) {
-            const message = `資料數量低於下限: ${count} < ${options.min}`
-            throw message
+            message = `資料數量低於下限: ${count} < ${options.min}`
         }
         if (options.absolute && count !== options.absolute) {
-            const message = `資料數量數值不合: ${count} !== ${options.absolute}`
-            throw message
+            message = `資料數量數值不合: ${count} !== ${options.absolute}`
         }
         if (options.range && !options.range.includes(count)) {
-            const message = `資料數量範圍不合: ${count} 不在 ${options.range} 中`
+            message = `資料數量範圍不合: ${count} 不在 ${options.range} 中`
+        }
+        if (message) {
+            console.trace(message)
             throw message
         }
         return count
@@ -253,7 +260,7 @@ export default class FirestoreAdapter extends VenoniaCRUD {
      */
     protected async mergeUniqueDoc(uid: string, data: any): Promise<string> {
         // const singleDocSnapshot = await this.checkQueryCount(uid, 1)
-        // const lastmod = new Date().toISOString()
+        // const lastmod = Timestamp.fromDate(new Date())
         // data.lastmod = lastmod
         // singleDocSnapshot.ref.set(data, {
         //     merge: true

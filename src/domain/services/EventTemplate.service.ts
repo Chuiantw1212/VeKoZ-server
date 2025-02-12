@@ -27,9 +27,6 @@ export default class EventTemplateService {
      */
     async getEventTemplateList(uid: string) {
         const eventTemplateMasterList: IEventTemplate[] = await this.eventTemplateModel.getTemplateList(uid)
-        // const eventTemplateList = eventTemplateMasterList.map((eventTemplate: IEventTemplate) => {
-        //     return this.getTemplate(uid, eventTemplate.id)
-        // })
         return eventTemplateMasterList
     }
 
