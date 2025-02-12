@@ -46,7 +46,7 @@ export default class EventTemplateModel extends FirestoreAdapter {
      * @param eventTemplate 
      * @returns 
      */
-    async mergeTempalte(uid: string, id: string, templatePart: IEventTemplate): Promise<number> {
+    async mergeTemplate(uid: string, id: string, templatePart: IEventTemplate): Promise<number> {
         const dataAccessOptions = {
             count: {
                 absolute: 1 // 如果不是1，就是符合條件統一改寫

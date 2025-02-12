@@ -62,6 +62,9 @@ export default class FirestoreAdapter extends VenoniaCRUD {
         const docData = documentSnapshot.data()
         if (docData) {
             delete docData.uid
+            if (docData.lastmod) {
+                docData.lastmod = new Date(docData.lastmod.seconds * 1000)
+            }
             return docData
         }
         return 0
@@ -94,6 +97,9 @@ export default class FirestoreAdapter extends VenoniaCRUD {
         const docDatas = docs.map(doc => {
             const docData = doc.data()
             delete docData.uid // IMPORTANT
+            if (docData.lastmod) {
+                docData.lastmod = new Date(docData.lastmod.seconds * 1000)
+            }
             return docData
         })
         return docDatas
@@ -113,6 +119,9 @@ export default class FirestoreAdapter extends VenoniaCRUD {
         const docDatas = snapshot.docs.map((doc: DocumentData) => {
             const docData = doc.data()
             delete docData.uid
+            if (docData.lastmod) {
+                docData.lastmod = new Date(docData.lastmod.seconds * 1000)
+            }
             return docData
         });
         return docDatas as any[]
@@ -156,11 +165,11 @@ export default class FirestoreAdapter extends VenoniaCRUD {
             throw 'uid不存在'
         }
         const docDatas: DocumentData = await targetQuery.get()
-        const targetDoc = docDatas.docs.find((doc: DocumentData) => {
+        const targetDoc: DocumentData = docDatas.docs.find((doc: DocumentData) => {
             return doc.id === id
         })
         if (targetDoc) {
-            await this.collection.doc.ref.update(data, {
+            await targetDoc.ref.update(data, {
                 merge: options?.merge
             })
             return 1
