@@ -2,7 +2,7 @@ import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { ICrudOptions, IModelPorts } from '../ports/out.model'
 import { ITemplateDesign } from '../entities/eventTemplate'
 
-export default class EventTemplateDesignModel extends FirestoreAdapter{
+export default class EventTemplateDesignModel extends FirestoreAdapter {
     constructor(data: IModelPorts) {
         super(data)
     }
@@ -58,8 +58,7 @@ export default class EventTemplateDesignModel extends FirestoreAdapter{
                 absolute: 1
             }
         }
-        const count = await super.deleteItemsByQuery(
-            [['uid', '==', uid], ['id', '==', id]],
+        const count = await super.deleteItemById(uid, id,
             options
         )
         return count

@@ -107,7 +107,7 @@ export default class EventTemplateService {
                 return this.deleteDesignById(uid, designId)
             })
             await Promise.all(promises)
-            const count = await this.eventTemplateModel.deleteTemplate(uid)
+            const count = await this.eventTemplateModel.deleteTemplate(uid, id)
             return count
         }
         return 0

@@ -64,8 +64,8 @@ export default class EventTemplateModel extends FirestoreAdapter {
      * 刪除
      * @param uid 
      */
-    async deleteTemplate(uid: string): Promise<number> {
-        const count = await this.deleteItemsByQuery([['uid', '==', uid]], {
+    async deleteTemplate(uid: string, id: string,): Promise<number> {
+        const count = await this.deleteItemById(uid, id, {
             count: {
                 absolute: 1
             }
