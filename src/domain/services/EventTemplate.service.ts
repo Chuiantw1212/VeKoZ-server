@@ -23,7 +23,7 @@ export default class EventTemplateService {
     /**
      * 取得列表
      * @param uid 
-     * @returns 
+     * @returns ｀
      */
     async getEventTemplateList(uid: string) {
         const eventTemplateMasterList: IEventTemplate[] = await this.eventTemplateModel.getTemplateList(uid)
@@ -50,7 +50,8 @@ export default class EventTemplateService {
         // 儲存template
         const insertedEventTemplate: IEventTemplate = await this.eventTemplateModel.createTemplate(uid, eventTemplate)
         // 儲存欄位design
-        const designDocPromises = designsTemp.map((design) => {
+        const designDocPromises = designsTemp.map((design: ITemplateDesign) => {
+            delete design.id // 避免模板值互相干擾
             design.templateId = insertedEventTemplate.id
             return this.eventTemplateDesignModel.createTemplateDesign(uid, design)
         })
@@ -78,11 +79,8 @@ export default class EventTemplateService {
         const eventTemplate: IEventTemplate | 0 = await this.eventTemplateModel.readTemplateById(uid, id)
         if (eventTemplate) {
             const designIds = eventTemplate.designIds || []
-            // // 自動修正樣板資料
-            // const correctedIds = designIds.filter(id => !!id)
-            // this.eventTemplateModel.mergeDesignIds(uid, correctedIds)
             // 取得details並回傳
-            const designPromises = await designIds.map((designId: string) => {
+            const designPromises = designIds.map((designId: string) => {
                 return this.eventTemplateDesignModel.getTemplateDesign(designId)
             })
             const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
