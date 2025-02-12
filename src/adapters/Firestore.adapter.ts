@@ -96,7 +96,6 @@ export default class FirestoreAdapter extends VenoniaCRUD {
             delete docData.uid // IMPORTANT
             return docData
         })
-        console.log(docDatas)
         return docDatas
     }
 
@@ -202,7 +201,6 @@ export default class FirestoreAdapter extends VenoniaCRUD {
             query = query.where(field, operator, value)
         })
         if (options?.orderBy) {
-            console.log(options.orderBy)
             const orderByDirection = options.orderBy[1] as any
             query.orderBy(options.orderBy[0], orderByDirection)
         }

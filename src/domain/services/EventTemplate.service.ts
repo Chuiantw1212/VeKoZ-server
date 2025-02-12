@@ -68,13 +68,13 @@ export default class EventTemplateService {
      * @param id 
      * @returns 
      */
-    async getTemplate(uid: string, id?: string): Promise<IEventTemplate | 0> {
+    async getTemplate(uid: string, id: string): Promise<IEventTemplate | 0> {
         const eventTemplate: IEventTemplate | 0 = await this.eventTemplateModel.readTemplateById(uid, id)
         if (eventTemplate) {
             const designIds = eventTemplate.designIds || []
-            // 自動修正樣板資料
-            const correctedIds = designIds.filter(id => !!id)
-            this.eventTemplateModel.mergeDesignIds(uid, correctedIds)
+            // // 自動修正樣板資料
+            // const correctedIds = designIds.filter(id => !!id)
+            // this.eventTemplateModel.mergeDesignIds(uid, correctedIds)
             // 取得details並回傳
             const designPromises = await designIds.map((designId: string) => {
                 return this.eventTemplateDesignModel.getTemplateDesign(designId)
