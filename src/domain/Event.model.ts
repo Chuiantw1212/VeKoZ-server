@@ -58,7 +58,7 @@ export default class EventModel extends FirestoreAdapter {
      * @returns 
      */
     async deleteByEventId(uid: string, id: string): Promise<number> {
-        const count = await super.deleteItemsByQuery([['uid', '==', uid], ['id', '==', id]])
+        const count = await super.deleteItemById(uid, id)
         return count
     }
 }

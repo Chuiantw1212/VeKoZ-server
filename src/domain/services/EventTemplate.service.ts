@@ -45,7 +45,7 @@ export default class EventTemplateService {
         delete eventTemplate.designs
         // 給預設未命名
         if (!eventTemplate.name) {
-            eventTemplate.name = '未命名'
+            eventTemplate.name = '未命名模板'
         }
         // 儲存template
         const insertedEventTemplate: IEventTemplate = await this.eventTemplateModel.createTemplate(uid, eventTemplate)

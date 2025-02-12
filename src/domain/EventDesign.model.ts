@@ -1,8 +1,9 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
-import type { ICrudOptions, IModelPorts } from '../ports/out.model'
+import type { IModelPorts } from '../ports/out.model'
+import type { ICrudOptions } from '../ports/out.crud'
 import { ITemplateDesign } from '../entities/eventTemplate'
 
-export default class EventDesignModel extends FirestoreAdapter{
+export default class EventDesignModel extends FirestoreAdapter {
     constructor(data: IModelPorts) {
         super(data)
     }
@@ -31,7 +32,7 @@ export default class EventDesignModel extends FirestoreAdapter{
                 absolute: 1
             }
         }
-        const count = await super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], {
+        const count = await super.setItemById(uid, id, {
             mutable,
         }, options)
         return count
@@ -55,30 +56,10 @@ export default class EventDesignModel extends FirestoreAdapter{
     async deleteDesignById(uid: string, id: string): Promise<number> {
         const options = {
             count: {
-                absolute: 1
+                range: [0, 1]
             }
         }
-        const count = await super.deleteItemsByQuery(
-            [['uid', '==', uid], ['id', '==', id]],
-            options
-        )
-        return count
-    }
-
-    /**
-     * 刪除
-     * @param uid 
-     * @param id 
-     * @returns 
-     */
-    async deleteDesignByEventId(uid: string, eventId: string): Promise<number> {
-        const options = {
-            count: {
-                absolute: 1
-            }
-        }
-        const count = await super.deleteItemsByQuery(
-            [['uid', '==', uid], ['eventId', '==', eventId]],
+        const count = await super.deleteItemById(uid, id,
             options
         )
         return count
