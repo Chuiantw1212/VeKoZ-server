@@ -32,7 +32,7 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
             },
             merge: true
         }
-        const count = await super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], {
+        const count = await super.setItemById(uid, id, {
             mutable,
         }, options)
         return count
