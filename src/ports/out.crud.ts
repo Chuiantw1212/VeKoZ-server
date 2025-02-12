@@ -37,6 +37,17 @@ export default abstract class VenoniaCRUD {
     protected async setItemsByQuery(wheres: any[][], data: any, options: ICrudOptions): Promise<number> {
         return new Promise(() => { })
     }
+
+    /**
+     * 用id更新資料
+     * @param id 
+     * @param data 
+     * @param options 
+     * @returns 
+     */
+    protected async setItemById(id: string, data: any, options?: ICrudOptions) {
+        return new Promise(() => { })
+    }
     /**
      * 用條件刪除資料
      * @param wheres 

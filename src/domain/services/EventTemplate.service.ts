@@ -53,7 +53,7 @@ export default class EventTemplateService {
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
         const designIds = designDocs.map(doc => doc.id ?? '')
         // 更新template
-        await this.eventTemplateModel.mergeDesignIds(uid, designIds)
+        await this.eventTemplateModel.mergeDesignIds(uid, String(insertedEventTemplate.id), designIds)
         // 取得新的Template
         const newTemplateDoc = await this.getTemplate(uid, String(insertedEventTemplate.id))
         if (newTemplateDoc) {
@@ -113,8 +113,8 @@ export default class EventTemplateService {
         return 0
     }
 
-    async patchTemplate(uid: string, designIds: string[]): Promise<number> {
-        const count = await this.eventTemplateModel.mergeDesignIds(uid, designIds)
+    async patchTemplate(uid: string, id: string, templatePart: IEventTemplate): Promise<number> {
+        const count = await this.eventTemplateModel.mergeTempalte(uid, id, templatePart)
         return count
     }
     async patchTemplateDesign(uid: string, payload: IPatchTemplateDesignReq) {

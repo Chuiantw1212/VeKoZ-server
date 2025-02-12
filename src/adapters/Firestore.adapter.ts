@@ -119,7 +119,7 @@ export default class FirestoreAdapter extends VenoniaCRUD {
     }
 
     /**
-     * U: 取代現有的Document某個欄位
+     * U: 更新現有的Documents
      * @param uid user id
      * @param data 
      */
@@ -136,6 +136,37 @@ export default class FirestoreAdapter extends VenoniaCRUD {
         })
         await Promise.all(promiese)
         return count
+    }
+
+    /**
+     * U: 更新現有的某個Document
+     * @param uid 
+     * @param id 
+     * @param options 
+     * @returns 
+     */
+    protected async setItemById(uid: string, id: string, data: any, options?: ICrudOptions) {
+        if (!this.collection) {
+            throw this.error.collectionIsNotReady
+        }
+        const targetQuery = this.collection.where('uid', '==', uid)
+        const countData = await targetQuery.count().get()
+        const count: number = countData.data().count
+        if (count == 0) {
+            throw 'uid不存在'
+        }
+        const docDatas: DocumentData = await targetQuery.get()
+        const targetDoc = docDatas.docs.find((doc: DocumentData) => {
+            return doc.id === id
+        })
+        if (targetDoc) {
+            await this.collection.doc.ref.update(data, {
+                merge: options?.merge
+            })
+            return 1
+        } else {
+            return 0
+        }
     }
 
     /**

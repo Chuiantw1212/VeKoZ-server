@@ -46,17 +46,14 @@ export default class EventTemplateModel extends FirestoreAdapter {
      * @param eventTemplate 
      * @returns 
      */
-    async mergeDesignIds(uid: string, designIds: string[]): Promise<number> {
-        const data = {
-            designIds,
-        }
+    async mergeTempalte(uid: string, id: string, templatePart: IEventTemplate): Promise<number> {
         const dataAccessOptions = {
             count: {
                 absolute: 1 // 如果不是1，就是符合條件統一改寫
             },
             merge: true,
         }
-        const count = await super.setItemsByQuery([['uid', '==', uid]], data, dataAccessOptions)
+        const count = await super.setItemById(uid, id, templatePart, dataAccessOptions)
         return count
     }
 

@@ -1,5 +1,6 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
-import type { ICrudOptions, IModelPorts } from '../ports/out.model'
+import type { IModelPorts } from '../ports/out.model'
+import type { ICrudOptions } from '../ports/out.crud'
 import { ITemplateDesign } from '../entities/eventTemplate'
 
 export default class EventTemplateDesignModel extends FirestoreAdapter {

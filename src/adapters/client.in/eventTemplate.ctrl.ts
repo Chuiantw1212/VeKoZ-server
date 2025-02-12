@@ -1,7 +1,7 @@
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
-import type { IPostTemplateDesignReq, IPatchTemplateDesignReq } from '../../entities/eventTemplate'
+import type { IPostTemplateDesignReq, IPatchTemplateDesignReq, IEventTemplate } from '../../entities/eventTemplate'
 const router = new Elysia()
 router.use(bearer())
     .get('/event/template/:id', async function ({ bearer, params }) {
@@ -24,11 +24,12 @@ router.use(bearer())
         const result = await EventTemplateService.addEventTemplate(user.uid, eventTemplate)
         return result
     })
-    .patch('/event/template', async function ({ request, bearer }) {
+    .patch('/event/template/:id', async function ({ request, bearer, params }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const designIds: string[] = await request.json()
-        const result = await EventTemplateService.patchTemplate(user.uid, designIds)
+        const { id } = params
+        const eventTemplatePart: IEventTemplate = await request.json()
+        const result = await EventTemplateService.patchTemplate(user.uid, id, eventTemplatePart)
         return result
     })
     .delete('/event/template/:id', async function ({ bearer, params }) {
