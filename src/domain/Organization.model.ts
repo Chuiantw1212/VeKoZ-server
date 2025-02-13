@@ -6,7 +6,7 @@ interface ILogo {
     buffer: Buffer,
 }
 
-export default class OrganizationModel extends FirestoreAdapter{
+export default class OrganizationModel extends FirestoreAdapter {
     publicPucket: any = null
 
     constructor(data: IModelPorts) {
@@ -54,7 +54,7 @@ export default class OrganizationModel extends FirestoreAdapter{
      * @returns 
      */
     async deleteItem(uid: string, id: string) {
-        await this.deleteItemById(uid, id)
+        await super.deleteItemById(uid, id)
         await this.publicPucket.deleteFiles({
             prefix: `company/${id}`
         })

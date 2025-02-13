@@ -4,6 +4,7 @@ import EventModel from '../Event.model'
 import EventActorModel from '../EventActor.model'
 import EventSchemaModel from '../EventSchema.model';
 import EventDesignModel from '../EventDesign.model';
+import { IOrganization } from '../../entities/organization';
 
 interface Idependency {
     eventModel: EventModel;
@@ -209,6 +210,15 @@ export default class EventService {
         if (description) {
             event.description = description.mutable?.value
             description.sqlField = 'description'
+        }
+
+        // 所屬組織
+        const organizationDesign: ITemplateDesign = templateDesigns.find((design: ITemplateDesign) => {
+            return design.type === 'organization'
+        }) as ITemplateDesign
+        if (organizationDesign) {
+            const organizationId = organizationDesign.mutable?.value
+            event.organizationId = organizationId
         }
 
         return {

@@ -7,6 +7,7 @@ import EventTemplateService from "../domain/services/EventTemplate.service"
 import OrganizationService from '../domain/services/Organization.service'
 import AuthService from '../domain/services/Auth.service'
 import PlaceService from '../domain/services/Place.service'
+import UserService from "../domain/services/User.service"
 
 export interface ILocals {
     [key: string]: any
@@ -16,18 +17,12 @@ export interface ILocals {
     OrganizationService: OrganizationService,
     AuthService: AuthService,
     PlaceService: PlaceService,
-    EventTemplateService: EventTemplateService
+    EventTemplateService: EventTemplateService,
+    UserService: UserService
 }
 
 export interface IApp {
     locals: ILocals
-}
-
-export function extractLocals(request: Request): ILocals | any {
-    if ("locals" in request) {
-        const locals: ILocals = request.locals as ILocals
-        return locals
-    }
 }
 
 class AccessGlobalService {

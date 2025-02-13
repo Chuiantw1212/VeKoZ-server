@@ -20,6 +20,7 @@ import EventTemplateModel from './domain/EventTemplate.model'
 import EventTemplateDesignModel from './domain/EventTemplateDesign.model'
 import OrganizationModel from './domain/Organization.model'
 import OrganizationMemberModel from './domain/OrganizationMember.model'
+import UserModel from './domain/User.model'
 // services
 import MetaService from './domain/services/Meta.service';
 import EventService from './domain/services/Event.service';
@@ -27,7 +28,7 @@ import EventTemplateService from './domain/services/EventTemplate.service'
 import OrganizationService from './domain/services/Organization.service'
 import AuthService from './domain/services/Auth.service'
 import PlaceService from './domain/services/Place.service'
-// services.others
+import UserService from './domain/services/User.service'
 import { ILocals } from './entities/app';
 // controllers
 import rootController from './adapters/client.in/root.ctrl'
@@ -91,6 +92,9 @@ import placeController from './adapters/client.in/place.ctrl'
     const placeModel = new PlaceModel({
         collection: firebase.getCollection('places')
     })
+    const userModel = new UserModel({
+        collection: firebase.getCollection('users')
+    })
 
     /**
      * Services
@@ -116,7 +120,10 @@ import placeController from './adapters/client.in/place.ctrl'
         PlaceService: new PlaceService({
             placeModel,
         }),
-        AuthService: new AuthService(firebase)
+        AuthService: new AuthService(firebase),
+        UserService: new UserService({
+            userModel
+        })
     }
     Object.assign(AccessGlobalService.locals, {
         ...allServices
@@ -143,11 +150,11 @@ import placeController from './adapters/client.in/place.ctrl'
 
     // Start Listening
     app.listen(8080, ({ hostname, port }) => {
-        console.log(
-            `🦊 Elysia is running at ${hostname}:${port}`
-        )
         const timeEnd = new Date().getTime()
         const timeDiff = (timeEnd - time) / 1000
         AccessGlobalService.locals.startupTime = timeDiff
+        console.log(
+            `🦊 Elysia took ${timeDiff}s to run at ${hostname}:${port}`
+        )
     })
 })()

@@ -1,10 +1,23 @@
+/**
+ * 可以被公開搜尋的用戶資料
+ */
 export interface IUser {
-    ui: { // 暫存前端的畫面偏好
-        event: {
-            calendar: string,
-        },
-        eventTemplate: {
-            name: string,
-        },
-    }
+    uid: '',
+    displayName: '',
+    email: '',
+    photoURL: '',
+    phoneNumber: '',
+    providerId: '',
 }
+
+/**
+ * 直接用頁面架構去處理偏好，
+ * 比較好維護。
+ */
+export interface IUserPreference {
+    uid: '',
+    event: {
+        calendarView: string,
+        organizationIds: string[]
+    },
+} 

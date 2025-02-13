@@ -46,12 +46,12 @@ router.use(bearer())
         }
         await OrganizationService.mergeUniqueDoc(user.uid, id, organization)
     })
-    .delete('/organization', async ({ bearer }) => {
+    .delete('/organization/:id', async ({ bearer, params }) => {
         // TODO: 新增的管理者也可以刪除組織嗎？
         const { OrganizationService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const organization: IOrganization = await OrganizationService.getItem(user.uid)
-        const isSuccess = await OrganizationService.deleteItem(user.uid, organization.id)
+        const { id } = params
+        const isSuccess = await OrganizationService.deleteItem(user.uid, id)
         return isSuccess
     })
 export default router
