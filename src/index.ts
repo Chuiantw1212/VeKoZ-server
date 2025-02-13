@@ -36,6 +36,7 @@ import eventController from './adapters/client.in/event.ctrl'
 import eventTemplateController from './adapters/client.in/eventTemplate.ctrl'
 import organizationController from './adapters/client.in/organization.ctrl'
 import placeController from './adapters/client.in/place.ctrl'
+import userController from './adapters/client.in/user.ctrl'
 
 (async () => {
     const app = new Elysia({ adapter: node() })
@@ -147,6 +148,7 @@ import placeController from './adapters/client.in/place.ctrl'
         .use(eventTemplateController)
         .use(organizationController)
         .use(placeController)
+        .use(userController)
 
     // Start Listening
     app.listen(8080, ({ hostname, port }) => {
