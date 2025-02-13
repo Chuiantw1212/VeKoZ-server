@@ -4,12 +4,12 @@
  * 這邊屬於私密資料，一定要跟別的資料區分開來。
  */
 export interface IUser {
-    uid: '',
-    displayName: '',
-    email: '',
-    photoURL: '',
-    phoneNumber: '',
-    providerId: '',
+    uid: string,
+    displayName: string,
+    email: string,
+    photoURL: string,
+    phoneNumber: string,
+    providerId: string,
 }
 
 /**

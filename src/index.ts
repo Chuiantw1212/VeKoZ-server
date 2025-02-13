@@ -21,6 +21,7 @@ import EventTemplateDesignModel from './domain/EventTemplateDesign.model'
 import OrganizationModel from './domain/Organization.model'
 import OrganizationMemberModel from './domain/OrganizationMember.model'
 import UserModel from './domain/User.model'
+import UserPreferenceModel from './domain/UserPreference.mode'
 // services
 import MetaService from './domain/services/Meta.service';
 import EventService from './domain/services/Event.service';
@@ -96,6 +97,9 @@ import userController from './adapters/client.in/user.ctrl'
     const userModel = new UserModel({
         collection: firebase.getCollection('users')
     })
+    const userPreferenceModel = new UserPreferenceModel({
+        collection: firebase.getCollection('userPreferences')
+    })
 
     /**
      * Services
@@ -123,7 +127,8 @@ import userController from './adapters/client.in/user.ctrl'
         }),
         AuthService: new AuthService(firebase),
         UserService: new UserService({
-            userModel
+            userModel,
+            userPreferenceModel
         })
     }
     Object.assign(AccessGlobalService.locals, {

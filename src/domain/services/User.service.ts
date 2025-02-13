@@ -1,12 +1,15 @@
 import UserModel from '../User.model'
+import UserPreferenceModel from '../UserPreference.mode';
 import type { IUser } from '../../entities/user';
-import { DecodedIdToken, UserInfo } from 'firebase-admin/auth';
+import { DecodedIdToken } from 'firebase-admin/auth';
 
 interface Idependency {
     userModel: UserModel;
+    userPreferenceModel: UserPreferenceModel
 }
 export default class UserService {
     protected userModel: UserModel = null as any
+    protected userPreferenceModel: UserPreferenceModel = null as any
 
     constructor(dependency: Idependency) {
         const {
@@ -34,6 +37,6 @@ export default class UserService {
             phoneNumber: '',
             providerId: '',
         }
-        return this.userModel.createUser(uid, user)
+        return this.userModel.createUser(uid, userInfo)
     }
 }
