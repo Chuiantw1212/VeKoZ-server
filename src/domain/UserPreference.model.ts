@@ -19,11 +19,11 @@ export default class UserPreferenceModel extends Firestore {
 
     /**
      * 取得用戶偏好
-     * @param uid 
+     * @param id 
      * @returns 
      */
-    async getPreference(uid: string): Promise<IUserPreference> {
-        const users: IUserPreference[] = await super.getItemsByQuery([['uid', '==', uid]], {
+    async getPreference(id: string): Promise<IUserPreference> {
+        const users: IUserPreference[] = await super.getItemsByQuery([['id', '==', id]], {
             count: {
                 range: [0, 1]
             }

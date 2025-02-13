@@ -1,21 +1,22 @@
 import UserModel from '../User.model'
-import UserPreferenceModel from '../UserPreference.mode';
+import UserPreferenceModel from '../UserPreference.model';
 import type { IUser, IUserPreference } from '../../entities/user';
-import { DecodedIdToken } from 'firebase-admin/auth';
 
 interface Idependency {
     userModel: UserModel;
     userPreferenceModel: UserPreferenceModel
 }
 export default class UserService {
-    protected userModel: UserModel = null as any
-    protected userPreferenceModel: UserPreferenceModel = null as any
+    protected userModel: UserModel
+    protected userPreferenceModel: UserPreferenceModel
 
     constructor(dependency: Idependency) {
         const {
             userModel,
+            userPreferenceModel,
         } = dependency
         this.userModel = userModel
+        this.userPreferenceModel = userPreferenceModel
     }
 
     async getUser(uid: string) {
@@ -36,8 +37,8 @@ export default class UserService {
      * 新增使用者
      * @param user 
      */
-    async addUser(uid: string, userInfo: IUser) {
-        const createdUser: IUser = await this.userModel.createUser(uid, userInfo)
+    async addUser(uid: string, user: IUser) {
+        const createdUser: IUser = await this.userModel.createUser(uid, user)
         if (createdUser.id) {
             const userPreference: IUserPreference = {
                 id: createdUser.id,
@@ -47,8 +48,8 @@ export default class UserService {
                     organizationIds: [],
                 }
             }
-            userInfo.preference = userPreference
+            user.preference = userPreference
         }
-        return userInfo
+        return user
     }
 }

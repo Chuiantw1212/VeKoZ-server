@@ -1,5 +1,5 @@
 import admin from "firebase-admin"
-import { getAuth, Auth } from 'firebase-admin/auth'
+import { getAuth, Auth, DecodedIdToken } from 'firebase-admin/auth'
 import { Firestore, getFirestore, } from 'firebase-admin/firestore'
 import { getStorage, Storage, } from 'firebase-admin/storage'
 export class FirebaseAdapter {
@@ -39,12 +39,12 @@ export class FirebaseAdapter {
     getCollection(collectionName: string) {
         return this.firestore.collection(collectionName)
     }
-    async verifyIdToken(idToken: string | null) {
+    async verifyIdToken(idToken: string | null): Promise<DecodedIdToken> {
         if (!idToken) {
             throw 'idToken is not given.'
         }
         const replacedToken = idToken.replace('Bearer ', '')
-        const decodedToken = await this.auth.verifyIdToken(replacedToken)
+        const decodedToken: DecodedIdToken = await this.auth.verifyIdToken(replacedToken)
         if (!decodedToken) {
             throw '未知的用戶'
         }

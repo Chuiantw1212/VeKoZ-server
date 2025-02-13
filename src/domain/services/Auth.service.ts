@@ -4,8 +4,8 @@ export default class VerifyIdTokenService {
     constructor(firebase: typeof FirebaseAdapter) {
         this.adapter = firebase
     }
-    verifyIdToken(idToken: string) {
-        const decodedIdToken = this.adapter.verifyIdToken(idToken)
+    async verifyIdToken(idToken: string) {
+        const decodedIdToken = await this.adapter.verifyIdToken(idToken)
         return decodedIdToken
     }
 }

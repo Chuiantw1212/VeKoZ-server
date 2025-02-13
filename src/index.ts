@@ -21,7 +21,7 @@ import EventTemplateDesignModel from './domain/EventTemplateDesign.model'
 import OrganizationModel from './domain/Organization.model'
 import OrganizationMemberModel from './domain/OrganizationMember.model'
 import UserModel from './domain/User.model'
-import UserPreferenceModel from './domain/UserPreference.mode'
+import UserPreferenceModel from './domain/UserPreference.model'
 // services
 import MetaService from './domain/services/Meta.service';
 import EventService from './domain/services/Event.service';
