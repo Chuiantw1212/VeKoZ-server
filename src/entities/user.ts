@@ -18,8 +18,9 @@ export interface IUser {
  * 2. 未來延伸功能如果要用別的信箱管理，只要把uid抽掉就好，其他都可以照舊。
  */
 export interface IUserPreference {
-    uid: '',
-    publicInfos: 'uid' | 'displayName' | 'email' | 'photoURL' | 'phoneNumber'[]
+    uid: string,
+    id: string, // 這邊使用IUser主檔的Id，就不自己建立
+    // publicInfos: 'uid' | 'displayName' | 'email' | 'photoURL' | 'phoneNumber'[]
     userType: 'host' | 'attendee',
     event: {
         calendarView: string,
