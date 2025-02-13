@@ -10,4 +10,11 @@ router.use(bearer())
         const user = await UserService.getUser(userIdToken.uid)
         return user
     })
+    .patch('/user/preference', async ({ bearer, request }) => {
+        const { AuthService, UserService } = AccessGlobalService.locals
+        const userIdToken: DecodedIdToken = await AuthService.verifyIdToken(bearer)
+        const userPreference = await request.json()
+        const count = await UserService.patchUserPreference(userIdToken.uid, userPreference)
+        return count
+    })
 export default router

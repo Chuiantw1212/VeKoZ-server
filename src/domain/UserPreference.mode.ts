@@ -7,6 +7,16 @@ export default class UserPreferenceModel extends Firestore {
         super(data)
     }
 
+    async setPreference(uid: string, preference: IUserPreference): Promise<number> {
+        const count = await super.setItemsByQuery([['uid', '==', uid]], preference, {
+            merge: true,
+            count: {
+                absolute: 1
+            }
+        })
+        return count
+    }
+
     /**
      * 取得用戶偏好
      * @param uid 

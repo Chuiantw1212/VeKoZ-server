@@ -1,6 +1,6 @@
 import UserModel from '../User.model'
 import UserPreferenceModel from '../UserPreference.mode';
-import type { IUser } from '../../entities/user';
+import type { IUser, IUserPreference } from '../../entities/user';
 import { DecodedIdToken } from 'firebase-admin/auth';
 
 interface Idependency {
@@ -21,6 +21,11 @@ export default class UserService {
     async getUser(uid: string) {
         const user = await this.userModel.getUser(uid)
         return user
+    }
+
+    async patchUserPreference(uid: string, preference: IUserPreference): Promise<number> {
+        const count = await this.userPreferenceModel.setPreference(uid, preference)
+        return count
     }
 
     /**
