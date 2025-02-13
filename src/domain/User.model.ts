@@ -22,6 +22,7 @@ export default class UserModel extends Firestore {
     }
 
     async createUser(uid: string, user: IUser) {
-        return super.createItem(uid, user)
+        const createdUser: IUser = await super.createItem(uid, user) as IUser
+        return createdUser
     }
 }

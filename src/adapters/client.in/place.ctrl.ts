@@ -12,7 +12,7 @@ router.use(bearer())
     .post('/place', async ({ request, bearer }) => {
         const { AuthService, PlaceService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const place: IPlace = await request.json() as any
+        const place = await request.json() as IPlace
         const result = await PlaceService.addPlace(user.uid, place)
         return result
     })
@@ -20,7 +20,7 @@ router.use(bearer())
         const { id } = params
         const { AuthService, PlaceService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const place: IPlace = await request.json() as any
+        const place = await request.json() as IPlace
         const result = await PlaceService.mergePlaceById(user.uid, id, place)
         return result
     })

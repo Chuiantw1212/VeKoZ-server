@@ -19,7 +19,11 @@ export default class UserService {
     }
 
     async getUser(uid: string) {
-        const user = await this.userModel.getUser(uid)
+        const user: IUser = await this.userModel.getUser(uid)
+        if (user.id) {
+            const userPreference = await this.userPreferenceModel.getPreference(user.id)
+            user.preference = userPreference
+        }
         return user
     }
 
@@ -32,16 +36,19 @@ export default class UserService {
      * 新增使用者
      * @param user 
      */
-    addUser(userIdToken: DecodedIdToken) {
-        const uid = userIdToken.uid
-        const userInfo: IUser = {
-            uid: userIdToken.uid,
-            displayName: '',
-            email: '',
-            photoURL: '',
-            phoneNumber: '',
-            providerId: '',
+    async addUser(uid: string, userInfo: IUser) {
+        const createdUser: IUser = await this.userModel.createUser(uid, userInfo)
+        if (createdUser.id) {
+            const userPreference: IUserPreference = {
+                id: createdUser.id,
+                userType: 'attendee',
+                event: {
+                    calendarView: 'dayGridMonth',
+                    organizationIds: [],
+                }
+            }
+            userInfo.preference = userPreference
         }
-        return this.userModel.createUser(uid, userInfo)
+        return userInfo
     }
 }
