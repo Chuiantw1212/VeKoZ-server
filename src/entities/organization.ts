@@ -1,7 +1,6 @@
 /**
  * https://schema.org/Organization
  */
-
 export interface IOrganization {
     [key: string]: any
     name: string;
@@ -9,6 +8,7 @@ export interface IOrganization {
     id: string; // doc id
     logo: string;
     founder: string; // 擁有者
+    googleCalendarId: string,
 }
 
 export interface IOrganizationMember {
@@ -24,9 +24,7 @@ export interface IOrganizationMember {
  * Organization Owner 權限以及各種編輯
  * Owner 所有權限
  */
-
 export interface IOrganizationRole {
     [key: string]: any
     organizationUid: string,
-    // userUid: string,
 }

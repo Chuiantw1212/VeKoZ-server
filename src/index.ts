@@ -30,6 +30,7 @@ import OrganizationService from './domain/services/Organization.service'
 import AuthService from './domain/services/Auth.service'
 import PlaceService from './domain/services/Place.service'
 import UserService from './domain/services/User.service'
+import GoogleService from './domain/services/Google.service'
 import { ILocals } from './entities/app';
 // controllers
 import rootController from './adapters/client.in/root.ctrl'
@@ -56,9 +57,12 @@ import userController from './adapters/client.in/user.ctrl'
     await firebase.initializeSync(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
 
     // Load GCP
-    // await googleCalendar.setClient(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
-    // await googleCalendar.list()
-    // googleCloud.setClient(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
+    let GOOGLE_CALENDAR_API_KEY = null
+    try {
+        GOOGLE_CALENDAR_API_KEY = await googleCloud.accessSecret('GOOGLE_CALENDAR_API_KEY')
+    } catch (error: any) {
+        console.trace('GOOGLE_CALENDAR_API_KEY:', error.message)
+    }
 
     /**
      * Models
@@ -129,7 +133,8 @@ import userController from './adapters/client.in/user.ctrl'
         UserService: new UserService({
             userModel,
             userPreferenceModel
-        })
+        }),
+        GoogleService: new GoogleService(googleCloud)
     }
     Object.assign(AccessGlobalService.locals, {
         ...allServices

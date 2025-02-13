@@ -1,7 +1,7 @@
-import FirebaseAdapter from "../../adapters/firebase.out.js"
+import FirebasePlugin from "../../adapters/firebase.out.js"
 export default class VerifyIdTokenService {
-    protected adapter: typeof FirebaseAdapter = null as any
-    constructor(firebase: typeof FirebaseAdapter) {
+    protected adapter: typeof FirebasePlugin = null as any
+    constructor(firebase: typeof FirebasePlugin) {
         this.adapter = firebase
     }
     async verifyIdToken(idToken: string) {

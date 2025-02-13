@@ -8,6 +8,7 @@ import OrganizationService from '../domain/services/Organization.service'
 import AuthService from '../domain/services/Auth.service'
 import PlaceService from '../domain/services/Place.service'
 import UserService from "../domain/services/User.service"
+import GoogleService from '../domain/services/Google.service'
 
 export interface ILocals {
     [key: string]: any
@@ -18,7 +19,8 @@ export interface ILocals {
     AuthService: AuthService,
     PlaceService: PlaceService,
     EventTemplateService: EventTemplateService,
-    UserService: UserService
+    UserService: UserService,
+    GoogleService: GoogleService
 }
 
 export interface IApp {

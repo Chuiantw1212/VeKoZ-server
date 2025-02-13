@@ -10,26 +10,34 @@ import { SecretManagerServiceClient } from '@google-cloud/secret-manager'
 
 export class GoogleCloudPlugin {
     protected sercertManagerServiceClient: SecretManagerServiceClient
+    private secrets: { [key: string]: any } = {}
     constructor() {
         // Secret
         const client = new SecretManagerServiceClient()
         this.sercertManagerServiceClient = client
     }
-    async accessSecret(name: string = '') {
+    public async accessSecret(name: string = '') {
         const [version] = await this.sercertManagerServiceClient.accessSecretVersion({
             name: `projects/83032571165/secrets/${name}/versions/latest`,
         })
         if (version.payload?.data) {
-            // Extract the payload as a string.
             const payload = version.payload.data.toString();
-
-            // WARNING: Do not print the secret in a production environment - this
-            // snippet is showing how to access the secret material.
-            const parsedValue = JSON.parse(payload)
-            return parsedValue
+            let parsedValue = null
+            try {
+                parsedValue = JSON.parse(payload)
+            } catch (error) {
+                parsedValue = payload
+            } finally {
+                this.secrets[name] = parsedValue
+                return parsedValue
+            }
         } else {
             throw `accessSecretVersion failed. ${name}`
         }
+    }
+    async getCalendarEventList(calendarId: string): Promise<any[]> {
+        const apiKey = this.secrets['GOOGLE_CALENDAR_API_KEY']
+        return []
     }
 }
 const googleCloud = new GoogleCloudPlugin()
