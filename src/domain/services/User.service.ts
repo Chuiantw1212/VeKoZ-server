@@ -44,7 +44,7 @@ export default class UserService {
                 id: createdUser.id,
                 userType: 'attendee',
                 event: {
-                    calendarView: 'dayGridMonth',
+                    calendarViewType: 'dayGridMonth',
                     organizationIds: [],
                 }
             }

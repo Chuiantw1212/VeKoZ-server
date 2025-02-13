@@ -25,7 +25,7 @@ export interface IUserPreference {
     // publicInfos: 'uid' | 'displayName' | 'email' | 'photoURL' | 'phoneNumber'[]
     userType: 'host' | 'attendee',
     event: {
-        calendarView: 'dayGridMonth' | 'dayGridWeek' | 'listWeek'
+        calendarViewType: 'dayGridMonth' | 'dayGridWeek' | 'listWeek'
         organizationIds: string[]
     },
 } 
