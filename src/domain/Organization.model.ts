@@ -7,11 +7,11 @@ interface ILogo {
 }
 
 export default class OrganizationModel extends FirestoreAdapter {
-    publicPucket: any = null
+    publicBucket: any = null
 
     constructor(data: IModelPorts) {
         super(data)
-        this.publicPucket = data.publicBucket
+        this.publicBucket = data.publicBucket
     }
 
     async createOrganization(uid: string, organization: IOrganization) {
@@ -30,11 +30,11 @@ export default class OrganizationModel extends FirestoreAdapter {
             throw "typeof logo === 'string'"
         }
         const { type, buffer } = logo
-        await this.publicPucket.deleteFiles({
+        await this.publicBucket.deleteFiles({
             prefix: `organization/${id}/logo`,
         })
         const uuid = crypto.randomUUID()
-        const blob = this.publicPucket.file(`organization/${id}/logo/${uuid}.${type}`)
+        const blob = this.publicBucket.file(`organization/${id}/logo/${uuid}.${type}`)
         const blobStream = blob.createWriteStream({
             resumable: false,
         })
@@ -55,7 +55,7 @@ export default class OrganizationModel extends FirestoreAdapter {
      */
     async deleteItem(uid: string, id: string) {
         await super.deleteItemById(uid, id)
-        await this.publicPucket.deleteFiles({
+        await this.publicBucket.deleteFiles({
             prefix: `organizatoin/${id}`
         })
         return true

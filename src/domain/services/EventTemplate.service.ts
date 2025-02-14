@@ -117,13 +117,13 @@ export default class EventTemplateService {
         return 0
     }
 
-    async patchTemplate(uid: string, id: string, templatePart: IEventTemplate): Promise<number> {
-        const count = await this.eventTemplateModel.mergeTemplate(uid, id, templatePart)
+    async patchTemplate(uid: string, id: string, template: IEventTemplate): Promise<number> {
+        const count = await this.eventTemplateModel.mergeTemplate(uid, id, template)
         return count
     }
     async patchTemplateDesign(uid: string, payload: IPatchTemplateDesignReq) {
-        const lastmod = await this.eventTemplateDesignModel.patchMutable(uid, payload.id, payload.mutable)
-        return lastmod
+        const count = await this.eventTemplateDesignModel.patchDesignById(uid, payload.id, payload)
+        return count
     }
 
     async deleteDesignById(uid: string, id: string): Promise<number> {

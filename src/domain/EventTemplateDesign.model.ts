@@ -1,11 +1,14 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { IModelPorts } from '../ports/out.model'
 import type { ICrudOptions } from '../ports/out.crud'
-import { ITemplateDesign } from '../entities/eventTemplate'
+import { ITemplateDesign, IPatchTemplateDesignReq } from '../entities/eventTemplate'
 
 export default class EventTemplateDesignModel extends FirestoreAdapter {
+    private publicBucket: any = null
+
     constructor(data: IModelPorts) {
         super(data)
+        this.publicBucket = data.publicBucket
     }
 
     /**
@@ -25,17 +28,22 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
      * @param mutable 
      * @returns 
      */
-    async patchMutable(uid: string, id: string, mutable: any) {
+    async patchDesignById(uid: string, id: string, data: IPatchTemplateDesignReq) {
         const options: ICrudOptions = {
             count: {
                 absolute: 1
             },
             merge: true
         }
-        const count = await super.setItemById(uid, id, {
-            mutable,
-        }, options)
-        return count
+        if (data.type === 'banner') {
+            // this.publicBucket.
+            return 0
+        } else {
+            const count = await super.setItemById(uid, id, {
+                data,
+            }, options)
+            return count
+        }
     }
 
     /**

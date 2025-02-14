@@ -7,7 +7,11 @@ export interface IEventTemplate {
     uid?: string;
     id?: string; // doc id
     designs?: ITemplateDesign[]
-    designIds?: string[]
+    designIds?: string[],
+    mutable?: {
+        type: string,
+    },
+    type?: string,
 }
 
 export interface ITemplateDesign {
@@ -40,4 +44,5 @@ export interface IDeleteTemplateDesignReq {
 export interface IPatchTemplateDesignReq {
     id: string,
     mutable: any,
+    type: string,
 }

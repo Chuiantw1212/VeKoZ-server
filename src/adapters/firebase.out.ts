@@ -1,7 +1,7 @@
 import admin from "firebase-admin"
 import { getAuth, Auth, DecodedIdToken } from 'firebase-admin/auth'
 import { Firestore, getFirestore, } from 'firebase-admin/firestore'
-import { getStorage, Storage, } from 'firebase-admin/storage'
+import { getStorage, Storage } from 'firebase-admin/storage'
 export class FirebaseAdapter {
     private firestore: Firestore = null as any
     private auth: Auth = null as any
