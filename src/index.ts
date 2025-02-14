@@ -84,7 +84,8 @@ import googleController from './adapters/client.in/google.ctrl'
         collection: firebase.getCollection('eventTemplates')
     })
     const eventTemplateDesignModel = new EventTemplateDesignModel({
-        collection: firebase.getCollection('eventTemplateDesigns')
+        collection: firebase.getCollection('eventTemplateDesigns'),
+        publicBucket: firebase.getPublicBucket()
     })
     const organizationModel = new OrganizationModel({
         collection: firebase.getCollection('organizations'),

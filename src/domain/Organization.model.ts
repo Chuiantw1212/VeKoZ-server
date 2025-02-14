@@ -1,7 +1,7 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { IModelPorts } from '../ports/out.model'
 import { IOrganization } from '../entities/organization';
-interface ILogo {
+interface IBlob {
     type: string;
     buffer: Buffer,
 }
@@ -25,7 +25,7 @@ export default class OrganizationModel extends FirestoreAdapter {
      * @param logo 
      * @returns 
      */
-    async storeLogo(id: string, logo: ILogo) {
+    async storeLogo(id: string, logo: IBlob) {
         if (logo && typeof logo === 'string') {
             throw "typeof logo === 'string'"
         }

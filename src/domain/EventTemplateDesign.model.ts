@@ -2,13 +2,20 @@ import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { IModelPorts } from '../ports/out.model'
 import type { ICrudOptions } from '../ports/out.crud'
 import { ITemplateDesign, IPatchTemplateDesignReq } from '../entities/eventTemplate'
+import type { Storage } from 'firebase-admin/storage'
+interface IBlob {
+    type: string;
+    buffer: Buffer,
+}
 
 export default class EventTemplateDesignModel extends FirestoreAdapter {
-    private publicBucket: any = null
+    private publicBucket: ReturnType<Storage['bucket']> = null as any
 
     constructor(data: IModelPorts) {
         super(data)
-        this.publicBucket = data.publicBucket
+        if (data.publicBucket) {
+            this.publicBucket = data.publicBucket
+        }
     }
 
     /**
@@ -28,20 +35,54 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
      * @param mutable 
      * @returns 
      */
-    async patchDesignById(uid: string, id: string, data: IPatchTemplateDesignReq) {
+    async patchDesignById(uid: string, id: string, data: IPatchTemplateDesignReq): Promise<number> {
         const options: ICrudOptions = {
             count: {
                 absolute: 1
             },
             merge: true
         }
+        // 對Blob特殊處理
         if (data.type === 'banner') {
-            // this.publicBucket.
-            return 0
-        } else {
-            const count = await super.setItemById(uid, id, data, options)
-            return count
+            const publicUrl = await this.storeBanner(id, data.mutable.value)
+            data.mutable.value = publicUrl
         }
+        // 儲存DesignMutableValue
+        const count = await super.setItemById(uid, id, data, options)
+        return count
+
+    }
+
+    /**
+     * 儲存組織Logo
+     * @param id 公開的DocId
+     * @param logo 
+     * @returns 
+     */
+    private async storeBanner(id: string, banner: IBlob): Promise<string> {
+        if (banner && typeof banner === 'string') {
+            throw "typeof banner === 'string'"
+        }
+        const { type, buffer } = banner
+        try {
+            await this.publicBucket.deleteFiles({
+                prefix: `eventTemplateDesign/${id}`,
+            })
+        } catch (error) {
+            // 可能會因為沒資料可刪出錯
+        }
+        const blob = this.publicBucket.file(`eventTemplateDesign/${id}/banner.${type}`)
+        const blobStream = blob.createWriteStream({
+            resumable: false,
+        })
+        const typedResult = Buffer.from(buffer)
+        // save buffer
+        blobStream.end(typedResult)
+        const publicUrl = blob.publicUrl()
+        console.log({
+            publicUrl
+        })
+        return publicUrl
     }
 
     /**
