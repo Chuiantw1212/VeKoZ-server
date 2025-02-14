@@ -39,9 +39,7 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
             // this.publicBucket.
             return 0
         } else {
-            const count = await super.setItemById(uid, id, {
-                data,
-            }, options)
+            const count = await super.setItemById(uid, id, data, options)
             return count
         }
     }

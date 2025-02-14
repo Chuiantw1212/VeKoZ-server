@@ -122,8 +122,10 @@ export default class EventService {
         const isSuccess = ones.every((value: number) => value == 1)
         if (isSuccess) {
             return 1
+        } else {
+            // throw `刪除途中出錯, ${[id, id, ...designIds]}`
+            return 500
         }
-        throw `刪除途中出錯, ${[id, id, ...designIds]}`
     }
 
     async getAvailableEventList(query: IEvent): Promise<IEvent[]> {
