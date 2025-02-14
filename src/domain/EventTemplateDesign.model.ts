@@ -43,7 +43,7 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
             merge: true
         }
         // 對Blob特殊處理
-        if (data.type === 'banner') {
+        if (data.type === 'banner' && typeof data.mutable.value !== 'string') {
             const publicUrl = await this.storeBanner(id, data.mutable.value)
             data.mutable.value = publicUrl
         }
