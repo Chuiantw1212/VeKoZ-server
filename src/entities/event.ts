@@ -11,7 +11,8 @@ export interface IEvent {
     locationName?: string,
     virtualLocationName?: string,
     virtualLocationUrl?: string,
-    attachments?: EventAttachment[]
+    attachments?: EventAttachment[],
+    designIds?: string[],
 }
 
 export interface EventAttachment {

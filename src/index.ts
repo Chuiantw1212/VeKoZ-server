@@ -14,7 +14,6 @@ import PlaceModel from './domain/Place.model'
 import SelectModel from './domain/Select.model';
 import EventModel from './domain/Event.model'
 import EventDesignModel from './domain/EventDesign.model'
-import EventSchemaModel from './domain/EventSchema.model'
 import EventActorModel from './domain/EventActor.model'
 import EventTemplateModel from './domain/EventTemplate.model'
 import EventTemplateDesignModel from './domain/EventTemplateDesign.model'
@@ -78,9 +77,6 @@ import googleController from './adapters/client.in/google.ctrl'
     const eventDesignModel = new EventDesignModel({
         collection: firebase.getCollection('eventDesigns'),
     })
-    const eventSchemaModel = new EventSchemaModel({
-        collection: firebase.getCollection('eventSchemas'),
-    })
     const eventActorModel = new EventActorModel({
         collection: firebase.getCollection('eventActors')
     })
@@ -118,7 +114,7 @@ import googleController from './adapters/client.in/google.ctrl'
             eventModel,
             eventDesignModel,
             eventActorModel,
-            eventSchemaModel,
+            // eventSchemaModel,
         }),
         EventTemplateService: new EventTemplateService({
             eventTemplateModel,

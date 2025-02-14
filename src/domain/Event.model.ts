@@ -1,5 +1,6 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { IModelPorts } from '../ports/out.model'
+import type { IEvent } from '../entities/event'
 import { IEventTemplate } from '../entities/eventTemplate'
 
 export default class EventModel extends FirestoreAdapter {
@@ -10,12 +11,22 @@ export default class EventModel extends FirestoreAdapter {
     /**
      * 新增
      * @param uid 
-     * @param eventTemplate 
+     * @param event 
      * @returns 
      */
-    async createEvent(uid: string, eventTemplate: IEventTemplate): Promise<IEventTemplate> {
-        const newEventDoc: IEventTemplate = await super.createItem(uid, eventTemplate)
+    async createEvent(uid: string, event: IEvent): Promise<IEvent> {
+        const newEventDoc: IEvent = await super.createItem(uid, event)
         return newEventDoc
+    }
+
+    /**
+     * R
+     * @param condition 
+     * @returns 
+     */
+    async getAvailableEventList(condition: IEvent): Promise<IEvent[]> {
+        const docDatas = await super.getItemsByQuery([['startDate', '>=', condition.startDate]])
+        return docDatas as IEvent[]
     }
 
     /**
@@ -23,8 +34,8 @@ export default class EventModel extends FirestoreAdapter {
      * @param id 
      * @returns 
      */
-    async getEventById(id: string): Promise<IEventTemplate | 0> {
-        const events = await super.getItemsByQuery([['id', '==', id]]) as IEventTemplate[]
+    async getEventById(id: string): Promise<IEvent | 0> {
+        const events = await super.getItemsByQuery([['id', '==', id]]) as IEvent[]
         if (events) {
             return events[0]
         }
@@ -44,6 +55,23 @@ export default class EventModel extends FirestoreAdapter {
         const dataAccessOptions = {
             count: {
                 min: 0,
+            },
+            merge: true,
+        }
+        const count = await super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], data, dataAccessOptions)
+        return count
+    }
+
+    /**
+     * 修改
+     * @param uid 
+     * @param eventTemplate 
+     * @returns 
+     */
+    async mergeEventById(uid: string, id: string, data: any): Promise<number> {
+        const dataAccessOptions = {
+            count: {
+                absolute: 1
             },
             merge: true,
         }
