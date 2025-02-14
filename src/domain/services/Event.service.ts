@@ -159,7 +159,6 @@ export default class EventService {
         const newEvent = await this.eventModel.createEvent(uid, result.eventTemplate) as IEvent
         // 儲存欄位designs
         const designDocPromises = designsTemp.map((design) => {
-            design.templateId = newEvent.id
             return this.eventDesignModel.createDesign(uid, design)
         })
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
