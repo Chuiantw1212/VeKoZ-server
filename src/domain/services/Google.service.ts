@@ -12,8 +12,11 @@ export default class VerifyIdTokenService {
     constructor(plugins: IGooglePlugins) {
         this.calendar = plugins.calendar
     }
-    async createGoogleEvent() {
+    async createGoogleEvent(event: IEvent) {
+        const googleEvent: calendar_v3.Params$Resource$Events$Insert = {
 
+        }
+        const result = await this.calendar.createCalendarEvent(googleEvent)
     }
 
     async getGoogleCalendarEventList(uid: string, params: calendar_v3.Params$Resource$Events$List): Promise<IEvent[] | undefined> {

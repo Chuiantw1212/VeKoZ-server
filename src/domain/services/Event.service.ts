@@ -41,21 +41,27 @@ export default class EventService {
         // 更新EventSEO
         switch (templateDesign.sqlField) {
             case 'description': {
-                this.eventSchemaModel.patchRecordField(uid, templateDesign.id, {
+                this.eventSchemaModel.patchRecordField(uid, String(templateDesign.eventId), {
                     description: templateDesign.mutable?.value ?? ''
                 })
                 break;
             }
             case 'name': {
-                this.eventSchemaModel.patchRecordField(uid, templateDesign.id, {
+                this.eventSchemaModel.patchRecordField(uid, String(templateDesign.eventId), {
                     name: templateDesign.mutable?.value ?? ''
                 })
                 break;
             }
             case 'date': {
-                this.eventSchemaModel.patchRecordField(uid, templateDesign.id, {
+                this.eventSchemaModel.patchRecordField(uid, String(templateDesign.eventId), {
                     startDate: templateDesign.mutable?.value[0] ?? '',
                     endDate: templateDesign.mutable?.value[1] ?? ''
+                })
+                break;
+            }
+            case 'organization': {
+                this.eventSchemaModel.patchRecordField(uid, String(templateDesign.eventId), {
+                    organizationId: templateDesign.mutable?.value ?? '',
                 })
                 break;
             }
@@ -219,6 +225,7 @@ export default class EventService {
         if (organizationDesign) {
             const organizationId = organizationDesign.mutable?.value
             event.organizationId = organizationId
+            organizationDesign.sqlField = 'organization'
         }
 
         return {
