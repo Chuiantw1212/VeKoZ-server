@@ -8,7 +8,7 @@ import { google } from 'googleapis'
 const calendar = google.calendar('v3');
 
 export class GoogleCalendarPlugin {
-    protected calendar: calendar_v3.Calendar
+    private calendar: calendar_v3.Calendar
     constructor() {
         this.calendar = calendar
     }
@@ -25,6 +25,11 @@ export class GoogleCalendarPlugin {
     async getCalendarEventList(params: calendar_v3.Params$Resource$Events$List) {
         const response = await this.calendar.events.list(params)
         return response.data.items
+    }
+
+    async createCalendarEvent(params: calendar_v3.Params$Resource$Events$Insert) {
+        const response = await this.calendar.events.insert(params)
+        return response.data
     }
 }
 export default new GoogleCalendarPlugin()

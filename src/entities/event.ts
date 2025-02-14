@@ -7,4 +7,16 @@ export interface IEvent {
     startDate?: string,
     endDate?: string,
     dateDesignId?: string,
+    locationAddress?: string,
+    locationName?: string,
+    virtualLocationName?: string,
+    virtualLocationUrl?: string,
+    attachments?: EventAttachment[]
+}
+
+export interface EventAttachment {
+    url?: string,
+    name?: string,
+    type?: string,
+    id?: string,
 }

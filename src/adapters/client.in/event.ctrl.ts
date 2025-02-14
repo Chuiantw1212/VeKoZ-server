@@ -6,7 +6,7 @@ import type { IEventTemplate, ITemplateDesign, } from '../../entities/eventTempl
 const router = new Elysia()
 router.use(bearer())
     .post('/event', async function ({ request, bearer }) {
-        const { AuthService, EventService } = AccessGlobalService.locals
+        const { AuthService, EventService, GoogleService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const event = await request.json() as IEventTemplate
         const result = await EventService.createNewEvent(user.uid, event)

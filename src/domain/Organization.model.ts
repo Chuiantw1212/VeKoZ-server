@@ -56,7 +56,7 @@ export default class OrganizationModel extends FirestoreAdapter {
     async deleteItem(uid: string, id: string) {
         await super.deleteItemById(uid, id)
         await this.publicPucket.deleteFiles({
-            prefix: `company/${id}`
+            prefix: `organizatoin/${id}`
         })
         return true
     }

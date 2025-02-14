@@ -4,7 +4,7 @@ import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
 const router = new Elysia()
 router.use(bearer())
-    .get('/google/calendar/event/list', async ({ bearer, query, params }) => {
+    .get('/google/calendar/event/list', async ({ bearer, query, }) => {
         /**
          * https://elysiajs.com/essential/route.html#wildcards
          */

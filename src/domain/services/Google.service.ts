@@ -12,6 +12,10 @@ export default class VerifyIdTokenService {
     constructor(plugins: IGooglePlugins) {
         this.calendar = plugins.calendar
     }
+    async createGoogleEvent() {
+
+    }
+
     async getGoogleCalendarEventList(uid: string, params: calendar_v3.Params$Resource$Events$List): Promise<IEvent[] | undefined> {
         if (!params.calendarId) {
             throw 'calendarId未提供'
@@ -23,11 +27,15 @@ export default class VerifyIdTokenService {
             })
             const eventList = googleEventWithDates.map((googleEvent) => {
                 const event: IEvent = {
-                    name: googleEvent.summary ?? '未命名',
                     uid,
+                    id: googleEvent.id ?? '',
+                    name: googleEvent.summary ?? '未命名',
                     description: googleEvent.description ?? '',
                     startDate: googleEvent.start?.dateTime ?? '',
                     endDate: googleEvent.end?.dateTime ?? '',
+                    locationAddress: googleEvent.location ?? '',
+                    virtualLocationUrl: googleEvent.htmlLink ?? '',
+                    lastmod: googleEvent.updated,
                 }
                 return event
             })
