@@ -7,7 +7,7 @@ import path from 'path'
 import AccessGlobalService from './entities/app'
 // adapters
 import firebase from './adapters/firebase.out'
-import googleCloud from './adapters/googleCloud.out'
+import googleSecretManager from './adapters/googleSecretManager.out'
 import googleCalendar from './adapters/googleCalendar.out'
 // models
 import PlaceModel from './domain/Place.model'
@@ -39,6 +39,7 @@ import eventTemplateController from './adapters/client.in/eventTemplate.ctrl'
 import organizationController from './adapters/client.in/organization.ctrl'
 import placeController from './adapters/client.in/place.ctrl'
 import userController from './adapters/client.in/user.ctrl'
+import googleController from './adapters/client.in/google.ctrl'
 
 (async () => {
     const app = new Elysia({ adapter: node() })
@@ -48,7 +49,7 @@ import userController from './adapters/client.in/user.ctrl'
     // Load firebase
     let FIREBASE_SERVICE_ACCOUNT_KEY_JSON = null
     try {
-        FIREBASE_SERVICE_ACCOUNT_KEY_JSON = await googleCloud.accessSecret('FIREBASE_SERVICE_ACCOUNT_KEY_JSON')
+        FIREBASE_SERVICE_ACCOUNT_KEY_JSON = await googleSecretManager.accessSecret('FIREBASE_SERVICE_ACCOUNT_KEY_JSON')
     } catch (error: any) {
         console.trace('FIREBASE_SERVICE_ACCOUNT_KEY_JSON:', error.message)
         const keyPath = path.resolve(__dirname, '../FIREBASE_SERVICE_ACCOUNT_KEY_JSON.json')
@@ -59,10 +60,11 @@ import userController from './adapters/client.in/user.ctrl'
     // Load GCP
     let GOOGLE_CALENDAR_API_KEY = null
     try {
-        GOOGLE_CALENDAR_API_KEY = await googleCloud.accessSecret('GOOGLE_CALENDAR_API_KEY')
+        GOOGLE_CALENDAR_API_KEY = await googleSecretManager.accessSecret('GOOGLE_CALENDAR_API_KEY')
     } catch (error: any) {
         console.trace('GOOGLE_CALENDAR_API_KEY:', error.message)
     }
+    await googleCalendar.setClient(GOOGLE_CALENDAR_API_KEY)
 
     /**
      * Models
@@ -134,7 +136,9 @@ import userController from './adapters/client.in/user.ctrl'
             userModel,
             userPreferenceModel
         }),
-        GoogleService: new GoogleService(googleCloud)
+        GoogleService: new GoogleService({
+            calendar: googleCalendar,
+        })
     }
     Object.assign(AccessGlobalService.locals, {
         ...allServices
@@ -159,6 +163,7 @@ import userController from './adapters/client.in/user.ctrl'
         .use(organizationController)
         .use(placeController)
         .use(userController)
+        .use(googleController)
 
     // Start Listening
     app.listen(8080, ({ hostname, port }) => {

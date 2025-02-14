@@ -35,10 +35,6 @@ export class GoogleCloudPlugin {
             throw `accessSecretVersion failed. ${name}`
         }
     }
-    async getCalendarEventList(calendarId: string): Promise<any[]> {
-        const apiKey = this.secrets['GOOGLE_CALENDAR_API_KEY']
-        return []
-    }
 }
 const googleCloud = new GoogleCloudPlugin()
 export default googleCloud

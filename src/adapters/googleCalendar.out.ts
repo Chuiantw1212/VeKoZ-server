@@ -13,17 +13,18 @@ export class GoogleCalendarPlugin {
         this.calendar = calendar
     }
     async setClient(apiKey: string) {
+        if (!apiKey) {
+            throw 'apiKey沒有提供'
+        }
         this.calendar = google.calendar({
             version: 'v3',
-            key: apiKey
+            auth: apiKey
         })
     }
 
-    async list() {
-        const res = await this.calendar.calendarList.list();
-        console.log({
-            res
-        })
+    async getCalendarEventList(params: calendar_v3.Params$Resource$Events$List) {
+        const response = await this.calendar.events.list(params)
+        return response.data.items
     }
 }
 export default new GoogleCalendarPlugin()
