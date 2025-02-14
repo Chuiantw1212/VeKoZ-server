@@ -225,6 +225,24 @@ export default class FirestoreAdapter extends VenoniaCRUD {
     }
 
     /**
+     * 從ISO轉為Timestamp
+     * @param isoDateString 
+     * @returns 
+     */
+    protected formatTimestamp(isoDateString: string) {
+        return Timestamp.fromDate(new Date(isoDateString))
+    }
+
+    /**
+     * 從Timestamp轉為Date
+     * @param timestamp 
+     * @returns 
+     */
+    protected formatDate(timestamp: Timestamp) {
+        return new Date(timestamp.seconds * 1000).toISOString()
+    }
+
+    /**
      * Utility: 取得組合出來的Query，controller不應該知道where語法
      * @param wheres 
      * @returns 
@@ -277,34 +295,5 @@ export default class FirestoreAdapter extends VenoniaCRUD {
             throw message
         }
         return count
-    }
-
-    /**
-     * 模仿SQL插入語法，未來銜接Cloud SQL使用
-     * @param uid 使用者uid
-     * @param data 任何資料
-     * @returns 
-     */
-    protected async insertRecord(uid: string, data: any): Promise<any> {
-        return await this.createItem(uid, data)
-    }
-
-    // ------------------------------------------------------------------------------------------------以下淘汰中
-
-    /**
-     * 合併現有的Document
-     * @param uid user id
-     * @param data 
-     * @deprecated
-     */
-    protected async mergeUniqueDoc(uid: string, data: any): Promise<string> {
-        // const singleDocSnapshot = await this.checkQueryCount(uid, 1)
-        // const lastmod = Timestamp.fromDate(new Date())
-        // data.lastmod = lastmod
-        // singleDocSnapshot.ref.set(data, {
-        //     merge: true
-        // })
-        // return lastmod
-        return ''
     }
 }

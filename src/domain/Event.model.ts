@@ -1,7 +1,6 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { IModelPorts } from '../ports/out.model'
 import type { IEvent } from '../entities/event'
-import { IEventTemplate } from '../entities/eventTemplate'
 
 export default class EventModel extends FirestoreAdapter {
     constructor(data: IModelPorts) {
@@ -15,6 +14,12 @@ export default class EventModel extends FirestoreAdapter {
      * @returns 
      */
     async createEvent(uid: string, event: IEvent): Promise<IEvent> {
+        if (event.startDate) {
+            event.startDate = super.formatTimestamp(event.startDate)
+        }
+        if (event.endDate) {
+            event.endDate = super.formatTimestamp(event.endDate)
+        }
         const newEventDoc: IEvent = await super.createItem(uid, event)
         return newEventDoc
     }
@@ -25,7 +30,15 @@ export default class EventModel extends FirestoreAdapter {
      * @returns 
      */
     async getAvailableEventList(condition: IEvent): Promise<IEvent[]> {
-        const docDatas = await super.getItemsByQuery([['startDate', '>=', condition.startDate]])
+        const docDatas = await super.getItemsByQuery([['startDate', '>=', new Date(condition.startDate)]])
+        docDatas.forEach(docData => {
+            if (docData.startDate) {
+                docData.startDate = super.formatDate(docData.startDate)
+            }
+            if (docData.endDate) {
+                docData.endDate = super.formatDate(docData.endDate)
+            }
+        })
         return docDatas as IEvent[]
     }
 
@@ -37,7 +50,14 @@ export default class EventModel extends FirestoreAdapter {
     async getEventById(id: string): Promise<IEvent | 0> {
         const events = await super.getItemsByQuery([['id', '==', id]]) as IEvent[]
         if (events) {
-            return events[0]
+            const event = events[0]
+            if (event.startDate) {
+                event.startDate = super.formatDate(event.startDate)
+            }
+            if (event.endDate) {
+                event.endDate = super.formatDate(event.endDate)
+            }
+            return event
         }
         return 0
     }
@@ -45,37 +65,24 @@ export default class EventModel extends FirestoreAdapter {
     /**
      * 修改
      * @param uid 
-     * @param eventTemplate 
+     * @param id 
+     * @param data 
      * @returns 
      */
-    async mergeDesignIds(uid: string, id: string, designIds: string[]): Promise<number> {
-        const data = {
-            designIds,
+    async mergeEventById(uid: string, id: string, event: IEvent): Promise<number> {
+        if (event.startDate) {
+            event.startDate = super.formatTimestamp(event.startDate)
         }
-        const dataAccessOptions = {
-            count: {
-                min: 0,
-            },
-            merge: true,
+        if (event.endDate) {
+            event.endDate = super.formatTimestamp(event.endDate)
         }
-        const count = await super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], data, dataAccessOptions)
-        return count
-    }
-
-    /**
-     * 修改
-     * @param uid 
-     * @param eventTemplate 
-     * @returns 
-     */
-    async mergeEventById(uid: string, id: string, data: any): Promise<number> {
         const dataAccessOptions = {
             count: {
                 absolute: 1
             },
             merge: true,
         }
-        const count = await super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], data, dataAccessOptions)
+        const count = await super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], event, dataAccessOptions)
         return count
     }
 
