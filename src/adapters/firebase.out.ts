@@ -16,7 +16,8 @@ export class FirebaseAdapter {
          * https://firebase.google.com/docs/storage/admin/start
         */
         const firebaseStorage: Storage = getStorage()
-        this.publicBucket = firebaseStorage.bucket('public.venonia.com')
+        const publicBucket = firebaseStorage.bucket('public.venonia.com')
+        this.publicBucket = publicBucket
         /**
          * 管理Firebase使用者
          * https://firebase.google.com/docs/auth/admin/manage-users

@@ -9,6 +9,7 @@ import AccessGlobalService from './entities/app'
 import firebase from './adapters/firebase.out'
 import googleSecretManager from './adapters/googleSecretManager.out'
 import googleCalendar from './adapters/googleCalendar.out'
+import googleStoragePlugin from './adapters/googleStorage.out'
 // models
 import PlaceModel from './domain/Place.model'
 import SelectModel from './domain/Select.model';
@@ -57,14 +58,17 @@ import googleController from './adapters/client.in/google.ctrl'
     await firebase.initializeSync(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
 
     // Load GCP
-    let GOOGLE_CALENDAR_API_KEY = null
+    let FIREBASE_API_KEY = null
     try {
-        GOOGLE_CALENDAR_API_KEY = await googleSecretManager.accessSecret('GOOGLE_CALENDAR_API_KEY')
+        FIREBASE_API_KEY = await googleSecretManager.accessSecret('FIREBASE_API_KEY')
     } catch (error: any) {
-        console.trace('GOOGLE_CALENDAR_API_KEY:', error.message)
+        console.trace('FIREBASE_API_KEY:', error.message)
     }
-    await googleCalendar.setClient(GOOGLE_CALENDAR_API_KEY)
+    await googleCalendar.setClient(FIREBASE_API_KEY)
 
+    // // // Load storage
+    // await googleStoragePlugin.setClient(FIREBASE_API_KEY)
+    // googleStoragePlugin.getPublicBucket()
     /**
      * Models
      */
