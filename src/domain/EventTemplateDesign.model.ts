@@ -1,13 +1,8 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
-import type { IModelPorts } from '../ports/out.model'
+import type { IModelPorts, IBlob } from '../ports/out.model'
 import type { ICrudOptions } from '../ports/out.crud'
 import { ITemplateDesign, IPatchTemplateDesignReq } from '../entities/eventTemplate'
 import type { Storage, } from 'firebase-admin/storage'
-
-interface IBlob {
-    type: string;
-    buffer: Buffer,
-}
 
 export default class EventTemplateDesignModel extends FirestoreAdapter {
     private publicBucket: ReturnType<Storage['bucket']> = null as any
@@ -79,9 +74,6 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
         // save buffer
         blobStream.end(typedResult)
         const publicUrl = blob.publicUrl()
-        console.log({
-            publicUrl
-        })
         return publicUrl
     }
 

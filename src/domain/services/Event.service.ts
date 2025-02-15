@@ -31,7 +31,7 @@ export default class EventService {
             throw 'id不存在'
         }
         // 更新EventDesigns
-        const count = await this.eventDesignModel.patchMutable(uid, templateDesign.id, templateDesign.mutable)
+        const count = await this.eventDesignModel.patchEventDesignById(uid, templateDesign.id, templateDesign)
         // 更新EventSEO
         switch (templateDesign.formField) {
             case 'description': {
@@ -76,11 +76,10 @@ export default class EventService {
         // collection
         const dateDesignId = event.dateDesignId
         const originEventDesign: ITemplateDesign = await this.eventDesignModel.getEventDesignById(event.dateDesignId)
-        const originMutable = originEventDesign.mutable ?? {}
-        Object.assign(originMutable, {
-            value: [event.startDate, event.endDate]
-        })
-        const count = await this.eventDesignModel.patchMutable(uid, dateDesignId, originMutable)
+        if (originEventDesign.mutable) {
+            originEventDesign.mutable.value = [event.startDate, event.endDate]
+        }
+        const count = await this.eventDesignModel.patchEventDesignById(uid, dateDesignId, originEventDesign)
         // SQL
         await this.eventModel.mergeEventById(uid, event.id, {
             startDate: event.startDate,

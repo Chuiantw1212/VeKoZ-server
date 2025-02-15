@@ -6,3 +6,8 @@ export interface IModelPorts {
     publicBucket?: ReturnType<Storage['bucket']>,
     privateBucket?: ReturnType<Storage['bucket']>,
 }
+
+export interface IBlob {
+    type: string;
+    buffer: Buffer,
+}

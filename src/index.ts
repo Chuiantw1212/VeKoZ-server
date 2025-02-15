@@ -80,6 +80,7 @@ import googleController from './adapters/client.in/google.ctrl'
     })
     const eventDesignModel = new EventDesignModel({
         collection: firebase.getCollection('eventDesigns'),
+        publicBucket: firebase.getPublicBucket()
     })
     const eventActorModel = new EventActorModel({
         collection: firebase.getCollection('eventActors')
