@@ -2,7 +2,8 @@ import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { IModelPorts } from '../ports/out.model'
 import type { ICrudOptions } from '../ports/out.crud'
 import { ITemplateDesign, IPatchTemplateDesignReq } from '../entities/eventTemplate'
-import type { Storage } from 'firebase-admin/storage'
+import type { Storage, } from 'firebase-admin/storage'
+
 interface IBlob {
     type: string;
     buffer: Buffer,
@@ -66,7 +67,7 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
         try {
             await this.publicBucket.deleteFiles({
                 prefix: `eventTemplateDesign/${id}`,
-            })
+            },)
         } catch (error) {
             // 可能會因為沒資料可刪出錯
         }
@@ -95,19 +96,31 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
 
     /**
      * 刪除
+     * https://cloud.google.com/storage/docs/deleting-objects
      * @param uid 
      * @param id 
      * @returns 
      */
     async deleteDesignById(uid: string, id: string): Promise<number> {
+        if(!id){
+            throw `id未提供`
+        }
+        console.log({
+            id
+        })
         try {
             // const options = 
-            await this.publicBucket.deleteFiles({
-                prefix: `eventTemplateDesign/${id}/`,
+            const files = await this.publicBucket.getFiles({
+                prefix: `eventTemplateDesign/${id}`,
             })
+            console.log(files)
+            // await this.publicBucket.deleteFiles({
+            //     prefix: `eventTemplateDesign/${id}`,
+            // })
         } catch (error) {
             // 可能會因為沒資料可刪出錯
         }
+        return 0
         const options = {
             count: {
                 absolute: 1
