@@ -8,9 +8,6 @@ import { google } from 'googleapis'
 export class GoogleStoragePlugin {
     private storage_v1: storage_v1.Storage = null as any
     async setClient(apiKey: string) {
-        console.log({
-            apiKey
-        })
         if (!apiKey) {
             throw 'apiKey沒有提供'
         }
@@ -24,7 +21,6 @@ export class GoogleStoragePlugin {
             project: 'votion-d92bc'
         }
         const googleBucket = await this.storage_v1.buckets.list(options)
-        console.log({ googleBucket })
         return googleBucket
     }
 }
