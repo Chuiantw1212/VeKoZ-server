@@ -151,13 +151,15 @@ export default class EventService {
             dateDesignId: '', // 這邊需要另外更新
         }
         const templateDesigns: ITemplateDesign[] = eventTemplate.designs as ITemplateDesign[]
-        templateDesigns.forEach(design => {
+        let dateDesignIndex: number = -1
+        templateDesigns.forEach((design, index) => {
             if (design.formField) {
                 if (design.formField === 'date') {
                     const startDate = design.mutable?.value[0]
                     const endDate = design.mutable?.value[1]
                     event.startDate = startDate
                     event.endDate = endDate
+                    dateDesignIndex = index
                 } else {
                     event[design.formField] = design.mutable?.value
                 }
@@ -176,7 +178,9 @@ export default class EventService {
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
         const designIds = designDocs.map(doc => doc.id ?? '')
         // 更新事件Master
+        const dateDesignId = designIds[dateDesignIndex]
         await this.eventModel.mergeEventById(uid, String(newEvent.id), {
+            dateDesignId,
             designIds,
         })
         return newEvent // 回傳完整Event才有機會，未來打開新事件時不用重新get
