@@ -2,34 +2,30 @@
  * 如果是本地就要運行gcloud auth application-default login來指派ADC
  * https://cloud.google.com/docs/authentication/provide-credentials-adc
  */
-import type { calendar_v3 } from "googleapis"
+import type { storage_v1 } from "googleapis"
 import { google } from 'googleapis'
 
-const calendar = google.calendar('v3');
-
-export class GoogleCalendarPlugin {
-    private calendar: calendar_v3.Calendar
-    constructor() {
-        this.calendar = calendar
-    }
+export class GoogleStoragePlugin {
+    private storage_v1: storage_v1.Storage = null as any
     async setClient(apiKey: string) {
+        console.log({
+            apiKey
+        })
         if (!apiKey) {
             throw 'apiKey沒有提供'
         }
-        this.calendar = google.calendar({
-            version: 'v3',
+        this.storage_v1 = google.storage({
+            version: 'v1',
             auth: apiKey
         })
     }
-
-    async getCalendarEventList(params: calendar_v3.Params$Resource$Events$List) {
-        const response = await this.calendar.events.list(params)
-        return response.data.items
-    }
-
-    async createCalendarEvent(params: calendar_v3.Params$Resource$Events$Insert) {
-        const response = await this.calendar.events.insert(params)
-        return response.data
+    async getPublicBucket() {
+        const options: storage_v1.Params$Resource$Buckets$List = {
+            project: 'votion-d92bc'
+        }
+        const googleBucket = await this.storage_v1.buckets.list(options)
+        console.log({ googleBucket })
+        return googleBucket
     }
 }
-export default new GoogleCalendarPlugin()
+export default new GoogleStoragePlugin()

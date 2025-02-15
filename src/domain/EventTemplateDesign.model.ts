@@ -1,12 +1,8 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
-import type { IModelPorts } from '../ports/out.model'
+import type { IModelPorts, IBlob } from '../ports/out.model'
 import type { ICrudOptions } from '../ports/out.crud'
 import { ITemplateDesign, IPatchTemplateDesignReq } from '../entities/eventTemplate'
-import type { Storage } from 'firebase-admin/storage'
-interface IBlob {
-    type: string;
-    buffer: Buffer,
-}
+import type { Storage, } from 'firebase-admin/storage'
 
 export default class EventTemplateDesignModel extends FirestoreAdapter {
     private publicBucket: ReturnType<Storage['bucket']> = null as any
@@ -66,7 +62,7 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
         try {
             await this.publicBucket.deleteFiles({
                 prefix: `eventTemplateDesign/${id}`,
-            })
+            },)
         } catch (error) {
             // 可能會因為沒資料可刪出錯
         }
@@ -78,9 +74,6 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
         // save buffer
         blobStream.end(typedResult)
         const publicUrl = blob.publicUrl()
-        console.log({
-            publicUrl
-        })
         return publicUrl
     }
 
@@ -95,16 +88,24 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
 
     /**
      * 刪除
+     * https://cloud.google.com/storage/docs/deleting-objects
      * @param uid 
      * @param id 
      * @returns 
      */
     async deleteDesignById(uid: string, id: string): Promise<number> {
+        if (!id) {
+            throw `id未提供`
+        }
         try {
-            // const options = 
-            await this.publicBucket.deleteFiles({
-                prefix: `eventTemplateDesign/${id}/`,
+            const getFilesResponse = await this.publicBucket.getFiles({
+                prefix: `eventTemplateDesign/${id}`,
             })
+            const files = getFilesResponse[0]
+            const promises = files.map(async (file) => {
+                return file.delete()
+            })
+            await Promise.all(promises)
         } catch (error) {
             // 可能會因為沒資料可刪出錯
         }

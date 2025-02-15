@@ -31,7 +31,7 @@ export default class EventService {
             throw 'id不存在'
         }
         // 更新EventDesigns
-        const count = await this.eventDesignModel.patchMutable(uid, templateDesign.id, templateDesign.mutable)
+        const count = await this.eventDesignModel.patchEventDesignById(uid, templateDesign.id, templateDesign)
         // 更新EventSEO
         switch (templateDesign.formField) {
             case 'description': {
@@ -76,11 +76,10 @@ export default class EventService {
         // collection
         const dateDesignId = event.dateDesignId
         const originEventDesign: ITemplateDesign = await this.eventDesignModel.getEventDesignById(event.dateDesignId)
-        const originMutable = originEventDesign.mutable ?? {}
-        Object.assign(originMutable, {
-            value: [event.startDate, event.endDate]
-        })
-        const count = await this.eventDesignModel.patchMutable(uid, dateDesignId, originMutable)
+        if (originEventDesign.mutable) {
+            originEventDesign.mutable.value = [event.startDate, event.endDate]
+        }
+        const count = await this.eventDesignModel.patchEventDesignById(uid, dateDesignId, originEventDesign)
         // SQL
         await this.eventModel.mergeEventById(uid, event.id, {
             startDate: event.startDate,
@@ -152,13 +151,15 @@ export default class EventService {
             dateDesignId: '', // 這邊需要另外更新
         }
         const templateDesigns: ITemplateDesign[] = eventTemplate.designs as ITemplateDesign[]
-        templateDesigns.forEach(design => {
+        let dateDesignIndex: number = -1
+        templateDesigns.forEach((design, index) => {
             if (design.formField) {
                 if (design.formField === 'date') {
                     const startDate = design.mutable?.value[0]
                     const endDate = design.mutable?.value[1]
                     event.startDate = startDate
                     event.endDate = endDate
+                    dateDesignIndex = index
                 } else {
                     event[design.formField] = design.mutable?.value
                 }
@@ -177,7 +178,9 @@ export default class EventService {
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
         const designIds = designDocs.map(doc => doc.id ?? '')
         // 更新事件Master
+        const dateDesignId = designIds[dateDesignIndex]
         await this.eventModel.mergeEventById(uid, String(newEvent.id), {
+            dateDesignId,
             designIds,
         })
         return newEvent // 回傳完整Event才有機會，未來打開新事件時不用重新get
