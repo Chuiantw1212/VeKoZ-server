@@ -50,7 +50,6 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
         // 儲存DesignMutableValue
         const count = await super.setItemById(uid, id, data, options)
         return count
-
     }
 
     /**
@@ -101,6 +100,14 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
      * @returns 
      */
     async deleteDesignById(uid: string, id: string): Promise<number> {
+        try {
+            // const options = 
+            await this.publicBucket.deleteFiles({
+                prefix: `eventTemplateDesign/${id}/`,
+            })
+        } catch (error) {
+            // 可能會因為沒資料可刪出錯
+        }
         const options = {
             count: {
                 absolute: 1

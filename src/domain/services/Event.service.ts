@@ -33,7 +33,7 @@ export default class EventService {
         // 更新EventDesigns
         const count = await this.eventDesignModel.patchMutable(uid, templateDesign.id, templateDesign.mutable)
         // 更新EventSEO
-        switch (templateDesign.sqlField) {
+        switch (templateDesign.formField) {
             case 'description': {
                 this.eventModel.mergeEventById(uid, String(templateDesign.eventId), {
                     description: templateDesign.mutable?.value ?? ''
@@ -144,31 +144,6 @@ export default class EventService {
             throw 'designs不存在'
         }
         // 建立sql與noSql的關聯，修改時，用collection資料覆蓋SQL
-        const result = await this.createEventSchema(eventTemplate)
-        // 儲存事件
-        const newEvent = await this.eventModel.createEvent(uid, result.event)
-        eventTemplate.id = newEvent.id
-        // 拷貝designs
-        const designsTemp = eventTemplate.designs
-        delete eventTemplate.designs
-        // 儲存欄位designs
-        const designDocPromises = designsTemp.map((design) => {
-            return this.eventDesignModel.createDesign(uid, design)
-        })
-        const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
-        const designIds = designDocs.map(doc => doc.id ?? '')
-        // 更新事件
-        await this.eventModel.mergeEventById(uid, String(newEvent.id), {
-            designIds,
-        })
-        return newEvent // 回傳完整Event才有機會，未來打開新事件時不用重新get
-    }
-
-    private async createEventSchema(eventTemplate: IEventTemplate) {
-        if (!eventTemplate.designs) {
-            throw 'designs欄位遺失'
-        }
-
         const event: IEvent = {
             name: '',
             startDate: '',
@@ -176,52 +151,35 @@ export default class EventService {
             description: '',
             dateDesignId: '', // 這邊需要另外更新
         }
-
         const templateDesigns: ITemplateDesign[] = eventTemplate.designs as ITemplateDesign[]
-
-        // 標題
-        const header1: ITemplateDesign = templateDesigns.find((design: ITemplateDesign) => {
-            return design.type === 'header1'
-        }) as ITemplateDesign
-        if (header1) {
-            event.name = header1.mutable?.value
-            header1.sqlField = 'name'
-        }
-
-        // 時間
-        const dateTimeRangeIndex: number = templateDesigns.findIndex((design: ITemplateDesign) => {
-            return design.type === 'dateTimeRange'
+        templateDesigns.forEach(design => {
+            if (design.formField) {
+                if (design.formField === 'date') {
+                    const startDate = design.mutable?.value[0]
+                    const endDate = design.mutable?.value[1]
+                    event.startDate = startDate
+                    event.endDate = endDate
+                } else {
+                    event[design.formField] = design.mutable?.value
+                }
+            }
         })
-        const dateTimeRange = templateDesigns[dateTimeRangeIndex]
-        if (dateTimeRange) {
-            event.startDate = dateTimeRange.mutable?.value[0]
-            event.endDate = dateTimeRange.mutable?.value[1]
-            event.dateDesignId = dateTimeRange.id
-            dateTimeRange.sqlField = 'date'
-        }
-
-        // 描述
-        const description: ITemplateDesign = templateDesigns.find((design: ITemplateDesign) => {
-            return design.type === 'textarea'
-        }) as ITemplateDesign
-        if (description) {
-            event.description = description.mutable?.value
-            description.sqlField = 'description'
-        }
-
-        // 所屬組織
-        const organizationDesign: ITemplateDesign = templateDesigns.find((design: ITemplateDesign) => {
-            return design.type === 'organization'
-        }) as ITemplateDesign
-        if (organizationDesign) {
-            const organizationId = organizationDesign.mutable?.value
-            event.organizationId = organizationId
-            organizationDesign.sqlField = 'organization'
-        }
-
-        return {
-            event,
-            dateTimeRangeIndex,
-        }
+        // 儲存事件Master
+        const newEvent = await this.eventModel.createEvent(uid, event)
+        eventTemplate.id = newEvent.id
+        // 拷貝designs details
+        const designsTemp = eventTemplate.designs
+        delete eventTemplate.designs
+        // 儲存欄位designs details
+        const designDocPromises = designsTemp.map((design) => {
+            return this.eventDesignModel.createDesign(uid, design)
+        })
+        const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
+        const designIds = designDocs.map(doc => doc.id ?? '')
+        // 更新事件Master
+        await this.eventModel.mergeEventById(uid, String(newEvent.id), {
+            designIds,
+        })
+        return newEvent // 回傳完整Event才有機會，未來打開新事件時不用重新get
     }
 }
