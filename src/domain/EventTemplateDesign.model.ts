@@ -102,25 +102,21 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
      * @returns 
      */
     async deleteDesignById(uid: string, id: string): Promise<number> {
-        if(!id){
+        if (!id) {
             throw `id未提供`
         }
-        console.log({
-            id
-        })
         try {
-            // const options = 
-            const files = await this.publicBucket.getFiles({
+            const getFilesResponse = await this.publicBucket.getFiles({
                 prefix: `eventTemplateDesign/${id}`,
             })
-            console.log(files)
-            // await this.publicBucket.deleteFiles({
-            //     prefix: `eventTemplateDesign/${id}`,
-            // })
+            const files = getFilesResponse[0]
+            const promises = files.map(async (file) => {
+                return file.delete()
+            })
+            await Promise.all(promises)
         } catch (error) {
             // 可能會因為沒資料可刪出錯
         }
-        return 0
         const options = {
             count: {
                 absolute: 1
