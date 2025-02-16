@@ -30,11 +30,13 @@ export default class EventDesignModel extends FirestoreAdapter {
      * @param mutable 
      * @returns 
      */
-    async patchEventDesignById(uid: string, id: string, data: IPatchTemplateDesignReq) {
+    async patchEventDesignById(uid: string, id: string, data: ITemplateDesign) {
         // 對Blob特殊處理
-        if (data.type === 'banner' && typeof data.mutable.value !== 'string') {
-            const publicUrl = await this.storeBanner(id, data.mutable.value)
-            data.mutable.value = publicUrl
+        if (data.mutable) {
+            if (data.type === 'banner' && typeof data.mutable.value !== 'string') {
+                const publicUrl = await this.storeBanner(id, data.mutable.value)
+                data.mutable.value = publicUrl
+            }
         }
         // 儲存資料
         const options: ICrudOptions = {
