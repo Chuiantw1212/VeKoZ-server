@@ -26,36 +26,41 @@ export default class EventService {
         this.eventActorModel = eventActorModel
     }
 
-    async patchEventForm(uid: string, templateDesign: ITemplateDesign): Promise<number> {
-        if (!templateDesign.id) {
+    async patchEventForm(uid: string, eventDesign: ITemplateDesign): Promise<number> {
+        if (!eventDesign.id) {
             throw 'id不存在'
         }
         // 更新EventDesigns
-        const count = await this.eventDesignModel.patchEventDesignById(uid, templateDesign.id, templateDesign)
+        const count = await this.eventDesignModel.patchEventDesignById(uid, eventDesign.id, eventDesign)
         // 更新EventSEO
-        switch (templateDesign.formField) {
+        console.log({
+            eventDesign
+        })
+        switch (eventDesign.formField) {
             case 'description': {
-                this.eventModel.mergeEventById(uid, String(templateDesign.eventId), {
-                    description: templateDesign.mutable?.value ?? ''
+                await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
+                    description: eventDesign.mutable?.value ?? ''
                 })
+                this.eventModel.setKeywordsById(uid, String(eventDesign.eventId))
                 break;
             }
             case 'name': {
-                this.eventModel.mergeEventById(uid, String(templateDesign.eventId), {
-                    name: templateDesign.mutable?.value ?? ''
+                await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
+                    name: eventDesign.mutable?.value ?? ''
                 })
+                this.eventModel.setKeywordsById(uid, String(eventDesign.eventId))
                 break;
             }
             case 'date': {
-                this.eventModel.mergeEventById(uid, String(templateDesign.eventId), {
-                    startDate: templateDesign.mutable?.value[0] ?? '',
-                    endDate: templateDesign.mutable?.value[1] ?? ''
+                await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
+                    startDate: eventDesign.mutable?.value[0] ?? '',
+                    endDate: eventDesign.mutable?.value[1] ?? ''
                 })
                 break;
             }
             case 'organization': {
-                this.eventModel.mergeEventById(uid, String(templateDesign.eventId), {
-                    organizationId: templateDesign.mutable?.value ?? '',
+                await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
+                    organizationId: eventDesign.mutable?.value ?? '',
                 })
                 break;
             }

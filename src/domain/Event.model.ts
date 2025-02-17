@@ -1,7 +1,12 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { IModelPorts } from '../ports/out.model'
 import type { IEvent } from '../entities/event'
-import nodejieba from 'nodejieba'
+import { Jieba, TfIdf } from '@node-rs/jieba'
+import { dict, idf } from '@node-rs/jieba/dict'
+import { ICrudOptions } from '../ports/out.crud'
+
+const jieba = Jieba.withDict(dict)
+const tfIdf = TfIdf.withDict(idf)
 
 export default class EventModel extends FirestoreAdapter {
     constructor(data: IModelPorts) {
@@ -103,8 +108,26 @@ export default class EventModel extends FirestoreAdapter {
      * @param uid 
      * @param id 
      */
-    async setKeywordsById(id: string) {
-        const event = super.getItemById(id)
-
+    async setKeywordsById(uid: string, id: string) {
+        const event = await super.getItemById(id) as IEvent
+        const description = event.description
+        const name = event.name
+        const fullText = `${name},${description}`
+        const result = tfIdf.extractKeywords(
+            jieba,
+            fullText,
+            30,
+        )
+        const keywords = result.map(item => {
+            return item.keyword
+        })
+        const options: ICrudOptions = {
+            count: {
+                absolute: 1
+            }
+        }
+        await super.setItemById(uid, id, {
+            keywords,
+        }, options)
     }
 }
