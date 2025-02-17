@@ -8,7 +8,7 @@ export interface IEvent {
     startDate?: any,
     endDate?: any,
     image?: string,
-    keywords?: string[]
+    keywords?: any,
     // 
     locationAddress?: string,
     locationName?: string,

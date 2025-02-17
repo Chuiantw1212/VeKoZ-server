@@ -36,7 +36,26 @@ export default class EventModel extends FirestoreAdapter {
      * @returns 
      */
     async getAvailableEventList(condition: IEvent): Promise<IEvent[]> {
-        const docDatas = await super.getItemsByQuery([['startDate', '>=', new Date(condition.startDate)]])
+        const wheres = []
+        if (condition.startDate) {
+            wheres.push(['startDate', '>=', new Date(condition.startDate)])
+        }
+        if (condition.endDate) {
+            wheres.push(['endDate', '<=', new Date(condition.endDate)])
+        }
+        if (condition.keywords) {
+            const result = tfIdf.extractKeywords(
+                jieba,
+                condition.keywords,
+                30,
+            )
+            const keywords = result.map(item => {
+                return item.keyword
+            })
+            wheres.push(['keywords', 'array-contains-any', keywords])
+        }
+
+        const docDatas = await super.getItemsByQuery(wheres)
         docDatas.forEach(docData => {
             if (docData.startDate) {
                 docData.startDate = super.formatDate(docData.startDate)
