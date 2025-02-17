@@ -1,6 +1,7 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { IModelPorts } from '../ports/out.model'
 import type { IEvent } from '../entities/event'
+import nodejieba from 'nodejieba'
 
 export default class EventModel extends FirestoreAdapter {
     constructor(data: IModelPorts) {
@@ -95,5 +96,15 @@ export default class EventModel extends FirestoreAdapter {
     async deleteByEventId(uid: string, id: string): Promise<number> {
         const count = await super.deleteItemById(uid, id)
         return count
+    }
+
+    /**
+     * 重新處理關鍵字
+     * @param uid 
+     * @param id 
+     */
+    async setKeywordsById(id: string) {
+        const event = super.getItemById(id)
+
     }
 }
