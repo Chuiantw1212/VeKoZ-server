@@ -1,11 +1,11 @@
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 const router = new Elysia()
-    .get('/meta/select/:id', async function ({ params }) {
+    .get('/meta/select/:key', async function ({ params }) {
         try {
             const { MetaService } = AccessGlobalService.locals
-            const { id } = params
-            const options = await MetaService.getOptionsById(id)
+            const { key } = params
+            const options = await MetaService.getOptionsByKey(key)
             return options
         } catch (error: any) {
             console.trace(error)

@@ -40,6 +40,7 @@ import organizationController from './adapters/client.in/organization.ctrl'
 import placeController from './adapters/client.in/place.ctrl'
 import userController from './adapters/client.in/user.ctrl'
 import googleController from './adapters/client.in/google.ctrl'
+import metaController from './adapters/client.in/meta.ctrl'
 
 (async () => {
     const app = new Elysia({ adapter: node() })
@@ -166,6 +167,7 @@ import googleController from './adapters/client.in/google.ctrl'
         .use(placeController)
         .use(userController)
         .use(googleController)
+        .use(metaController)
 
     // Start Listening
     app.listen(8080, ({ hostname, port }) => {

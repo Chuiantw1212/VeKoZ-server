@@ -10,8 +10,13 @@ export default class SelectModel extends FirestoreAdapter {
         super(data)
     }
 
-    async getOptionsById(id: string): Promise<IOptionsItem[]> {
-        const selectDocData = await super.getItemById(id) as ISelectDocData
-        return selectDocData.options
+    async getOptionsByKey(key: string): Promise<IOptionsItem[]> {
+        const optoins: ICrudOptions = {
+            count: {
+                absolute: 1
+            }
+        }
+        const selectDocData = await super.getItemsByQuery([['key', '==', key]], optoins) as ISelectDocData[]
+        return selectDocData[0].options
     }
 }

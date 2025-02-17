@@ -16,7 +16,7 @@ export default class MetaService {
         const promises = this.optionKeys.map(async (key: string) => {
             let options = this.optionsMap[key]
             if (!options?.length) {
-                options = await this.selectModel.getOptionsById(key)
+                options = await this.selectModel.getOptionsByKey(key)
                 this.optionsMap[key] = options
             }
             const selectDocData: ISelectDocData = {
@@ -33,12 +33,12 @@ export default class MetaService {
         return selectMap
     }
 
-    async getOptionsById(id: string) {
-        let options = this.optionsMap[id]
+    async getOptionsByKey(key: string) {
+        let options = this.optionsMap[key]
         if (!options?.length) {
-            options = await this.selectModel.getOptionsById(id)
-            this.optionsMap[id] = options
+            options = await this.selectModel.getOptionsByKey(key)
+            this.optionsMap[key] = options
         }
-        return this.optionsMap[id]
+        return this.optionsMap[key]
     }
 }
