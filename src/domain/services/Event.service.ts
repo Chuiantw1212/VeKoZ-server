@@ -1,5 +1,5 @@
 import type { IEventTemplate, ITemplateDesign, } from '../../entities/eventTemplate';
-import type { IEvent, } from '../../entities/event';
+import type { IEvent, IEventQuery, } from '../../entities/event';
 import EventModel from '../Event.model'
 import EventActorModel from '../EventActor.model'
 import EventDesignModel from '../EventDesign.model';
@@ -71,25 +71,36 @@ export default class EventService {
         return count
     }
 
-    async patchEventCalendar(uid: string, event: IEvent): Promise<number> {
-        if (!event.id) {
+    /**
+     * 月曆日期拖拽以及開放表單使用
+     * @param uid 
+     * @param updateEventReq 
+     * @returns 
+     */
+    async patchEventCalendar(uid: string, updateEventReq: IEvent): Promise<number> {
+        if (!updateEventReq.id) {
             throw 'event.id不存在'
         }
-        if (!event.dateDesignId) {
-            throw 'event.dateDesignId不存在'
+        const { dateDesignId, startDate, endDate, isPublic } = updateEventReq
+        if (dateDesignId && startDate && endDate) {
+            const originEventDesign: ITemplateDesign = await this.eventDesignModel.getEventDesignById(dateDesignId)
+            if (originEventDesign.mutable) {
+                originEventDesign.mutable.value = [startDate, endDate]
+            }
+            await this.eventDesignModel.patchEventDesignById(uid, dateDesignId, originEventDesign)
         }
-        // collection
-        const dateDesignId = event.dateDesignId
-        const originEventDesign: ITemplateDesign = await this.eventDesignModel.getEventDesignById(event.dateDesignId)
-        if (originEventDesign.mutable) {
-            originEventDesign.mutable.value = [event.startDate, event.endDate]
-        }
-        const count = await this.eventDesignModel.patchEventDesignById(uid, dateDesignId, originEventDesign)
         // SQL
-        await this.eventModel.mergeEventById(uid, event.id, {
-            startDate: event.startDate,
-            endDate: event.endDate
-        })
+        const newEvent: IEvent = {}
+        if (isPublic !== null) { // false !== null
+            newEvent.isPublic = isPublic
+        }
+        if (startDate) {
+            newEvent.startDate = startDate
+        }
+        if (endDate) {
+            newEvent.endDate = endDate
+        }
+        const count = await this.eventModel.mergeEventById(uid, updateEventReq.id, newEvent)
         return count
     }
 
@@ -133,7 +144,10 @@ export default class EventService {
         }
     }
 
-    async queryEventList(query: IEvent): Promise<IEvent[]> {
+    async queryEventList(query: IEventQuery): Promise<IEvent[]> {
+        //    if (condition.addressRegion) {
+        //     wheres.push(['addressRegion', '==', condition.addressRegion])
+        // }
         const events = await this.eventModel.queryEventList(query) as IEvent[]
         return events
     }

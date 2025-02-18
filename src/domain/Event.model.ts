@@ -37,6 +37,10 @@ export default class EventModel extends FirestoreAdapter {
      * @returns 
      */
     async queryEventList(condition: IEventQuery): Promise<IEvent[]> {
+        console.log({
+            condition
+        })
+
         const wheres = []
         if (condition.startDate) {
             wheres.push(['startDate', '>=', new Date(condition.startDate)])
@@ -44,9 +48,7 @@ export default class EventModel extends FirestoreAdapter {
         if (condition.endDate) {
             wheres.push(['endDate', '<=', new Date(condition.endDate)])
         }
-        if (condition.addressRegion) {
-            wheres.push(['endDate', '<=', new Date(condition.endDate)])
-        }
+
         if (condition.keywords) {
             const result = tfIdf.extractKeywords(
                 jieba,
@@ -58,9 +60,20 @@ export default class EventModel extends FirestoreAdapter {
             })
             wheres.push(['keywords', 'array-contains-any', keywords])
         }
+        if (String(condition.isPublic) === 'true') { // 使用'true'
+            wheres.push(['isPublic', '==', true])
+        }
 
-        const docDatas = await super.getItemsByQuery(wheres)
-        docDatas.forEach(docData => {
+        const options: ICrudOptions = {
+            orderBy: ['startDate', 'asc'],
+        }
+        // 區域處理
+        let hasOnSite = condition.addressRegion
+        if (condition.addressRegion) {
+            wheres.push(['addressRegion', '==', condition.addressRegion])
+        }
+        const firstEventList = await super.getItemsByQuery(wheres, options)
+        firstEventList.forEach(docData => {
             if (docData.startDate) {
                 docData.startDate = super.formatDate(docData.startDate)
             }
@@ -68,7 +81,33 @@ export default class EventModel extends FirestoreAdapter {
                 docData.endDate = super.formatDate(docData.endDate)
             }
         })
-        return docDatas as IEvent[]
+
+        /**
+         * 在選定城市情況下，補外縣市的線上活動
+         */
+        let onlineEvents: IEvent[] = []
+        if (String(condition.includeVirtualLocation) === 'true') {
+            if (hasOnSite) {
+                wheres.pop() // 丟掉城市篩選
+                wheres.push(['addressRegion', '!==', condition.addressRegion])
+            }
+            wheres.push(['hasVirtualLocation', '==', true])
+            onlineEvents = await super.getItemsByQuery(wheres, options)
+            onlineEvents.forEach(docData => {
+                if (docData.startDate) {
+                    docData.startDate = super.formatDate(docData.startDate)
+                }
+                if (docData.endDate) {
+                    docData.endDate = super.formatDate(docData.endDate)
+                }
+            })
+        }
+
+        const allEvents = [...firstEventList, ...onlineEvents].sort((first, second) => {
+            return second.startDate - first.startDate
+        })
+
+        return allEvents as IEvent[]
     }
 
     /**

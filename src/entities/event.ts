@@ -5,6 +5,7 @@ export interface IEventQuery {
     addressRegion?: string,
     includeVirtualLocation: boolean,
     timeFrame?: string,
+    isPublic?: boolean,
 }
 
 // 盡可能最小化，節省空間
