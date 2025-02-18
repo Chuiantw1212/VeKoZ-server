@@ -33,9 +33,6 @@ export default class EventService {
         // 更新EventDesigns
         const count = await this.eventDesignModel.patchEventDesignById(uid, eventDesign.id, eventDesign)
         // 更新EventSEO
-        console.log({
-            eventDesign
-        })
         switch (eventDesign.formField) {
             case 'description': {
                 await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
