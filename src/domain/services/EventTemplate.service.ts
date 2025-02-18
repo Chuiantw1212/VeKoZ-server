@@ -95,6 +95,9 @@ export default class EventTemplateService {
             const eventTemplateDesigns = await Promise.all(designPromises) as any[]
             eventTemplate.designs = eventTemplateDesigns
             delete eventTemplate.designIds
+            this.eventTemplateModel.mergeTemplate(uid, id, {
+                lastmod: true,
+            }) // 更新lastmod
             return eventTemplate
         }
         return 0

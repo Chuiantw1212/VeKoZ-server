@@ -169,6 +169,8 @@ export default class FirestoreAdapter extends VenoniaCRUD {
             return doc.id === id
         })
         if (targetDoc) {
+            const lastmod = Timestamp.fromDate(new Date())
+            data.lastmod = lastmod
             await targetDoc.ref.update(data, {
                 merge: options?.merge
             })
