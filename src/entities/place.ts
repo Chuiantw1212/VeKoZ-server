@@ -8,4 +8,5 @@ export interface IPlace {
     uid: string;
     id: string; // doc id
     description: string,
+    addressRegion:string, // 第一級行政區
 }

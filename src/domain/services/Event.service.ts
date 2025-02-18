@@ -132,8 +132,8 @@ export default class EventService {
         }
     }
 
-    async getAvailableEventList(query: IEvent): Promise<IEvent[]> {
-        const events = await this.eventModel.getAvailableEventList(query) as IEvent[]
+    async queryEventList(query: IEvent): Promise<IEvent[]> {
+        const events = await this.eventModel.queryEventList(query) as IEvent[]
         return events
     }
 

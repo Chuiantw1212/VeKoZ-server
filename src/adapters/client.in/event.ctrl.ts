@@ -42,7 +42,7 @@ router.use(bearer())
     .get('/event/list', async function ({ query }) {
         const { EventService } = AccessGlobalService.locals
         const eventQuery = query as any
-        const eventList = await EventService.getAvailableEventList(eventQuery)
+        const eventList = await EventService.queryEventList(eventQuery)
         return eventList
     })
 export default router

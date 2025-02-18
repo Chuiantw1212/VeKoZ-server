@@ -1,6 +1,6 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { IModelPorts } from '../ports/out.model'
-import type { IEvent } from '../entities/event'
+import type { IEvent, IEventQuery } from '../entities/event'
 import { Jieba, TfIdf } from '@node-rs/jieba'
 import { dict, idf } from '@node-rs/jieba/dict'
 import { ICrudOptions } from '../ports/out.crud'
@@ -26,6 +26,7 @@ export default class EventModel extends FirestoreAdapter {
         if (event.endDate) {
             event.endDate = super.formatTimestamp(event.endDate)
         }
+        delete event.designIds // 用不到了
         const newEventDoc: IEvent = await super.createItem(uid, event)
         return newEventDoc
     }
@@ -35,12 +36,15 @@ export default class EventModel extends FirestoreAdapter {
      * @param condition 
      * @returns 
      */
-    async getAvailableEventList(condition: IEvent): Promise<IEvent[]> {
+    async queryEventList(condition: IEventQuery): Promise<IEvent[]> {
         const wheres = []
         if (condition.startDate) {
             wheres.push(['startDate', '>=', new Date(condition.startDate)])
         }
         if (condition.endDate) {
+            wheres.push(['endDate', '<=', new Date(condition.endDate)])
+        }
+        if (condition.addressRegion) {
             wheres.push(['endDate', '<=', new Date(condition.endDate)])
         }
         if (condition.keywords) {
