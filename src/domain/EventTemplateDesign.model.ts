@@ -55,6 +55,9 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
      * @returns 
      */
     private async storeBanner(id: string, banner: IBlob): Promise<string> {
+        if (!banner) {
+            return ''
+        }
         if (banner && typeof banner === 'string') {
             throw "typeof banner === 'string'"
         }
