@@ -89,7 +89,7 @@ export default class EventModel extends FirestoreAdapter {
         if (String(condition.includeVirtualLocation) === 'true') {
             if (hasOnSite) {
                 wheres.pop() // 丟掉城市篩選
-                wheres.push(['addressRegion', '!==', condition.addressRegion])
+                wheres.push(['addressRegion', '!=', condition.addressRegion])
             }
             wheres.push(['hasVirtualLocation', '==', true])
             onlineEvents = await super.getItemsByQuery(wheres, options)
