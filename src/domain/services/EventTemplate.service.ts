@@ -79,11 +79,20 @@ export default class EventTemplateService {
         const eventTemplate: IEventTemplate | 0 = await this.eventTemplateModel.readTemplateById(uid, id)
         if (eventTemplate) {
             const designIds = eventTemplate.designIds || []
+            const validDesignIds = designIds.filter(id => {
+                return id && id !== 'undefined'
+            })
+            if (designIds.length !== validDesignIds.length) {
+                // 自動(?)修正錯誤的templateDesigns
+                this.eventTemplateModel.mergeTemplate(uid, id, {
+                    designIds: validDesignIds,
+                })
+            }
             // 取得details並回傳
-            const designPromises = designIds.map((designId: string) => {
+            const designPromises = validDesignIds.map((designId: string) => {
                 return this.eventTemplateDesignModel.getTemplateDesign(designId)
             })
-            const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
+            const eventTemplateDesigns = await Promise.all(designPromises) as any[]
             eventTemplate.designs = eventTemplateDesigns
             delete eventTemplate.designIds
             return eventTemplate

@@ -26,7 +26,7 @@ export default class EventModel extends FirestoreAdapter {
         if (event.endDate) {
             event.endDate = super.formatTimestamp(event.endDate)
         }
-        delete event.designIds // 用不到了
+        // delete event.designIds // 用不到了?
         const newEventDoc: IEvent = await super.createItem(uid, event)
         return newEventDoc
     }

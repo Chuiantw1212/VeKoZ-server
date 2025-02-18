@@ -114,9 +114,10 @@ export default class EventService {
         if (!event) {
             return 0
         }
-        const designIds = event.designIds
-        if (!designIds) {
-            throw '資料有誤, event.designIds不存在'
+        const designIds = event.designIds ?? []
+        if (!designIds.length) {
+            console.trace('資料有誤, event.designIds不存在', id)
+            // return 0
         }
         const masterPromise = this.eventModel.deleteByEventId(uid, id)
         const detailPromises = designIds?.map(designId => {
