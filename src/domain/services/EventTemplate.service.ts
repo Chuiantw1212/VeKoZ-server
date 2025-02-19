@@ -37,7 +37,7 @@ export default class EventTemplateService {
      * @returns 
      */
     async addEventTemplate(uid: string, eventTemplate: IEventTemplate): Promise<IEventTemplate> {
-        if (!eventTemplate.designs?.length) {
+        if (!eventTemplate.designs) {
             throw 'designs不存在'
         }
         // 深拷貝designs

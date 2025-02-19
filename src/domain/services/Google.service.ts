@@ -36,8 +36,8 @@ export default class VerifyIdTokenService {
                     description: googleEvent.description ?? '',
                     startDate: googleEvent.start?.dateTime ?? '',
                     endDate: googleEvent.end?.dateTime ?? '',
-                    locationAddress: googleEvent.location ?? '',
-                    virtualLocationUrl: googleEvent.htmlLink ?? '',
+                    placeAddress: googleEvent.location ?? '',
+                    urlValue: googleEvent.htmlLink ?? '',
                     lastmod: googleEvent.updated,
                 }
                 return event

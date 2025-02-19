@@ -30,24 +30,24 @@ export interface ITemplateDesignMutable {
     label?: string,
     // 未定義欄位使用
     value?: any,
-    // organization
+    // Organization
     organizationName?: string,
     organizationId?: string,
-    // organization members
+    // Organization members
     memberIds?: string[],
     memberNames?: string[],
     // 時間
-    startDate: Date,
-    endDate: Date,
+    startDate?: Date,
+    endDate?: Date,
     // 線下地點
     placeId?: string, // entities, 如果有owner可共用評價
-    placeOwnerId: string,
+    placeOwnerId?: string,
     placeName?: string,
-    locationAddress?: string,
+    placeAddress?: string,
     placeAddressRegion?: string, // 第一級行政區
     // 線上地點
-    virtualLocationName?: string,
-    virtualLocationUrl?: string,
+    urlName?: string,
+    urlValue?: string,
     // 票券
     offers?: IOffer[]
 }
