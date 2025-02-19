@@ -26,6 +26,82 @@ export default class EventService {
         this.eventActorModel = eventActorModel
     }
 
+    /**
+     * 新增活動
+     * @param uid 
+     * @param eventTemplate 
+     * @returns 
+     */
+    async createNewEvent(uid: string, eventTemplate: IEventTemplate): Promise<IEvent> {
+        if (!eventTemplate.designs?.length) {
+            throw 'designs不存在'
+        }
+        // 建立sql與noSql的關聯，修改時，用collection資料覆蓋SQL
+        const templateDesigns: ITemplateDesign[] = eventTemplate.designs as ITemplateDesign[]
+        const designsWithFormField = templateDesigns.filter(design => {
+            return design.formField
+        })
+        const event: IEvent = {}
+        let dateDesignIndex: number = -1
+        designsWithFormField.forEach((design, index) => {
+            /**
+             * 注意要跟 patchEventForm 那邊的switch case交叉檢查
+             */
+            switch (design.formField) {
+                case 'name': {
+                    event.name = design.mutable?.value
+                    break;
+                }
+                case 'description': {
+                    event.description = design.mutable?.value
+                    break;
+                }
+                case 'date': {
+                    const startDate = design.mutable?.value[0]
+                    const endDate = design.mutable?.value[1]
+                    event.startDate = startDate
+                    event.endDate = endDate
+                    dateDesignIndex = index
+                    break;
+                }
+                case 'organizer': {
+                    event.organizerId = design.mutable?.organizationId
+                    event.organizerName = design.mutable?.organizationName
+                    break;
+                }
+                case 'performers': {
+                    event.performerIds = design.mutable?.memberIds
+                    event.organizerName = design.mutable?.organizationName
+                    break;
+                }
+                case 'place': {
+                    event.addressRegion = design.mutable?.placeAddressRegion
+                    break;
+                }
+            }
+        })
+        // 儲存事件Master
+        const newEvent = await this.eventModel.createEvent(uid, event)
+        eventTemplate.id = newEvent.id
+        this.eventModel.setKeywordsById(uid, String(newEvent.id))
+        // 拷貝designs details
+        const designsTemp = eventTemplate.designs
+        delete eventTemplate.designs
+        // 儲存欄位designs details
+        const designDocPromises = designsTemp.map((design) => {
+            return this.eventDesignModel.createDesign(uid, design)
+        })
+        const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
+        const designIds = designDocs.map(doc => doc.id ?? '')
+        // 更新事件Master
+        const dateDesignId = designIds[dateDesignIndex]
+        await this.eventModel.mergeEventById(uid, String(newEvent.id), {
+            dateDesignId,
+            designIds,
+        })
+        return newEvent // 回傳完整Event才有機會，未來打開新事件時不用重新get
+    }
+
     async patchEventForm(uid: string, eventDesign: ITemplateDesign): Promise<number> {
         if (!eventDesign.id) {
             throw 'id不存在'
@@ -147,81 +223,5 @@ export default class EventService {
         // }
         const events = await this.eventModel.queryEventList(query) as IEvent[]
         return events
-    }
-
-    /**
-     * 新增活動
-     * @param uid 
-     * @param eventTemplate 
-     * @returns 
-     */
-    async createNewEvent(uid: string, eventTemplate: IEventTemplate): Promise<IEvent> {
-        if (!eventTemplate.designs?.length) {
-            throw 'designs不存在'
-        }
-        // 建立sql與noSql的關聯，修改時，用collection資料覆蓋SQL
-        const templateDesigns: ITemplateDesign[] = eventTemplate.designs as ITemplateDesign[]
-        const designsWithFormField = templateDesigns.filter(design => {
-            return design.formField
-        })
-        const event: IEvent = {}
-        let dateDesignIndex: number = -1
-        designsWithFormField.forEach((design, index) => {
-            /**
-             * 注意要跟 patchEventForm 那邊的switch case交叉檢查
-             */
-            switch (design.formField) {
-                case 'name': {
-                    event.name = design.mutable?.value
-                    break;
-                }
-                case 'description': {
-                    event.description = design.mutable?.value
-                    break;
-                }
-                case 'date': {
-                    const startDate = design.mutable?.value[0]
-                    const endDate = design.mutable?.value[1]
-                    event.startDate = startDate
-                    event.endDate = endDate
-                    dateDesignIndex = index
-                    break;
-                }
-                case 'organizer': {
-                    event.organizerId = design.mutable?.organizationId
-                    event.organizerName = design.mutable?.organizationName
-                    break;
-                }
-                case 'performers': {
-                    event.performerIds = design.mutable?.memberIds
-                    event.organizerName = design.mutable?.organizationName
-                    break;
-                }
-                case 'place': {
-                    event.addressRegion = design.mutable?.placeAddressRegion
-                    break;
-                }
-            }
-        })
-        // 儲存事件Master
-        const newEvent = await this.eventModel.createEvent(uid, event)
-        eventTemplate.id = newEvent.id
-        this.eventModel.setKeywordsById(uid, String(newEvent.id))
-        // 拷貝designs details
-        const designsTemp = eventTemplate.designs
-        delete eventTemplate.designs
-        // 儲存欄位designs details
-        const designDocPromises = designsTemp.map((design) => {
-            return this.eventDesignModel.createDesign(uid, design)
-        })
-        const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
-        const designIds = designDocs.map(doc => doc.id ?? '')
-        // 更新事件Master
-        const dateDesignId = designIds[dateDesignIndex]
-        await this.eventModel.mergeEventById(uid, String(newEvent.id), {
-            dateDesignId,
-            designIds,
-        })
-        return newEvent // 回傳完整Event才有機會，未來打開新事件時不用重新get
     }
 }
