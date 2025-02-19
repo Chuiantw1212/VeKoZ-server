@@ -68,6 +68,9 @@ export default class EventModel extends FirestoreAdapter {
         if (condition.addressRegion) {
             wheres.push(['addressRegion', '==', condition.addressRegion])
         }
+        // console.log({
+        //     wheres
+        // })
         const firstEventList = await super.getItemsByQuery(wheres, options)
         firstEventList.forEach(docData => {
             if (docData.startDate) {
@@ -179,13 +182,16 @@ export default class EventModel extends FirestoreAdapter {
         const keywords = result.map(item => {
             return item.keyword
         })
+        console.log(keywords)
         const options: ICrudOptions = {
             count: {
                 absolute: 1
             }
         }
-        await super.setItemById(uid, id, {
-            keywords,
-        }, options)
+        if (keywords) {
+            await super.setItemById(uid, id, {
+                keywords,
+            }, options)
+        }
     }
 }

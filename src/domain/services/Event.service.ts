@@ -48,6 +48,10 @@ export default class EventService {
              * 注意要跟 patchEventForm 那邊的switch case交叉檢查
              */
             switch (design.formField) {
+                case 'image': {
+                    event.image = design.mutable?.value
+                    break;
+                }
                 case 'name': {
                     event.name = design.mutable?.value
                     break;
@@ -89,6 +93,7 @@ export default class EventService {
         delete eventTemplate.designs
         // 儲存欄位designs details
         const designDocPromises = designsTemp.map((design) => {
+            delete design.id // 重要，不然會污染到模板資料
             return this.eventDesignModel.createDesign(uid, design)
         })
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
@@ -108,8 +113,16 @@ export default class EventService {
         }
         // 更新EventDesigns
         const count = await this.eventDesignModel.patchEventDesignById(uid, eventDesign.id, eventDesign)
-        // 更新EventSEO
+        /**
+         * 注意要跟 createForm 那邊的switch case交叉檢查
+         */
         switch (eventDesign.formField) {
+            case 'image': {
+                await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
+                    image: eventDesign.mutable?.value ?? ''
+                })
+                break;
+            }
             case 'description': {
                 await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
                     description: eventDesign.mutable?.value ?? ''
@@ -131,9 +144,10 @@ export default class EventService {
                 })
                 break;
             }
-            case 'organization': {
+            case 'organizer': {
                 await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
-                    organizationId: eventDesign.mutable?.value ?? '',
+                    organizationId: eventDesign.mutable?.organizationId,
+                    organizerName: eventDesign.mutable?.organizationName,
                 })
                 break;
             }
