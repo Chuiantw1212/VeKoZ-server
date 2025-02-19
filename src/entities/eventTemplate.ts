@@ -21,6 +21,7 @@ export interface ITemplateDesign {
     mutable?: ITemplateDesignMutable,
     templateId?: string,
     formField?: string, // 讓連動更新欄位
+    required?: boolean,
 }
 
 /**
@@ -62,6 +63,7 @@ export interface IPostTemplateDesignReq {
     type: string,
     destination: string,
     templateId: string,
+    required: boolean,
     // templateDesignIds: string[]
 }
 
