@@ -40,12 +40,14 @@ export interface ITemplateDesignMutable {
     startDate: Date,
     endDate: Date,
     // 線下地點
-    locationName?: string,
+    placeId?: string, // entities, 如果有owner可共用評價
+    placeOwnerId: string,
+    placeName?: string,
     locationAddress?: string,
-    locatoinRegion?: string,
+    locationAddressRegion?: string, // 第一級行政區
     // 線上地點
-    virtualName?: string,
-    virtualUrl?: string,
+    virtualLocationName?: string,
+    virtualLocationUrl?: string,
     // 票券
     offers?: IOffer[]
 }

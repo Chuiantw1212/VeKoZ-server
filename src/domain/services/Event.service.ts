@@ -193,25 +193,20 @@ export default class EventService {
                     break;
                 }
                 case 'performers': {
-                    event.performerIds = design.mutable?
+                    event.performerIds = design.mutable?.memberIds
                     event.organizerName = design.mutable?.organizationName
                     break;
                 }
+                case 'place': {
+                    event.addressRegion = design.mutable?.locationAddressRegion
+                    break;
+                }
             }
-            // if (design.formField === 'date') {
-            //     const startDate = design.mutable?.value[0]
-            //     const endDate = design.mutable?.value[1]
-            //     event.startDate = startDate
-            //     event.endDate = endDate
-            //     dateDesignIndex = index
-            // } else {
-            //     // 另外再去跑patch design處理資料
-            //     // event[design.formField] = design.mutable?.value
-            // }
         })
         // 儲存事件Master
         const newEvent = await this.eventModel.createEvent(uid, event)
         eventTemplate.id = newEvent.id
+        this.eventModel.setKeywordsById(uid, String(newEvent.id))
         // 拷貝designs details
         const designsTemp = eventTemplate.designs
         delete eventTemplate.designs
