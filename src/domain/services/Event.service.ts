@@ -160,29 +160,48 @@ export default class EventService {
             throw 'designs不存在'
         }
         // 建立sql與noSql的關聯，修改時，用collection資料覆蓋SQL
-        const event: IEvent = {
-            name: '',
-            startDate: '',
-            endDate: '',
-            description: '',
-            dateDesignId: '', // 這邊需要另外更新
-        }
         const templateDesigns: ITemplateDesign[] = eventTemplate.designs as ITemplateDesign[]
+        const designsWithFormField = templateDesigns.filter(design => {
+            return design.formField
+        })
+        const event: IEvent = {}
         let dateDesignIndex: number = -1
-        templateDesigns.forEach((design, index) => {
-            if (design.formField) {
-                if (design.formField === 'date') {
+        designsWithFormField.forEach((design, index) => {
+            /**
+             * 注意要跟 patchEventForm 那邊的switch case交叉檢查
+             */
+            switch (design.formField) {
+                case 'name': {
+                    event.name = design.mutable?.value
+                    break;
+                }
+                case 'description': {
+                    event.description = design.mutable?.value
+                    break;
+                }
+                case 'date': {
                     const startDate = design.mutable?.value[0]
                     const endDate = design.mutable?.value[1]
                     event.startDate = startDate
                     event.endDate = endDate
                     dateDesignIndex = index
-                } 
-                else {
-                    // 另外再去跑patch design處理資料
-                    // event[design.formField] = design.mutable?.value
+                    break;
+                }
+                case 'organization': {
+                    event.
+                    break;
                 }
             }
+            // if (design.formField === 'date') {
+            //     const startDate = design.mutable?.value[0]
+            //     const endDate = design.mutable?.value[1]
+            //     event.startDate = startDate
+            //     event.endDate = endDate
+            //     dateDesignIndex = index
+            // } else {
+            //     // 另外再去跑patch design處理資料
+            //     // event[design.formField] = design.mutable?.value
+            // }
         })
         // 儲存事件Master
         const newEvent = await this.eventModel.createEvent(uid, event)

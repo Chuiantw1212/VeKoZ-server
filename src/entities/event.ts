@@ -11,7 +11,7 @@ export interface IEvent extends IEventSEO {
 }
 interface IEventSEO extends IEventQuery {
     image?: string,
-    name?: string;
+    name?: string,
     description?: string,
     performers?: string[], // userIds 
     organizer?: string, // organizationId
@@ -19,7 +19,7 @@ interface IEventSEO extends IEventQuery {
 export interface IEventQuery {
     startDate?: any,
     endDate?: any,
-    keywords?: string[],
+    keywords?: string[] | string,
     addressRegion?: string,
     hasVirtualLocation?: boolean,
     isPublic?: boolean,

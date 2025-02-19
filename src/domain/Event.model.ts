@@ -48,7 +48,7 @@ export default class EventModel extends FirestoreAdapter {
         if (condition.keywords) {
             const result = tfIdf.extractKeywords(
                 jieba,
-                condition.keywords,
+                condition.keywords as string,
                 30,
             )
             const keywords = result.map(item => {
