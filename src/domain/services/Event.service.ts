@@ -198,7 +198,7 @@ export default class EventService {
                     break;
                 }
                 case 'place': {
-                    event.addressRegion = design.mutable?.locationAddressRegion
+                    event.addressRegion = design.mutable?.placeAddressRegion
                     break;
                 }
             }

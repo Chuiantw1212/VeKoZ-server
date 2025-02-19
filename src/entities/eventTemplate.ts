@@ -44,7 +44,7 @@ export interface ITemplateDesignMutable {
     placeOwnerId: string,
     placeName?: string,
     locationAddress?: string,
-    locationAddressRegion?: string, // 第一級行政區
+    placeAddressRegion?: string, // 第一級行政區
     // 線上地點
     virtualLocationName?: string,
     virtualLocationUrl?: string,
