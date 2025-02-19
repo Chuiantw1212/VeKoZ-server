@@ -23,9 +23,37 @@ export interface ITemplateDesign {
     formField?: string, // 讓連動更新欄位
 }
 
+/**
+ * 與前端共用Interface，盡可能區分定義，避免都使用value便於未來維護
+ */
 export interface ITemplateDesignMutable {
     label?: string,
+    // 未定義欄位使用
     value?: any,
+    // organization
+    organizationName?: string,
+    organizationId?: string,
+    // organization members
+    memberIds?: string[],
+    memberNames?: string[],
+    // 時間
+    startDate: Date,
+    endDate: Date,
+    // 線下地點
+    locationName?: string,
+    locationAddress?: string,
+    locatoinRegion?: string,
+    // 線上地點
+    virtualName?: string,
+    virtualUrl?: string,
+    // 票券
+    offers?: IOffer[]
+}
+
+interface IOffer {
+    name: string,
+    count: number,
+    price: number,
 }
 
 export interface IPostTemplateDesignReq {

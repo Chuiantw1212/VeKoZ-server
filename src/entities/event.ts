@@ -17,7 +17,7 @@ interface IEventSEO extends IEventQuery {
     performerIds?: string[],
     organizerName?: string, // organizerName
     organizerId?: string,
-    placeId: string, // 如果有owner，可共用評價
+    placeId?: string, // 如果有owner，可共用評價
     // 未來功能設想
     // contributors?: string[], // 不被搜尋，但可共用評價？
     // placeOwnerId?: string, // 如果有owner，可共用評價

@@ -187,8 +187,14 @@ export default class EventService {
                     dateDesignIndex = index
                     break;
                 }
-                case 'organization': {
-                    // event.organizerId
+                case 'organizer': {
+                    event.organizerId = design.mutable?.organizationId
+                    event.organizerName = design.mutable?.organizationName
+                    break;
+                }
+                case 'performers': {
+                    event.performerIds = design.mutable?
+                    event.organizerName = design.mutable?.organizationName
                     break;
                 }
             }
