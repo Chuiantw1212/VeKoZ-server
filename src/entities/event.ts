@@ -13,8 +13,15 @@ interface IEventSEO extends IEventQuery {
     image?: string,
     name?: string,
     description?: string,
-    performers?: string[], // userIds 
-    organizer?: string, // organizationId
+    performerNames?: string[],
+    performerIds?: string[],
+    organizerName?: string, // organizerName
+    organizerId?: string,
+    placeId: string, // 如果有owner，可共用評價
+    // 未來功能設想
+    // contributors?: string[], // 不被搜尋，但可共用評價？
+    // placeOwnerId?: string, // 如果有owner，可共用評價
+    // placeOwnerName?: string, // 如果有owner，可共用評價
 }
 export interface IEventQuery {
     startDate?: any,

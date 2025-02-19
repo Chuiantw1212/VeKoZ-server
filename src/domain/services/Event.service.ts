@@ -188,7 +188,7 @@ export default class EventService {
                     break;
                 }
                 case 'organization': {
-                    event.
+                    // event.organizerId
                     break;
                 }
             }
