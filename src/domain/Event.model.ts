@@ -27,7 +27,7 @@ export default class EventModel extends FirestoreAdapter {
             event.endDate = super.formatTimestamp(event.endDate)
         }
         // delete event.designIds // 用不到了?
-        const newEventDoc: IEvent = await super.createItem(uid, event)
+        const newEventDoc: IEvent = await super.createItem(uid, event) as IEvent
         return newEventDoc
     }
 
@@ -37,10 +37,6 @@ export default class EventModel extends FirestoreAdapter {
      * @returns 
      */
     async queryEventList(condition: IEventQuery): Promise<IEvent[]> {
-        console.log({
-            condition
-        })
-
         const wheres = []
         if (condition.startDate) {
             wheres.push(['startDate', '>=', new Date(condition.startDate)])
@@ -86,7 +82,7 @@ export default class EventModel extends FirestoreAdapter {
          * 在選定城市情況下，補外縣市的線上活動
          */
         let onlineEvents: IEvent[] = []
-        if (String(condition.includeVirtualLocation) === 'true') {
+        if (String(condition.hasVirtualLocation) === 'true') {
             if (hasOnSite) {
                 wheres.pop() // 丟掉城市篩選
                 wheres.push(['addressRegion', '!=', condition.addressRegion])

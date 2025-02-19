@@ -177,8 +177,10 @@ export default class EventService {
                     event.startDate = startDate
                     event.endDate = endDate
                     dateDesignIndex = index
-                } else {
-                    event[design.formField] = design.mutable?.value
+                } 
+                else {
+                    // 另外再去跑patch design處理資料
+                    // event[design.formField] = design.mutable?.value
                 }
             }
         })
