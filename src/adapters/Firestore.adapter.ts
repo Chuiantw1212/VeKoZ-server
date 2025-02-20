@@ -71,6 +71,21 @@ export default class FirestoreAdapter extends VenoniaCRUD {
     }
 
     /**
+     * R: 利用document id取得唯一資料欄位
+     * @param id 
+     * @param field 
+     * @returns 
+     */
+    protected async getFieldById(id: string, field: string): Promise<unknown> {
+        if (!this.collection) {
+            throw this.error.collectionIsNotReady
+        }
+        const docData: DocumentData = await this.collection.doc(id).get()
+        const result = docData.get(field)
+        return result
+    }
+
+    /**
      * R: 利用條件查詢資料
      * @param uid 
      * @param options 
@@ -103,28 +118,6 @@ export default class FirestoreAdapter extends VenoniaCRUD {
             return docData
         })
         return docDatas
-    }
-
-    /**
-     * R: 讀取全部的資料
-     * https://firebase.google.com/docs/firestore/query-data/get-data#node.js_6
-     * @returns 
-     * @deprecated
-     */
-    protected async getDocList() {
-        if (!this.collection) {
-            throw this.error.collectionIsNotReady
-        }
-        const snapshot = await this.collection.get()
-        const docDatas = snapshot.docs.map((doc: DocumentData) => {
-            const docData = doc.data()
-            delete docData.uid
-            if (docData.lastmod) {
-                docData.lastmod = new Date(docData.lastmod.seconds * 1000)
-            }
-            return docData
-        });
-        return docDatas as any[]
     }
 
     /**

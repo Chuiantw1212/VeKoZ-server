@@ -121,7 +121,7 @@ import metaController from './adapters/client.in/meta.ctrl'
             eventModel,
             eventDesignModel,
             eventActorModel,
-            // eventSchemaModel,
+            organizationModel,
         }),
         EventTemplateService: new EventTemplateService({
             eventTemplateModel,

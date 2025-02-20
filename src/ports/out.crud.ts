@@ -29,6 +29,16 @@ export default abstract class VenoniaCRUD {
         return new Promise(() => { })
     }
     /**
+     * 取得特定欄位的資料
+     * @param id 
+     * @param data 
+     * @param options 
+     * @returns 
+     */
+    protected async getFieldById(id: string, field: string) {
+        return new Promise(() => { })
+    }
+    /**
      * 用條件更新資料列表
      * @param wheres 
      * @param options 通常包含uid權限管控用，但現在放在wheres比較簡單

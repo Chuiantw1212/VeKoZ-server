@@ -3,27 +3,32 @@ import type { IEvent, IEventQuery, } from '../../entities/event';
 import EventModel from '../Event.model'
 import EventActorModel from '../EventActor.model'
 import EventDesignModel from '../EventDesign.model';
+import OrganizationModel from '../Organization.model';
 
 interface Idependency {
     eventModel: EventModel;
     eventDesignModel: EventDesignModel;
     eventActorModel: EventActorModel;
+    organizationModel: OrganizationModel
 }
 
 export default class EventService {
     protected eventModel: EventModel = null as any
     protected eventDesignModel: EventDesignModel = null as any
     protected eventActorModel: EventActorModel = null as any
+    protected organizationModel: OrganizationModel = null as any
 
     constructor(dependency: Idependency) {
         const {
             eventModel,
             eventDesignModel,
             eventActorModel,
+            organizationModel,
         } = dependency
         this.eventModel = eventModel
         this.eventDesignModel = eventDesignModel
         this.eventActorModel = eventActorModel
+        this.organizationModel = organizationModel
     }
 
     /**
@@ -147,10 +152,14 @@ export default class EventService {
                 break;
             }
             case 'organizer': {
-                await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
-                    organizationId: eventDesign.mutable?.organizationId,
-                    organizerName: eventDesign.mutable?.organizationName,
-                })
+                if (eventDesign.mutable?.organizationId) {
+                    const organizerLogo = await this.organizationModel.getLogoUrl(eventDesign.mutable.organizationId)
+                    await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
+                        organizationId: eventDesign.mutable.organizationId,
+                        organizerName: eventDesign.mutable?.organizationName,
+                        organizerLogo,
+                    })
+                }
                 break;
             }
             default: {

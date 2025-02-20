@@ -48,6 +48,16 @@ export default class OrganizationModel extends FirestoreAdapter {
     }
 
     /**
+     * 取得商標連結
+     * @param id 
+     * @returns 
+     */
+    async getLogoUrl(id: string): Promise<string> {
+        const result = await super.getFieldById(id, 'logo',) as string
+        return result
+    }
+
+    /**
      * 刪除組織
      * @param uid 使用者uid
      * @param id 文件id
