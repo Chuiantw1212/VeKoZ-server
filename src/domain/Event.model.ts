@@ -32,20 +32,24 @@ export default class EventModel extends FirestoreAdapter {
      * @returns 
      */
     async queryEventList(query: IEventQuery): Promise<IEvent[]> {
-        // console.log(query.keywords)
         const wheres = []
         if (query.organizerId) {
             wheres.push(['organizerId', '==', query.organizerId])
         }
         if (query.startDate) {
             const startDate = new Date(query.startDate)
-            wheres.push(['startDate', '>=', startDate])
+            if (!isNaN(startDate.getTime())) {
+                wheres.push(['startDate', '>=', startDate])
+            }
+        }
+        if (query.endDate) {
+            const endDate = new Date(query.endDate)
+            if (!isNaN(endDate.getTime())) {
+                wheres.push(['endDate', '<=', endDate])
+            }
         }
         if (query.startHour) {
             wheres.push(['startHour', '==', query.startHour])
-        }
-        if (query.endDate) {
-            wheres.push(['endDate', '<=', new Date(query.endDate)])
         }
         if (query.keywords?.length) {
             wheres.push(['keywords', 'array-contains-any', query.keywords])
