@@ -4,19 +4,21 @@ import EventModel from '../Event.model'
 import EventActorModel from '../EventActor.model'
 import EventDesignModel from '../EventDesign.model';
 import OrganizationModel from '../Organization.model';
+import NlpAdapter from '../../adapters/nlp.out';
 
 interface Idependency {
     eventModel: EventModel;
     eventDesignModel: EventDesignModel;
     eventActorModel: EventActorModel;
     organizationModel: OrganizationModel
+    nlpAdapter: NlpAdapter
 }
 
 export default class EventService {
-    protected eventModel: EventModel = null as any
-    protected eventDesignModel: EventDesignModel = null as any
-    protected eventActorModel: EventActorModel = null as any
-    protected organizationModel: OrganizationModel = null as any
+    private eventModel: EventModel
+    private eventDesignModel: EventDesignModel
+    private organizationModel: OrganizationModel
+    private nlpAdapter: NlpAdapter
 
     constructor(dependency: Idependency) {
         const {
@@ -24,11 +26,12 @@ export default class EventService {
             eventDesignModel,
             eventActorModel,
             organizationModel,
+            nlpAdapter,
         } = dependency
         this.eventModel = eventModel
         this.eventDesignModel = eventDesignModel
-        this.eventActorModel = eventActorModel
         this.organizationModel = organizationModel
+        this.nlpAdapter = nlpAdapter
     }
 
     /**
@@ -107,8 +110,10 @@ export default class EventService {
         })
         // 儲存事件Master
         const newEvent = await this.eventModel.createEvent(uid, event)
-        eventTemplate.id = newEvent.id
-        this.eventModel.setKeywordsById(uid, String(newEvent.id))
+        if (newEvent.id) {
+            eventTemplate.id = newEvent.id
+            this.updateEventKeywordsById(uid, newEvent.id)
+        }
         // 拷貝designs details
         const designsTemp = eventTemplate.designs
         delete eventTemplate.designs
@@ -129,8 +134,8 @@ export default class EventService {
     }
 
     async patchEventForm(uid: string, eventDesign: ITemplateDesign): Promise<number> {
-        if (!eventDesign.id) {
-            throw 'id不存在'
+        if (!eventDesign.id || !eventDesign.eventId) {
+            throw 'id或是eventId不存在'
         }
         // 更新EventDesigns
         const count = await this.eventDesignModel.patchEventDesignById(uid, eventDesign.id, eventDesign)
@@ -139,23 +144,21 @@ export default class EventService {
          */
         switch (eventDesign.formField) {
             case 'banner': {
-                await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
+                await this.eventModel.mergeEventById(uid, eventDesign.eventId, {
                     banner: eventDesign.mutable?.value ?? ''
                 })
                 break;
             }
             case 'description': {
-                await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
+                await this.eventModel.mergeEventById(uid, eventDesign.eventId, {
                     description: eventDesign.mutable?.value ?? ''
                 })
-                this.eventModel.setKeywordsById(uid, String(eventDesign.eventId))
                 break;
             }
             case 'name': {
-                await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
+                await this.eventModel.mergeEventById(uid, eventDesign.eventId, {
                     name: eventDesign.mutable?.value ?? ''
                 })
-                this.eventModel.setKeywordsById(uid, String(eventDesign.eventId))
                 break;
             }
             case 'date': {
@@ -175,13 +178,13 @@ export default class EventService {
                 if (18 <= startHour && startHour < 24) {
                     eventDatePatch.startHour = 'evening'
                 }
-                await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), eventDatePatch)
+                await this.eventModel.mergeEventById(uid, eventDesign.eventId, eventDatePatch)
                 break;
             }
             case 'organizer': {
                 if (eventDesign.mutable?.organizationId) {
                     const organizerLogo = await this.organizationModel.getLogoUrl(eventDesign.mutable.organizationId)
-                    await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
+                    await this.eventModel.mergeEventById(uid, eventDesign.eventId, {
                         organizationId: eventDesign.mutable.organizationId,
                         organizerName: eventDesign.mutable?.organizationName,
                         organizerLogo,
@@ -193,7 +196,29 @@ export default class EventService {
                 return count
             }
         }
+        // 一但觸發更新關鍵字列表
+        if (['name', 'description'].includes(eventDesign.formField)) {
+            this.updateEventKeywordsById(uid, eventDesign.eventId)
+        }
         return count
+    }
+
+    /**
+     * 更新event.keywords
+     * @param uid 
+     * @param eventId 
+     */
+    private async updateEventKeywordsById(uid: string, eventId: string,) {
+        const event = await this.eventModel.getEventById(eventId)
+        if (!event) return
+
+        const description = event.description
+        const name = event.name
+        const fullText = `${name}。${description}`
+        const newKeywords = this.nlpAdapter.extractKeywords(fullText)
+        this.eventModel.mergeEventById(uid, eventId, {
+            keywords: newKeywords
+        })
     }
 
     /**
@@ -270,6 +295,12 @@ export default class EventService {
     }
 
     async queryEventList(query: IEventQuery): Promise<IEvent[]> {
+        /**
+         * 處理
+         */
+        if (query.keywords) {
+
+        }
         const events = await this.eventModel.queryEventList(query) as IEvent[]
         return events
     }

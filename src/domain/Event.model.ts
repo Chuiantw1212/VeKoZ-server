@@ -1,12 +1,7 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
 import type { IModelPorts } from '../ports/out.model'
 import type { IEvent, IEventQuery } from '../entities/event'
-import { Jieba, TfIdf } from '@node-rs/jieba'
-import { dict, idf } from '@node-rs/jieba/dict'
 import { ICrudOptions } from '../ports/out.crud'
-
-const jieba = Jieba.withDict(dict)
-const tfIdf = TfIdf.withDict(idf)
 
 export default class EventModel extends FirestoreAdapter {
     constructor(data: IModelPorts) {
@@ -53,21 +48,6 @@ export default class EventModel extends FirestoreAdapter {
             wheres.push(['endDate', '<=', new Date(query.endDate)])
         }
         if (query.keywords) {
-            const keywordString = query.keywords as string
-            const cutForSearch = jieba.cutForSearch(keywordString)
-            const cutAll = jieba.cutAll(keywordString)
-            const cutAsync = await jieba.cutAsync(keywordString)
-            const result = tfIdf.extractKeywords(
-                jieba,
-                keywordString,
-                30,
-            )
-            console.log({
-                result,
-                cutForSearch,
-                cutAll,
-                cutAsync
-            })
             // const keywords = result.map(item => {
             //     return item.keyword
             // })
@@ -184,36 +164,5 @@ export default class EventModel extends FirestoreAdapter {
     async deleteByEventId(uid: string, id: string): Promise<number> {
         const count = await super.deleteItemById(uid, id)
         return count
-    }
-
-    /**
-     * 重新處理關鍵字
-     * @param uid 
-     * @param id 
-     */
-    async setKeywordsById(uid: string, id: string) {
-        const event = await super.getItemById(id) as IEvent
-        const description = event.description
-        const name = event.name
-        const fullText = `${name},${description}`
-        const result = tfIdf.extractKeywords(
-            jieba,
-            fullText,
-            30,
-        )
-        const keywords = result.map(item => {
-            return item.keyword
-        })
-        console.log(keywords)
-        const options: ICrudOptions = {
-            count: {
-                absolute: 1
-            }
-        }
-        if (keywords) {
-            await super.setItemById(uid, id, {
-                keywords,
-            }, options)
-        }
     }
 }

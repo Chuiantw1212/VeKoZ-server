@@ -10,6 +10,7 @@ import firebase from './adapters/firebase.out'
 import googleSecretManager from './adapters/googleSecretManager.out'
 import googleCalendar from './adapters/googleCalendar.out'
 import googleStoragePlugin from './adapters/googleStorage.out'
+import NlpAdapter from './adapters/nlp.out'
 // models
 import PlaceModel from './domain/Place.model'
 import SelectModel from './domain/Select.model';
@@ -109,6 +110,7 @@ import metaController from './adapters/client.in/meta.ctrl'
     const userPreferenceModel = new UserPreferenceModel({
         collection: firebase.getCollection('userPreferences')
     })
+    const nlpAdapter = new NlpAdapter()
 
     /**
      * Services
@@ -122,6 +124,7 @@ import metaController from './adapters/client.in/meta.ctrl'
             eventDesignModel,
             eventActorModel,
             organizationModel,
+            nlpAdapter,
         }),
         EventTemplateService: new EventTemplateService({
             eventTemplateModel,
