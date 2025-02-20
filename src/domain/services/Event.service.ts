@@ -308,7 +308,8 @@ export default class EventService {
          * 處理
          */
         if (query.keywords) {
-
+            const keywords = this.nlpAdapter.cutForSearch(query.keywords as string)
+            query.keywords = keywords
         }
         const events = await this.eventModel.queryEventList(query) as IEvent[]
         return events

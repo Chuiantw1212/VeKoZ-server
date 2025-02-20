@@ -32,7 +32,7 @@ export default class EventModel extends FirestoreAdapter {
      * @returns 
      */
     async queryEventList(query: IEventQuery): Promise<IEvent[]> {
-        console.log(query.keywords)
+        // console.log(query.keywords)
         const wheres = []
         if (query.organizerId) {
             wheres.push(['organizerId', '==', query.organizerId])
@@ -47,13 +47,8 @@ export default class EventModel extends FirestoreAdapter {
         if (query.endDate) {
             wheres.push(['endDate', '<=', new Date(query.endDate)])
         }
-        if (query.keywords) {
-            // const keywords = result.map(item => {
-            //     return item.keyword
-            // })
-            // if (keywords.length) {
-            //     wheres.push(['keywords', 'array-contains-any', keywords])
-            // }
+        if (query.keywords?.length) {
+            wheres.push(['keywords', 'array-contains-any', query.keywords])
         }
         if (String(query.isPublic) === 'true') {
             wheres.push(['isPublic', '==', true])
