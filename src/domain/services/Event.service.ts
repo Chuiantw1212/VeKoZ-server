@@ -50,7 +50,7 @@ export default class EventService {
             isPublic: false, // 預設非公開
         }
         let dateDesignIndex: number = -1
-        designsWithFormField.forEach((design, index) => {
+        designsWithFormField.forEach(async (design, index) => {
             /**
              * 注意要跟 patchEventForm 那邊的switch case交叉檢查
              */
@@ -76,8 +76,12 @@ export default class EventService {
                     break;
                 }
                 case 'organizer': {
-                    event.organizerId = design.mutable?.organizationId
-                    event.organizerName = design.mutable?.organizationName
+                    if (design.mutable?.organizationId) {
+                        const organizerLogo = await this.organizationModel.getLogoUrl(design.mutable.organizationId)
+                        event.organizerLogo = organizerLogo
+                        event.organizerId = design.mutable.organizationId
+                        event.organizerName = design.mutable?.organizationName
+                    }
                     break;
                 }
                 case 'performers': {
