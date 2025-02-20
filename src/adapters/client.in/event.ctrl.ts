@@ -42,10 +42,11 @@ router.use(bearer())
     //     const result = await EventService.patchEventForm(user.uid, templateDesign)
     //     return result
     // })
-    .get('/event/:id', async function ({ params }) {
-        const { EventService } = AccessGlobalService.locals
+    .get('/event/:id', async function ({ params, bearer }) {
+        const { AuthService, EventService } = AccessGlobalService.locals
         const { id } = params
-        const event = await EventService.getEvent(id)
+        const user = await AuthService.verifyIdToken(bearer)
+        const event = await EventService.getEvent(id, user.uid)
         return event
     })
     .delete('/event/:id', async function ({ params, bearer }) {

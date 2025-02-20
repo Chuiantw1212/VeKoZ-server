@@ -254,7 +254,7 @@ export default class EventService {
         return count
     }
 
-    async getEvent(id: string): Promise<IEventTemplate | 0> {
+    async getEvent(id: string, uid: string,): Promise<IEventTemplate | 0> {
         const eventTemplate: IEventTemplate | 0 = await this.eventModel.getEventById(id)
         if (eventTemplate) {
             const designIds = eventTemplate.designIds || []
@@ -263,9 +263,18 @@ export default class EventService {
                 return this.eventDesignModel.getEventDesignById(designId)
             })
             const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
-            eventTemplate.designs = eventTemplateDesigns
-            delete eventTemplate.designIds
-            return eventTemplate
+            const isAllDetailMissing = eventTemplateDesigns.every(value => !value)
+            if (isAllDetailMissing) {
+                if (uid) {
+                    console.error('event.designs皆為0', id)
+                    this.eventModel.deleteByEventId(uid, id)
+                }
+                return 0
+            } else {
+                eventTemplate.designs = eventTemplateDesigns
+                delete eventTemplate.designIds
+                return eventTemplate
+            }
         }
         return 0
     }
