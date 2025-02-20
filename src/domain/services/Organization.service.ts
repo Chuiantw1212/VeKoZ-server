@@ -26,14 +26,15 @@ export default class OrganizationService {
         this.eventModel = eventModel
     }
 
-    async storeLogo(id: string, logo: any) {
+    async storeLogo(uid: string, id: string, logo: any) {
         const logoUrl = await this.organizationModel.storeLogo(id, logo)
-        // 更新相關的event.logo
         const eventListL: IEvent[] = await this.eventModel.queryEventList({
             organizerId: id,
         })
-        console.log({
-            eventListL
+        eventListL.forEach((event: IEvent) => {
+            this.eventModel.mergeEventById(uid, String(event.id), {
+                organizerLogo: logoUrl,
+            })
         })
         return logoUrl
     }

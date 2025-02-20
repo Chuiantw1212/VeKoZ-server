@@ -25,7 +25,7 @@ router.use(bearer())
         organization.logo = ''
         let newOrganization: IOrganization = await OrganizationService.newItem(user.uid, organization)
         if (logo && typeof logo !== 'string') {
-            const publicUrl: string = await OrganizationService.storeLogo(newOrganization.id, logo)
+            const publicUrl: string = await OrganizationService.storeLogo(user.uid, newOrganization.id, logo)
             newOrganization.logo = publicUrl
         }
         await OrganizationService.mergeUniqueDoc(user.uid, newOrganization)
@@ -41,7 +41,7 @@ router.use(bearer())
             ...newOrganization
         })
         if (typeof organization.logo !== 'string') {
-            const publicUrl: string = await OrganizationService.storeLogo(organization.id, organization.logo)
+            const publicUrl: string = await OrganizationService.storeLogo(user.uid, organization.id, organization.logo)
             organization.logo = publicUrl
         }
         await OrganizationService.mergeUniqueDoc(user.uid, organization)
