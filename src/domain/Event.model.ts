@@ -56,8 +56,11 @@ export default class EventModel extends FirestoreAdapter {
             })
             wheres.push(['keywords', 'array-contains-any', keywords])
         }
-        if (String(condition.isPublic) === 'true') { // 使用'true'
+        if (String(condition.isPublic) === 'true') {
             wheres.push(['isPublic', '==', true])
+        }
+        if (String(condition.isPublic) === 'false') {
+            wheres.push(['isPublic', '==', false])
         }
 
         const options: ICrudOptions = {
@@ -68,9 +71,9 @@ export default class EventModel extends FirestoreAdapter {
         if (condition.addressRegion) {
             wheres.push(['addressRegion', '==', condition.addressRegion])
         }
-        // console.log({
-        //     wheres
-        // })
+        console.log({
+            wheres
+        })
         const firstEventList = await super.getItemsByQuery(wheres, options)
         firstEventList.forEach(docData => {
             if (docData.startDate) {

@@ -41,15 +41,17 @@ export default class EventService {
         const designsWithFormField = templateDesigns.filter(design => {
             return design.formField
         })
-        const event: IEvent = {}
+        const event: IEvent = {
+            isPublic: false, // 預設非公開
+        }
         let dateDesignIndex: number = -1
         designsWithFormField.forEach((design, index) => {
             /**
              * 注意要跟 patchEventForm 那邊的switch case交叉檢查
              */
             switch (design.formField) {
-                case 'image': {
-                    event.image = design.mutable?.value
+                case 'banner': {
+                    event.banner = design.mutable?.value
                     break;
                 }
                 case 'name': {
@@ -117,9 +119,9 @@ export default class EventService {
          * 注意要跟 createForm 那邊的switch case交叉檢查
          */
         switch (eventDesign.formField) {
-            case 'image': {
+            case 'banner': {
                 await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
-                    image: eventDesign.mutable?.value ?? ''
+                    banner: eventDesign.mutable?.value ?? ''
                 })
                 break;
             }

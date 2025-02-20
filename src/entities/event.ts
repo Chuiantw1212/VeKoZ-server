@@ -10,13 +10,14 @@ export interface IEvent extends IEventSEO {
     dateDesignId?: string, // 從月曆拉動活動日期時，使用dateDesignId去更新對應套版設計的資料欄位
 }
 interface IEventSEO extends IEventQuery {
-    image?: string,
+    banner?: string,
     name?: string,
     description?: string,
     performerNames?: string[],
     performerIds?: string[],
     organizerName?: string, // organizerName
     organizerId?: string,
+    organizerLogo?: string,
 }
 export interface IEventQuery {
     startDate?: any,
