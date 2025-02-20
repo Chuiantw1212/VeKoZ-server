@@ -72,6 +72,16 @@ export default class EventService {
                     const endDate = design.mutable?.value[1]
                     event.startDate = startDate
                     event.endDate = endDate
+                    const startHour = new Date(startDate).getHours()
+                    if (6 <= startHour && startHour < 12) {
+                        event.startHour = 'morning'
+                    }
+                    if (12 <= startHour && startHour < 18) {
+                        event.startHour = 'afternoon'
+                    }
+                    if (18 <= startHour && startHour < 24) {
+                        event.startHour = 'evening'
+                    }
                     dateDesignIndex = index
                     break;
                 }
@@ -149,10 +159,23 @@ export default class EventService {
                 break;
             }
             case 'date': {
-                await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), {
-                    startDate: eventDesign.mutable?.value[0] ?? '',
-                    endDate: eventDesign.mutable?.value[1] ?? ''
-                })
+                const startDate = eventDesign.mutable?.value[0] ?? ''
+                const endDate = eventDesign.mutable?.value[1] ?? ''
+                const eventDatePatch: IEvent = {
+                    startDate,
+                    endDate
+                }
+                const startHour = new Date(startDate).getHours()
+                if (6 <= startHour && startHour < 12) {
+                    eventDatePatch.startHour = 'morning'
+                }
+                if (12 <= startHour && startHour < 18) {
+                    eventDatePatch.startHour = 'afternoon'
+                }
+                if (18 <= startHour && startHour < 24) {
+                    eventDatePatch.startHour = 'evening'
+                }
+                await this.eventModel.mergeEventById(uid, String(eventDesign.eventId), eventDatePatch)
                 break;
             }
             case 'organizer': {

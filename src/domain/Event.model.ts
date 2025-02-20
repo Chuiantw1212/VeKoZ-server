@@ -37,27 +37,43 @@ export default class EventModel extends FirestoreAdapter {
      * @returns 
      */
     async queryEventList(query: IEventQuery): Promise<IEvent[]> {
+        console.log(query.keywords)
         const wheres = []
         if (query.organizerId) {
             wheres.push(['organizerId', '==', query.organizerId])
         }
         if (query.startDate) {
-            wheres.push(['startDate', '>=', new Date(query.startDate)])
+            const startDate = new Date(query.startDate)
+            wheres.push(['startDate', '>=', startDate])
+        }
+        if (query.startHour) {
+            wheres.push(['startHour', '==', query.startHour])
         }
         if (query.endDate) {
             wheres.push(['endDate', '<=', new Date(query.endDate)])
         }
-
         if (query.keywords) {
+            const keywordString = query.keywords as string
+            const cutForSearch = jieba.cutForSearch(keywordString)
+            const cutAll = jieba.cutAll(keywordString)
+            const cutAsync = await jieba.cutAsync(keywordString)
             const result = tfIdf.extractKeywords(
                 jieba,
-                query.keywords as string,
+                keywordString,
                 30,
             )
-            const keywords = result.map(item => {
-                return item.keyword
+            console.log({
+                result,
+                cutForSearch,
+                cutAll,
+                cutAsync
             })
-            wheres.push(['keywords', 'array-contains-any', keywords])
+            // const keywords = result.map(item => {
+            //     return item.keyword
+            // })
+            // if (keywords.length) {
+            //     wheres.push(['keywords', 'array-contains-any', keywords])
+            // }
         }
         if (String(query.isPublic) === 'true') {
             wheres.push(['isPublic', '==', true])
@@ -74,9 +90,9 @@ export default class EventModel extends FirestoreAdapter {
         if (query.locationAddressRegion) {
             wheres.push(['locationAddressRegion', '==', query.locationAddressRegion])
         }
-        // console.log({
-        //     wheres
-        // })
+        console.log({
+            wheres
+        })
         const firstEventList = await super.getItemsByQuery(wheres, options)
         firstEventList.forEach(docData => {
             if (docData.startDate) {
