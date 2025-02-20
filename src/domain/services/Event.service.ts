@@ -90,7 +90,7 @@ export default class EventService {
                     break;
                 }
                 case 'place': {
-                    event.addressRegion = design.mutable?.placeAddressRegion
+                    event.locationAddressRegion = design.mutable?.placeAddressRegion
                     break;
                 }
             }
@@ -247,9 +247,6 @@ export default class EventService {
     }
 
     async queryEventList(query: IEventQuery): Promise<IEvent[]> {
-        //    if (condition.addressRegion) {
-        //     wheres.push(['addressRegion', '==', condition.addressRegion])
-        // }
         const events = await this.eventModel.queryEventList(query) as IEvent[]
         return events
     }

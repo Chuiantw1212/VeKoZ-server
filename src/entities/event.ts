@@ -16,14 +16,14 @@ interface IEventSEO extends IEventQuery {
     performerNames?: string[],
     performerIds?: string[],
     organizerName?: string, // organizerName
-    organizerId?: string,
     organizerLogo?: string,
 }
 export interface IEventQuery {
+    organizerId?: string,
     startDate?: any,
     endDate?: any,
     keywords?: string[] | string,
-    addressRegion?: string,
+    locationAddressRegion?: string,
     hasVirtualLocation?: boolean,
     isPublic?: boolean,
 }

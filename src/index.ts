@@ -130,6 +130,7 @@ import metaController from './adapters/client.in/meta.ctrl'
         OrganizationService: new OrganizationService({
             organizationModel,
             organizationMemberModel,
+            eventModel,
         }),
         PlaceService: new PlaceService({
             placeModel,

@@ -1,27 +1,41 @@
+import type { IOrganization, IOrganizationMember } from '../../entities/organization';
 import OrganizationModel from '../Organization.model'
 import OrganizationMemberModel from '../OrganizationMember.model';
-import type { IOrganization, IOrganizationMember } from '../../entities/organization';
+import EventModel from '../Event.model';
+import { IEvent } from '../../entities/event';
 
 interface Idependency {
     organizationModel: OrganizationModel;
     organizationMemberModel: OrganizationMemberModel
+    eventModel: EventModel
 }
 
 export default class OrganizationService {
-    protected organizationModel: OrganizationModel = null as any
-    protected organizationMemberModel: OrganizationMemberModel = null as any
+    protected organizationModel: OrganizationModel
+    protected organizationMemberModel: OrganizationMemberModel
+    protected eventModel: EventModel
 
     constructor(dependency: Idependency) {
         const {
             organizationModel,
             organizationMemberModel,
+            eventModel
         } = dependency
         this.organizationModel = organizationModel
         this.organizationMemberModel = organizationMemberModel
+        this.eventModel = eventModel
     }
 
     async storeLogo(id: string, logo: any) {
-        return await this.organizationModel.storeLogo(id, logo)
+        const logoUrl = await this.organizationModel.storeLogo(id, logo)
+        // 更新相關的event.logo
+        const eventListL: IEvent[] = await this.eventModel.queryEventList({
+            organizerId: id,
+        })
+        console.log({
+            eventListL
+        })
+        return logoUrl
     }
 
     /**
@@ -44,7 +58,7 @@ export default class OrganizationService {
     /**
      * 更新組織
      */
-    async mergeUniqueDoc(uid: string, id: string, organization: IOrganization) {
+    async mergeUniqueDoc(uid: string, organization: IOrganization) {
         return await this.organizationModel.mergeOrganizationById(uid, organization.id, organization)
     }
 

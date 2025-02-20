@@ -36,19 +36,22 @@ export default class EventModel extends FirestoreAdapter {
      * @param condition 
      * @returns 
      */
-    async queryEventList(condition: IEventQuery): Promise<IEvent[]> {
+    async queryEventList(query: IEventQuery): Promise<IEvent[]> {
         const wheres = []
-        if (condition.startDate) {
-            wheres.push(['startDate', '>=', new Date(condition.startDate)])
+        if (query.organizerId) {
+            wheres.push(['organizerId', '==', query.organizerId])
         }
-        if (condition.endDate) {
-            wheres.push(['endDate', '<=', new Date(condition.endDate)])
+        if (query.startDate) {
+            wheres.push(['startDate', '>=', new Date(query.startDate)])
+        }
+        if (query.endDate) {
+            wheres.push(['endDate', '<=', new Date(query.endDate)])
         }
 
-        if (condition.keywords) {
+        if (query.keywords) {
             const result = tfIdf.extractKeywords(
                 jieba,
-                condition.keywords as string,
+                query.keywords as string,
                 30,
             )
             const keywords = result.map(item => {
@@ -56,24 +59,24 @@ export default class EventModel extends FirestoreAdapter {
             })
             wheres.push(['keywords', 'array-contains-any', keywords])
         }
-        if (String(condition.isPublic) === 'true') {
+        if (String(query.isPublic) === 'true') {
             wheres.push(['isPublic', '==', true])
         }
-        if (String(condition.isPublic) === 'false') {
+        if (String(query.isPublic) === 'false') {
             wheres.push(['isPublic', '==', false])
         }
 
         const options: ICrudOptions = {
             orderBy: ['startDate', 'asc'],
         }
-        // 區域處理
-        let hasOnSite = condition.addressRegion
-        if (condition.addressRegion) {
-            wheres.push(['addressRegion', '==', condition.addressRegion])
+        // 必須放在最後的區域選擇
+        let hasOnSite = query.locationAddressRegion
+        if (query.locationAddressRegion) {
+            wheres.push(['locationAddressRegion', '==', query.locationAddressRegion])
         }
-        console.log({
-            wheres
-        })
+        // console.log({
+        //     wheres
+        // })
         const firstEventList = await super.getItemsByQuery(wheres, options)
         firstEventList.forEach(docData => {
             if (docData.startDate) {
@@ -88,10 +91,10 @@ export default class EventModel extends FirestoreAdapter {
          * 在選定城市情況下，補外縣市的線上活動
          */
         let onlineEvents: IEvent[] = []
-        if (String(condition.hasVirtualLocation) === 'true') {
+        if (String(query.hasVirtualLocation) === 'true') {
             if (hasOnSite) {
                 wheres.pop() // 丟掉城市篩選
-                wheres.push(['addressRegion', '!=', condition.addressRegion])
+                wheres.push(['locationAddressRegion', '!=', query.locationAddressRegion])
             }
             wheres.push(['hasVirtualLocation', '==', true])
             onlineEvents = await super.getItemsByQuery(wheres, options)
