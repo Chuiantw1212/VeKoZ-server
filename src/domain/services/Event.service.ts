@@ -6,6 +6,7 @@ import EventDesignModel from '../EventDesign.model';
 import OrganizationModel from '../Organization.model';
 import NlpAdapter from '../../adapters/nlp.out';
 import OfferModel from '../OfferModel';
+import { IOffer } from '../../entities/offer';
 
 interface Idependency {
     eventModel: EventModel;
@@ -60,7 +61,7 @@ export default class EventService {
         }
         // 更新EventMaster
         const eventPatchePromises = designsWithFormField.map((design: ITemplateDesign) => {
-            const eventPatch = this.extractFormField(uid, design)
+            const eventPatch = this.extractFormField(design, uid)
             return eventPatch
         })
         const eventPatches = await Promise.all(eventPatchePromises)
@@ -69,23 +70,24 @@ export default class EventService {
                 Object.assign(event, eventPatch)
             }
         })
-        // 儲存事件Master
-        const newEvent = await this.eventModel.createEvent(uid, event)
-        if (newEvent.id) {
-            eventTemplate.id = newEvent.id
-            this.updateEventKeywordsById(uid, newEvent.id)
+        // 創建事件Master
+        const newEvent: IEvent = await this.eventModel.createEvent(uid, event)
+        // 修正Master細節
+        eventTemplate.id = newEvent.id
+        this.updateEventKeywordsById(uid, String(newEvent.id))
+        if (newEvent.offerIds && newEvent.organizerId) {
+            this.offerModel.initOffersById(uid, newEvent.offerIds, newEvent.organizerId)
         }
-        // 拷貝designs details
+        // 創建designs
         const designsTemp = eventTemplate.designs
         delete eventTemplate.designs
-        // 儲存欄位designs details
         const designDocPromises = designsTemp.map((design) => {
             delete design.id // 重要，不然會污染到模板資料
             return this.eventDesignModel.createDesign(uid, design)
         })
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
         const designIds = designDocs.map(doc => doc.id ?? '')
-        // 更新事件Master
+        // 回頭更新事件Master
         const dateDesign = designDocs.find(design => {
             return design.formField === 'dates'
         })
@@ -106,7 +108,7 @@ export default class EventService {
         const count = await this.eventDesignModel.patchEventDesignById(uid, eventDesign.id, eventDesign)
         // 更新EventMaster
         if (eventDesign.formField) {
-            const eventPatch = await this.extractFormField(uid, eventDesign)
+            const eventPatch = await this.extractFormField(eventDesign)
             if (eventPatch) {
                 await this.eventModel.mergeEventById(uid, eventDesign.eventId, eventPatch)
                 // 已存的事件更新關鍵字列表
@@ -118,7 +120,7 @@ export default class EventService {
         return count
     }
 
-    private async extractFormField(uid: string, eventDesign: ITemplateDesign) {
+    private async extractFormField(eventDesign: ITemplateDesign, uid?: string) {
         if (!eventDesign.mutable) {
             return
         }
@@ -170,10 +172,18 @@ export default class EventService {
                 break;
             }
             case 'offers': {
-                // console.log(eventDesign.mutable)
-                const offerPromiese = eventDesign.mutable.offers?.forEach(offer => {
-                    return this
-                })
+                // 有需要創造才拿到uid
+                if (eventDesign.mutable.offers) {
+                    if (uid) {
+                        const offerPromiese = eventDesign.mutable.offers.map(offer => {
+                            return this.offerModel.createOffer(uid, offer)
+                        })
+                        const newOffers = await Promise.all(offerPromiese) as IOffer[]
+                        const offerIds = newOffers.map((offer: IOffer) => offer.id)
+                        eventPatch.offerIds = offerIds
+                    }
+                }
+                break;
             }
             default: {
                 return {}

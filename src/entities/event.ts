@@ -3,11 +3,14 @@
  * https://schema.org/Event
  */
 export interface IEvent extends IEventSEO {
-    [key: string]: any
+    // [key: string]: any
     uid?: string;
     id?: string; // doc id
+    // DetailIds
     designIds?: string[],
     dateDesignId?: string, // 從月曆拉動活動日期時，使用dateDesignId去更新對應套版設計的資料欄位
+    locationId?: string
+    offerIds?: string[]
 }
 interface IEventSEO extends IEventQuery {
     banner?: string,

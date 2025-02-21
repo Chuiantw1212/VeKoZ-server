@@ -1,3 +1,4 @@
+import type { IOffer } from "./offer";
 /**
  * https://schema.org/Organization
  */
@@ -51,12 +52,6 @@ export interface ITemplateDesignMutable {
     urlValue?: string,
     // 票券
     offers?: IOffer[]
-}
-
-interface IOffer {
-    name: string,
-    count: number,
-    price: number,
 }
 
 export interface IPostTemplateDesignReq {
