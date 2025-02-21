@@ -77,10 +77,11 @@ export default class EventService {
         const designDocPromises = eventTemplate.designs.map(async (design) => {
             delete design.id // 重要，不然會污染到模板資料
             // 特殊處理Offer
-            if (design.type === 'offers') {
+            if (design.type === 'offers' && design.mutable && design.mutable.offers) {
                 const categoryId = crypto.randomUUID()
-                const categoryName = design.mutable?.label ?? ''
-                design.mutable?.offers?.forEach(offer => {
+                const categoryName = design.mutable.label ?? ''
+                const newOffers = structuredClone(design.mutable.offers)
+                newOffers.forEach(offer => {
                     offer.inventoryValue = offer.inventoryMaxValue
                     offer.eventId = event.id ?? ''
                     offer.eventName = event.name ?? ''
@@ -93,15 +94,14 @@ export default class EventService {
                     offer.validFrom = event.startDate
                     offer.validThrough = event.endDate
                     offer.availableAtOrFrom = 'VeKoZ' // composite key
+                    return offer
                 })
-                const createdOffers = await this.offerModel.createOffers(uid, design.mutable?.offers ?? [])
-                if (design.mutable) {
-                    design.mutable.categoryId = categoryId
-                    design.mutable.offers?.forEach((offer, index) => {
-                        offer.id = createdOffers[index].id
-                    })
-                    offerCategoryIds.push(categoryId)
-                }
+                const createdOffers = await this.offerModel.createOffers(uid, newOffers)
+                design.mutable.categoryId = categoryId
+                design.mutable.offers.forEach((offer, index) => {
+                    offer.id = createdOffers[index].id
+                })
+                offerCategoryIds.push(categoryId)
             }
             return this.eventDesignModel.createDesign(uid, design)
         })
@@ -125,15 +125,28 @@ export default class EventService {
         }
         // 更新EventDesigns
         const count = await this.eventDesignModel.patchEventDesignById(uid, eventDesign.id, eventDesign)
+        if (!eventDesign.formField) {
+            return count
+        }
         // 更新EventMaster
-        if (eventDesign.formField) {
-            const eventPatch = await this.extractFormField(eventDesign, uid)
-            if (eventPatch) {
-                await this.eventModel.mergeEventById(uid, eventDesign.eventId, eventPatch)
-                // 已存的事件更新關鍵字列表
-                if (this.seoFields.includes(eventDesign.formField)) {
-                    this.updateEventKeywordsById(uid, eventDesign.eventId)
+        const eventPatch = await this.extractFormField(eventDesign, uid)
+        // 例外處理offers
+        if (eventDesign.formField === 'offers') {
+            eventDesign.mutable.offers?.forEach(offer => {
+                console.log({
+                    offer
+                })
+                if (offer.id) {
+
                 }
+            })
+        }
+        // 更新event
+        if (eventPatch) {
+            await this.eventModel.mergeEventById(uid, eventDesign.eventId, eventPatch)
+            // 已存的事件更新關鍵字列表
+            if (this.seoFields.includes(eventDesign.formField)) {
+                this.updateEventKeywordsById(uid, eventDesign.eventId)
             }
         }
         return count

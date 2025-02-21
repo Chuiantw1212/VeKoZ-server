@@ -1,6 +1,6 @@
 import { IModelPorts, } from "../ports/out.model"
 import type { ICrudOptions, IDataCountOptions } from "../ports/out.crud"
-import { CollectionReference, DocumentData, DocumentSnapshot, Query, Timestamp } from "firebase-admin/firestore"
+import { CollectionReference, DocumentData, DocumentSnapshot, Query, QuerySnapshot, Timestamp } from "firebase-admin/firestore"
 import VenoniaCRUD from "../ports/out.crud"
 /**
  * 檔案的Naming要對應firestore的存取方式
@@ -184,7 +184,7 @@ export default class FirestoreAdapter extends VenoniaCRUD {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }
-        const query = await this.getQuery(wheres)
+        const query = await this.getQuery(wheres, options)
         const count = await this.checkQueryCount(query, options?.count ?? {})
         const docs = (await query.get()).docs
         const promises = docs.map(doc => {
@@ -199,26 +199,18 @@ export default class FirestoreAdapter extends VenoniaCRUD {
      * @param id 文件id
      * @returns 
      */
-    protected async deleteItemById(uid: string, id: string): Promise<1 | 0> {
+    protected async deleteItemById(uid: string, id: string, options?: ICrudOptions): Promise<number> {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }
-        const targetQuery = this.collection.where('uid', '==', uid)
-        const countData = await targetQuery.count().get()
-        const count: number = countData.data().count
-        if (count == 0) {
-            return 0
-        }
-        const docDatas: DocumentData = await targetQuery.get()
-        const targetDoc = docDatas.docs.find((doc: DocumentData) => {
-            return doc.id === id
+        const targetQuery = this.collection.where('uid', '==', uid).where('id', '==', id)
+        const count = await this.checkQueryCount(targetQuery, options?.count ?? {})
+        const querySnapShot: QuerySnapshot = await targetQuery.get()
+        const promiese = querySnapShot.docs.map(doc => {
+            return this.collection?.doc(doc.id).delete()
         })
-        if (targetDoc) {
-            await this.collection.doc(targetDoc.id).delete()
-            return 1
-        } else {
-            return 0
-        }
+        await Promise.all(promiese)
+        return count
     }
 
     /**
