@@ -23,6 +23,7 @@ import OrganizationModel from './domain/Organization.model'
 import OrganizationMemberModel from './domain/OrganizationMember.model'
 import UserModel from './domain/User.model'
 import UserPreferenceModel from './domain/UserPreference.model'
+import OfferModel from './domain/OfferModel'
 // services
 import MetaService from './domain/services/Meta.service';
 import EventService from './domain/services/Event.service';
@@ -110,6 +111,10 @@ import metaController from './adapters/client.in/meta.ctrl'
     const userPreferenceModel = new UserPreferenceModel({
         collection: firebase.getCollection('userPreferences')
     })
+    const offerModel = new OfferModel({
+        collection: firebase.getCollection('offers')
+    })
+
     const nlpAdapter = new NlpAdapter()
 
     /**
@@ -125,6 +130,7 @@ import metaController from './adapters/client.in/meta.ctrl'
             eventActorModel,
             organizationModel,
             nlpAdapter,
+            offerModel,
         }),
         EventTemplateService: new EventTemplateService({
             eventTemplateModel,

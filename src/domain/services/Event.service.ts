@@ -5,13 +5,15 @@ import EventActorModel from '../EventActor.model'
 import EventDesignModel from '../EventDesign.model';
 import OrganizationModel from '../Organization.model';
 import NlpAdapter from '../../adapters/nlp.out';
+import OfferModel from '../OfferModel';
 
 interface Idependency {
     eventModel: EventModel;
     eventDesignModel: EventDesignModel;
     eventActorModel: EventActorModel;
     organizationModel: OrganizationModel
-    nlpAdapter: NlpAdapter
+    nlpAdapter: NlpAdapter,
+    offerModel: OfferModel
 }
 
 export default class EventService {
@@ -19,6 +21,7 @@ export default class EventService {
     private eventDesignModel: EventDesignModel
     private organizationModel: OrganizationModel
     private nlpAdapter: NlpAdapter
+    private offerModel: OfferModel
     private seoFields: string[] = ['name', 'description', 'organizer', 'performers']
 
     constructor(dependency: Idependency) {
@@ -28,11 +31,13 @@ export default class EventService {
             eventActorModel,
             organizationModel,
             nlpAdapter,
+            offerModel,
         } = dependency
         this.eventModel = eventModel
         this.eventDesignModel = eventDesignModel
         this.organizationModel = organizationModel
         this.nlpAdapter = nlpAdapter
+        this.offerModel = offerModel
     }
 
     /**
@@ -163,6 +168,12 @@ export default class EventService {
                     })
                 }
                 break;
+            }
+            case 'offers': {
+                // console.log(eventDesign.mutable)
+                const offerPromiese = eventDesign.mutable.offers?.forEach(offer => {
+                    return this
+                })
             }
             default: {
                 return {}
