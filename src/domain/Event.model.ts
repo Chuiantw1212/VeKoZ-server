@@ -15,14 +15,11 @@ export default class EventModel extends FirestoreAdapter {
      * @returns 
      */
     async createEvent(uid: string, event: IEvent): Promise<IEvent> {
-        if (event.startDate) {
-            event.startDate = super.formatTimestamp(event.startDate)
-        }
-        if (event.endDate) {
-            event.endDate = super.formatTimestamp(event.endDate)
-        }
-        // delete event.designIds // 用不到了?
+        event.startDate = super.formatTimestamp(event.startDate)
+        event.endDate = super.formatTimestamp(event.endDate)
         const newEventDoc: IEvent = await super.createItem(uid, event) as IEvent
+        event.startDate = super.formatDate(event.startDate)
+        event.endDate = super.formatDate(event.endDate)
         return newEventDoc
     }
 
@@ -69,9 +66,9 @@ export default class EventModel extends FirestoreAdapter {
         if (query.locationAddressRegion) {
             wheres.push(['locationAddressRegion', '==', query.locationAddressRegion])
         }
-        console.log({
-            wheres
-        })
+        // console.log({
+        //     wheres
+        // })
         const firstEventList = await super.getItemsByQuery(wheres, options)
         firstEventList.forEach(docData => {
             if (docData.startDate) {

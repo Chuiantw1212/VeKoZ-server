@@ -46,6 +46,8 @@ export default class FirestoreAdapter extends VenoniaCRUD {
             ...data,
             uid // IMPORTANT 否則新資料會是null
         })
+        // 轉換
+        data.lastmod = new Date(data.lastmod.seconds * 1000)
         return data
     }
 
@@ -225,6 +227,9 @@ export default class FirestoreAdapter extends VenoniaCRUD {
      * @returns 
      */
     protected formatTimestamp(isoDateString: string) {
+        if (!isoDateString) {
+            return
+        }
         return Timestamp.fromDate(new Date(isoDateString))
     }
 
@@ -234,6 +239,9 @@ export default class FirestoreAdapter extends VenoniaCRUD {
      * @returns 
      */
     protected formatDate(timestamp: Timestamp) {
+        if (!timestamp) {
+            return
+        }
         return new Date(timestamp.seconds * 1000).toISOString()
     }
 
