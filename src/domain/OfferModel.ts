@@ -9,6 +9,11 @@ export default class OfferModel extends FirestoreAdapter {
         super(data)
     }
 
+    async getOfferList(uid: string): Promise<IOffer[]> {
+        const offers: IOffer[] = await super.getItemsByQuery([['uid', '==', uid]]) as IOffer[]
+        return offers
+    }
+
     async setOffers(uid: string, offers: IOffer[]) {
         const options: ICrudOptions = {
             merge: true,

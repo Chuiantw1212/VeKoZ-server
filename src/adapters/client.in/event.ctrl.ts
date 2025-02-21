@@ -1,7 +1,7 @@
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
-import { IEvent } from '../../entities/event'
+import { IEvent, IEventQuery } from '../../entities/event'
 import type { IEventTemplate, ITemplateDesign, } from '../../entities/eventTemplate'
 const router = new Elysia()
 router.use(bearer())
@@ -58,7 +58,7 @@ router.use(bearer())
     })
     .get('/event/list', async function ({ query }) {
         const { EventService } = AccessGlobalService.locals
-        const eventQuery = query as any
+        const eventQuery = query as IEventQuery
         const eventList = await EventService.queryEventList(eventQuery)
         return eventList
     })

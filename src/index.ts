@@ -33,6 +33,7 @@ import AuthService from './domain/services/Auth.service'
 import PlaceService from './domain/services/Place.service'
 import UserService from './domain/services/User.service'
 import GoogleService from './domain/services/Google.service'
+import OfferService from './domain/services/Offer.service'
 import { ILocals } from './entities/app';
 // controllers
 import rootController from './adapters/client.in/root.ctrl'
@@ -43,6 +44,7 @@ import placeController from './adapters/client.in/place.ctrl'
 import userController from './adapters/client.in/user.ctrl'
 import googleController from './adapters/client.in/google.ctrl'
 import metaController from './adapters/client.in/meta.ctrl'
+import offerController from './adapters/client.in/offer.ctrl'
 
 (async () => {
     const app = new Elysia({ adapter: node() })
@@ -151,6 +153,9 @@ import metaController from './adapters/client.in/meta.ctrl'
         }),
         GoogleService: new GoogleService({
             calendar: googleCalendar,
+        }),
+        OfferService: new OfferService({
+            offerModel: offerModel,
         })
     }
     Object.assign(AccessGlobalService.locals, {
@@ -178,6 +183,7 @@ import metaController from './adapters/client.in/meta.ctrl'
         .use(userController)
         .use(googleController)
         .use(metaController)
+        .use(offerController)
 
     // Start Listening
     app.listen(8080, ({ hostname, port }) => {

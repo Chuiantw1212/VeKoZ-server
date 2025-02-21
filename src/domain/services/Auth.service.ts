@@ -8,4 +8,8 @@ export default class VerifyIdTokenService {
         const decodedIdToken = await this.adapter.verifyIdToken(idToken)
         return decodedIdToken
     }
+
+    // reset password
+
+    // change password
 }

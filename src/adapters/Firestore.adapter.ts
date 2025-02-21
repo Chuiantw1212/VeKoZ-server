@@ -157,7 +157,7 @@ export default class FirestoreAdapter extends VenoniaCRUD {
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
         if (count == 0) {
-            throw 'uid不存在'
+            return 0
         }
         const docDatas: DocumentData = await targetQuery.get()
         const targetDoc: DocumentData = docDatas.docs.find((doc: DocumentData) => {
@@ -207,7 +207,7 @@ export default class FirestoreAdapter extends VenoniaCRUD {
         const countData = await targetQuery.count().get()
         const count: number = countData.data().count
         if (count == 0) {
-            throw 'uid不存在'
+            return 0
         }
         const docDatas: DocumentData = await targetQuery.get()
         const targetDoc = docDatas.docs.find((doc: DocumentData) => {
