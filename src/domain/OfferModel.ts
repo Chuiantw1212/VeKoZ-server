@@ -9,17 +9,14 @@ export default class OfferModel extends FirestoreAdapter {
         super(data)
     }
 
-    async deleteOffers(uid: string, offerIds: string[]): Promise<number> {
-        const offerPromiese = offerIds.map((id) => {
-            return super.getItemById(id)
-        });
-        const offers = await Promise.all(offerPromiese) as IOffer[]
+    async deleteOffers(uid: string, eventId: string): Promise<number> {
+        const offers = await super.getItemsByQuery([['uid', '==', uid], ['eventId', '==', eventId]])
         const isNotSaled = offers.every((offer) => {
             return offer.inventoryValue === offer.inventoryValue
         })
         if (isNotSaled) {
-            const promises = offerIds.map((id) => {
-                return super.deleteItemById(uid, id)
+            const promises = offers.map((offer) => {
+                return super.deleteItemById(uid, offer.id)
             })
             const ones = await Promise.all(promises)
             const successOnes = ones.filter(one => !!one)
@@ -38,15 +35,14 @@ export default class OfferModel extends FirestoreAdapter {
         return offers
     }
 
-    async createOffers(uid: string, offers: IOffer[]) {
+    async createOffers(uid: string, offers: IOffer[]): Promise<IOffer[]> {
         const offerPromiese = offers.map(offer => {
             offer.validFrom = super.formatTimestamp(offer.validFrom)
             offer.validThrough = super.formatTimestamp(offer.validThrough)
             return super.createItem(uid, offer)
         })
         const resultOffers = await Promise.all(offerPromiese) as IOffer[]
-        const offerIds = resultOffers.map((offer: IOffer) => offer.id)
-        return offerIds
+        return resultOffers
     }
 
     // async initOffersById(uid: string, event: IEvent) {

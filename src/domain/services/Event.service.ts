@@ -72,31 +72,37 @@ export default class EventService {
         const newEvent: IEvent = await this.eventModel.createEvent(uid, event)
         eventTemplate.id = newEvent.id
         this.updateEventKeywordsById(uid, String(newEvent.id))
-        // Master之後創造offers
-        const offerDesigns = eventTemplate.designs.filter(design => {
-            return design.type === 'offers'
-        })
-        const categoryPromiese = offerDesigns.map(async (design) => {
-            const categoryId = crypto.randomUUID()
-            const categoryName = design.mutable?.label ?? ''
-            design.mutable?.offers?.forEach(offer => {
-                offer.categoryId = categoryId
-                offer.categoryName = categoryName
-                offer.sellerId = event.organizerId ?? ''
-                offer.sellerName = event.organizerName ?? ''
-                offer.offererId = event.organizerId ?? ''
-                offer.offererName = event.organizerName ?? ''
-                offer.validFrom = event.startDate
-                offer.validThrough = event.endDate
-                offer.availableAtOrFrom = 'VeKoZ'
-            })
-            await this.offerModel.createOffers(uid, design.mutable?.offers ?? [])
-            return categoryId
-        })
-        const offerCategoryIds = await Promise.all(categoryPromiese)
         // 創建designs
-        const designDocPromises = eventTemplate.designs.map((design) => {
+        const offerCategoryIds: string[] = []
+        const designDocPromises = eventTemplate.designs.map(async (design) => {
             delete design.id // 重要，不然會污染到模板資料
+            // 特殊處理Offer
+            if (design.type === 'offers') {
+                const categoryId = crypto.randomUUID()
+                const categoryName = design.mutable?.label ?? ''
+                design.mutable?.offers?.forEach(offer => {
+                    offer.inventoryValue = offer.inventoryMaxValue
+                    offer.eventId = event.id ?? ''
+                    offer.eventName = event.name ?? ''
+                    offer.categoryId = categoryId // composite key
+                    offer.categoryName = categoryName
+                    offer.sellerId = event.organizerId ?? ''
+                    offer.sellerName = event.organizerName ?? ''
+                    offer.offererId = event.organizerId ?? ''
+                    offer.offererName = event.organizerName ?? ''
+                    offer.validFrom = event.startDate
+                    offer.validThrough = event.endDate
+                    offer.availableAtOrFrom = 'VeKoZ' // composite key
+                })
+                const createdOffers = await this.offerModel.createOffers(uid, design.mutable?.offers ?? [])
+                if (design.mutable) {
+                    design.mutable.categoryId = categoryId
+                    design.mutable.offers?.forEach((offer, index) => {
+                        offer.id = createdOffers[index].id
+                    })
+                    offerCategoryIds.push(categoryId)
+                }
+            }
             return this.eventDesignModel.createDesign(uid, design)
         })
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
@@ -284,10 +290,9 @@ export default class EventService {
             return 0
         }
         // 先刪除票券
-        const offerIds = event.offerIds ?? []
-        const offerDeletedCount = await this.offerModel.deleteOffers(uid, offerIds)
+        const offerDeletedCount = await this.offerModel.deleteOffers(uid, String(event.id))
         if (!offerDeletedCount) {
-            console.error('票券未成功刪除', offerIds)
+            console.error('票券未成功刪除')
         }
         // 再刪去其他資料
         const designIds = event.designIds ?? []
