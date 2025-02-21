@@ -33,6 +33,8 @@ export default class OfferModel extends FirestoreAdapter {
         const offerIds = event.offerIds
         const organizerId = event.organizerId
         const eventId = event.id
+        const eventName = event.name
+        const organizerName = event.organizerName
         if (!offerIds || !organizerId || !eventId) {
             return
         }
@@ -45,8 +47,11 @@ export default class OfferModel extends FirestoreAdapter {
         offerIds.map((id: string) => {
             const result = super.setItemById(uid, id, {
                 sellerId: organizerId,
+                sellername: organizerName,
                 offererId: organizerId,
+                offererName: organizerName,
                 eventId,
+                eventName,
             }, options)
             return result
         })
