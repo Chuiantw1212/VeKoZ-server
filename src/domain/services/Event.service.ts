@@ -83,6 +83,12 @@ export default class EventService {
         delete eventTemplate.designs
         const designDocPromises = designsTemp.map((design) => {
             delete design.id // 重要，不然會污染到模板資料
+            if (design.type === 'offers') {
+                design.mutable?.offers?.forEach((offer, index) => {
+                    const offerIds = newEvent.offerIds ?? []
+                    offer.id = offerIds[index]
+                })
+            }
             return this.eventDesignModel.createDesign(uid, design)
         })
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
