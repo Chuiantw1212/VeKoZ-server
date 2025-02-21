@@ -63,42 +63,53 @@ export default class EventService {
             return eventPatch
         })
         const eventPatches = await Promise.all(eventPatchePromises)
-        eventPatches.forEach(eventPatch => {
+        eventPatches.forEach(eventPatch => { // 整合成完整IEvent
             if (eventPatch) {
                 Object.assign(event, eventPatch)
             }
         })
-        // 創建事件Master
+        // 創建事件Master與關鍵字
         const newEvent: IEvent = await this.eventModel.createEvent(uid, event)
-        // 修正Master細節
         eventTemplate.id = newEvent.id
         this.updateEventKeywordsById(uid, String(newEvent.id))
-        this.offerModel.initOffersById(uid, newEvent)
+        // Master之後創造offers
+        const offerDesigns = eventTemplate.designs.filter(design => {
+            return design.type === 'offers'
+        })
+        const categoryPromiese = offerDesigns.map(async (design) => {
+            const categoryId = crypto.randomUUID()
+            const categoryName = design.mutable?.label ?? ''
+            design.mutable?.offers?.forEach(offer => {
+                offer.categoryId = categoryId
+                offer.categoryName = categoryName
+                offer.sellerId = event.organizerId ?? ''
+                offer.sellerName = event.organizerName ?? ''
+                offer.offererId = event.organizerId ?? ''
+                offer.offererName = event.organizerName ?? ''
+                offer.validFrom = event.startDate
+                offer.validThrough = event.endDate
+                offer.availableAtOrFrom = 'VeKoZ'
+            })
+            await this.offerModel.createOffers(uid, design.mutable?.offers ?? [])
+            return categoryId
+        })
+        const offerCategoryIds = await Promise.all(categoryPromiese)
         // 創建designs
-        const designsTemp = eventTemplate.designs
-        delete eventTemplate.designs
-        const designDocPromises = designsTemp.map((design) => {
+        const designDocPromises = eventTemplate.designs.map((design) => {
             delete design.id // 重要，不然會污染到模板資料
-            if (design.type === 'offers') {
-                design.mutable?.offers?.forEach((offer, index) => {
-                    const offerIds = newEvent.offerIds ?? []
-                    offer.id = offerIds[index]
-                })
-            }
             return this.eventDesignModel.createDesign(uid, design)
         })
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
         const designIds = designDocs.map(doc => doc.id ?? '')
         // 回頭更新事件Master
         const dateDesign = designDocs.find(design => {
-            return design.formField === 'dates'
+            return design.formField === 'dates' // 唯一一個
         })
-        if (dateDesign) {
-            await this.eventModel.mergeEventById(uid, String(newEvent.id), {
-                dateDesignId: dateDesign.id,
-                designIds,
-            })
-        }
+        await this.eventModel.mergeEventById(uid, String(newEvent.id), {
+            dateDesignId: dateDesign?.id,
+            designIds,
+            offerCategoryIds,
+        })
         return newEvent // 回傳完整Event才有機會，未來打開新事件時不用重新get
     }
 
@@ -171,12 +182,12 @@ export default class EventService {
                 }
                 break;
             }
-            case 'offers': {
-                if (eventDesign.mutable.offers) {
-                    eventPatch.offerIds = await this.offerModel.setOffers(uid, eventDesign.mutable.offers)
-                }
-                break;
-            }
+            // case 'offers': {
+            //     if (eventDesign.mutable.offers) {
+            //         eventPatch.offerIds = await this.offerModel.setOffers(uid, eventDesign.mutable.offers)
+            //     }
+            //     break;
+            // }
             default: {
                 return {}
             }
@@ -272,15 +283,16 @@ export default class EventService {
         if (!event) {
             return 0
         }
-        // 先確認訂單狀態，先全部讀出來
-        
+        // 先刪除票券
         const offerIds = event.offerIds ?? []
-        const offerPromises = this.offerModel.deleteOfferByEventId(uid, id)
+        const offerDeletedCount = await this.offerModel.deleteOffers(uid, offerIds)
+        if (!offerDeletedCount) {
+            console.error('票券未成功刪除', offerIds)
+        }
         // 再刪去其他資料
         const designIds = event.designIds ?? []
         if (!designIds.length) {
-            console.trace('資料有誤, event.designIds不存在', id)
-            // return 0
+            console.error('資料有誤, event.designIds不存在', id)
         }
         const masterPromise = this.eventModel.deleteByEventId(uid, id)
         const detailPromises = designIds?.map(designId => {

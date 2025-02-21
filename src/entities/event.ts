@@ -10,7 +10,7 @@ export interface IEvent extends IEventSEO {
     designIds?: string[],
     dateDesignId?: string, // 從月曆拉動活動日期時，使用dateDesignId去更新對應套版設計的資料欄位
     locationId?: string
-    offerIds?: string[]
+    offerCategoryIds?: string[]
     locationAddress?: string,
 }
 interface IEventSEO extends IEventQuery {

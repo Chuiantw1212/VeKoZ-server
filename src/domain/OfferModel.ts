@@ -9,62 +9,75 @@ export default class OfferModel extends FirestoreAdapter {
         super(data)
     }
 
-    async deleteOfferById(uid: string, id: string): Promise<number> {
-        // const count = await super.deleteItemsByQuery([['uid', '==', uid], ['eventId', '==', eventId]])
-        // return count
+    async deleteOffers(uid: string, offerIds: string[]): Promise<number> {
+        const offerPromiese = offerIds.map((id) => {
+            return super.getItemById(id)
+        });
+        const offers = await Promise.all(offerPromiese) as IOffer[]
+        const isNotSaled = offers.every((offer) => {
+            return offer.inventoryValue === offer.inventoryValue
+        })
+        if (isNotSaled) {
+            const promises = offerIds.map((id) => {
+                return super.deleteItemById(uid, id)
+            })
+            const ones = await Promise.all(promises)
+            const successOnes = ones.filter(one => !!one)
+            return successOnes.length
+        } else {
+            return 0
+        }
     }
 
     async getOfferList(uid: string): Promise<IOffer[]> {
         const offers: IOffer[] = await super.getItemsByQuery([['uid', '==', uid]]) as IOffer[]
+        offers.forEach(offer => {
+            offer.validFrom = super.formatDate(offer.validFrom)
+            offer.validThrough = super.formatDate(offer.validThrough)
+        })
         return offers
     }
 
-    async setOffers(uid: string, offers: IOffer[]) {
-        const options: ICrudOptions = {
-            merge: true,
-            count: {
-                absolute: 1
-            }
-        }
+    async createOffers(uid: string, offers: IOffer[]) {
         const offerPromiese = offers.map(offer => {
-            if (offer.id) {
-                super.setItemById(uid, offer.id, offer, options)
-                return offer.id
-            } else {
-                return super.createItem(uid, offer)
-            }
+            offer.validFrom = super.formatTimestamp(offer.validFrom)
+            offer.validThrough = super.formatTimestamp(offer.validThrough)
+            return super.createItem(uid, offer)
         })
         const resultOffers = await Promise.all(offerPromiese) as IOffer[]
         const offerIds = resultOffers.map((offer: IOffer) => offer.id)
         return offerIds
     }
 
-    async initOffersById(uid: string, event: IEvent) {
-        const offerIds = event.offerIds
-        const organizerId = event.organizerId
-        const eventId = event.id
-        const eventName = event.name
-        const organizerName = event.organizerName
-        if (!offerIds || !organizerId || !eventId) {
-            return
-        }
-        const options: ICrudOptions = {
-            merge: true,
-            count: {
-                absolute: 1
-            }
-        }
-        offerIds.map((id: string) => {
-            const result = super.setItemById(uid, id, {
-                sellerId: organizerId,
-                sellername: organizerName,
-                offererId: organizerId,
-                offererName: organizerName,
-                eventId,
-                eventName,
-            }, options)
-            return result
-        })
-    }
-
+    // async initOffersById(uid: string, event: IEvent) {
+    //     const offerIds = event.offerIds
+    //     const organizerId = event.organizerId
+    //     const eventId = event.id
+    //     const eventName = event.name
+    //     const organizerName = event.organizerName
+    //     const eventStartDate = event.startDate as string
+    //     const eventEndDate = event.endDate as string
+    //     if (!offerIds || !organizerId || !eventId) {
+    //         return
+    //     }
+    //     const options: ICrudOptions = {
+    //         merge: true,
+    //         count: {
+    //             absolute: 1
+    //         }
+    //     }
+    //     offerIds.map((id: string) => {
+    //         const result = super.setItemById(uid, id, {
+    //             sellerId: organizerId,
+    //             sellerName: organizerName,
+    //             offererId: organizerId,
+    //             offererName: organizerName,
+    //             eventId,
+    //             eventName,
+    //             validFrom: super.formatTimestamp(eventStartDate),
+    //             validThrough: super.formatTimestamp(eventEndDate),
+    //         }, options)
+    //         return result
+    //     })
+    // }
 }

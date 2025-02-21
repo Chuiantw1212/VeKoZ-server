@@ -199,7 +199,7 @@ export default class FirestoreAdapter extends VenoniaCRUD {
      * @param id 文件id
      * @returns 
      */
-    protected async deleteItemById(uid: string, id: string, options?: ICrudOptions): Promise<number> {
+    protected async deleteItemById(uid: string, id: string): Promise<1 | 0> {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }
