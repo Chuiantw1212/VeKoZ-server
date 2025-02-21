@@ -6,7 +6,6 @@ import EventDesignModel from '../EventDesign.model';
 import OrganizationModel from '../Organization.model';
 import NlpAdapter from '../../adapters/nlp.out';
 import OfferModel from '../OfferModel';
-import { IOffer } from '../../entities/offer';
 
 interface Idependency {
     eventModel: EventModel;
@@ -29,7 +28,6 @@ export default class EventService {
         const {
             eventModel,
             eventDesignModel,
-            eventActorModel,
             organizationModel,
             nlpAdapter,
             offerModel,
