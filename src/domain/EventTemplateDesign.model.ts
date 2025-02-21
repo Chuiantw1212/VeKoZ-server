@@ -54,14 +54,18 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
      * @param logo 
      * @returns 
      */
-    private async storeBanner(id: string, banner: IBlob): Promise<string> {
+    private async storeBanner(id: string, banner: any): Promise<string> {
         if (!banner) {
             return ''
         }
         if (banner && typeof banner === 'string') {
             throw "typeof banner === 'string'"
         }
-        const { type, buffer } = banner
+        const imageType = banner.type
+        const buffer: ArrayBuffer = banner.buffer
+        if (!imageType) {
+            return ''
+        }
         try {
             await this.publicBucket.deleteFiles({
                 prefix: `eventTemplateDesign/${id}`,
@@ -69,7 +73,7 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
         } catch (error) {
             // 可能會因為沒資料可刪出錯
         }
-        const blob = this.publicBucket.file(`eventTemplateDesign/${id}/banner.${type}`)
+        const blob = this.publicBucket.file(`eventTemplateDesign/${id}/banner.${imageType}`)
         const blobStream = blob.createWriteStream({
             resumable: false,
         })
