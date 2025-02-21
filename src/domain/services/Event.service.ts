@@ -75,9 +75,7 @@ export default class EventService {
         // 修正Master細節
         eventTemplate.id = newEvent.id
         this.updateEventKeywordsById(uid, String(newEvent.id))
-        if (newEvent.offerIds && newEvent.organizerId) {
-            this.offerModel.initOffersById(uid, newEvent.offerIds, newEvent.organizerId)
-        }
+        this.offerModel.initOffersById(uid, newEvent)
         // 創建designs
         const designsTemp = eventTemplate.designs
         delete eventTemplate.designs

@@ -5,4 +5,5 @@ export interface IOffer {
     price: number,
     sellerId: string,
     offererId: string, // organizationId
+    eventId: string,
 }

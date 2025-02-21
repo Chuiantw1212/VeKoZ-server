@@ -1,4 +1,5 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
+import { IEvent } from '../entities/event'
 import { IOffer } from '../entities/offer'
 import { ICrudOptions } from '../ports/out.crud'
 import type { IModelPorts } from '../ports/out.model'
@@ -28,7 +29,13 @@ export default class OfferModel extends FirestoreAdapter {
         return offerIds
     }
 
-    async initOffersById(uid: string, offerIds: string[], organizationId: string) {
+    async initOffersById(uid: string, event: IEvent) {
+        const offerIds = event.offerIds
+        const organizerId = event.organizerId
+        const eventId = event.id
+        if (!offerIds || !organizerId || !eventId) {
+            return
+        }
         const options: ICrudOptions = {
             merge: true,
             count: {
@@ -37,8 +44,9 @@ export default class OfferModel extends FirestoreAdapter {
         }
         offerIds.map((id: string) => {
             const result = super.setItemById(uid, id, {
-                sellerId: organizationId,
-                offererId: organizationId
+                sellerId: organizerId,
+                offererId: organizerId,
+                eventId,
             }, options)
             return result
         })
