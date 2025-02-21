@@ -19,6 +19,7 @@ export default class EventService {
     private eventDesignModel: EventDesignModel
     private organizationModel: OrganizationModel
     private nlpAdapter: NlpAdapter
+    private seoFields: string[] = ['name', 'description', 'organizer', 'performers']
 
     constructor(dependency: Idependency) {
         const {
@@ -104,7 +105,7 @@ export default class EventService {
             if (eventPatch) {
                 await this.eventModel.mergeEventById(uid, eventDesign.eventId, eventPatch)
                 // 已存的事件更新關鍵字列表
-                if (['name', 'description'].includes(eventDesign.formField)) {
+                if (this.seoFields.includes(eventDesign.formField)) {
                     this.updateEventKeywordsById(uid, eventDesign.eventId)
                 }
             }
@@ -179,10 +180,17 @@ export default class EventService {
         const event = await this.eventModel.getEventById(eventId)
         if (!event) return
 
+        // 優先欄位
+        const organizationName = String(event.organizerName)
+
+        // 需要篩選欄位
         const description = event.description
         const name = event.name
         const fullText = `${name}。${description}`
-        const newKeywords = this.nlpAdapter.extractKeywords(fullText)
+        const extractedWords = this.nlpAdapter.extractKeywords(fullText)
+        const newKeywords = [organizationName, ...extractedWords].slice(0, 30)
+
+        // 回存
         this.eventModel.mergeEventById(uid, eventId, {
             keywords: newKeywords
         })
