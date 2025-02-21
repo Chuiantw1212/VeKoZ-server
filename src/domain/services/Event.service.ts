@@ -108,7 +108,7 @@ export default class EventService {
         const count = await this.eventDesignModel.patchEventDesignById(uid, eventDesign.id, eventDesign)
         // 更新EventMaster
         if (eventDesign.formField) {
-            const eventPatch = await this.extractFormField(eventDesign)
+            const eventPatch = await this.extractFormField(eventDesign, uid)
             if (eventPatch) {
                 await this.eventModel.mergeEventById(uid, eventDesign.eventId, eventPatch)
                 // 已存的事件更新關鍵字列表
@@ -120,7 +120,7 @@ export default class EventService {
         return count
     }
 
-    private async extractFormField(eventDesign: ITemplateDesign, uid?: string) {
+    private async extractFormField(eventDesign: ITemplateDesign, uid: string) {
         if (!eventDesign.mutable) {
             return
         }
@@ -170,16 +170,8 @@ export default class EventService {
                 break;
             }
             case 'offers': {
-                // 有需要創造才拿到uid
                 if (eventDesign.mutable.offers) {
-                    if (uid) {
-                        const offerPromiese = eventDesign.mutable.offers.map(offer => {
-                            return this.offerModel.createOffer(uid, offer)
-                        })
-                        const newOffers = await Promise.all(offerPromiese) as IOffer[]
-                        const offerIds = newOffers.map((offer: IOffer) => offer.id)
-                        eventPatch.offerIds = offerIds
-                    }
+                    eventPatch.offerIds = await this.offerModel.setOffers(uid, eventDesign.mutable.offers)
                 }
                 break;
             }

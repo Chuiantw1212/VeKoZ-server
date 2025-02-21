@@ -8,8 +8,24 @@ export default class OfferModel extends FirestoreAdapter {
         super(data)
     }
 
-    async createOffer(uid: string, offer: IOffer) {
-        return await super.createItem(uid, offer)
+    async setOffers(uid: string, offers: IOffer[]) {
+        const options: ICrudOptions = {
+            merge: true,
+            count: {
+                absolute: 1
+            }
+        }
+        const offerPromiese = offers.map(offer => {
+            if (offer.id) {
+                super.setItemById(uid, offer.id, offer, options)
+                return offer.id
+            } else {
+                return super.createItem(uid, offer)
+            }
+        })
+        const resultOffers = await Promise.all(offerPromiese) as IOffer[]
+        const offerIds = resultOffers.map((offer: IOffer) => offer.id)
+        return offerIds
     }
 
     async initOffersById(uid: string, offerIds: string[], organizationId: string) {
@@ -27,4 +43,5 @@ export default class OfferModel extends FirestoreAdapter {
             return result
         })
     }
+
 }
