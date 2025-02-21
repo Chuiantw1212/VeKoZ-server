@@ -22,7 +22,7 @@ export default class OfferModel extends FirestoreAdapter {
         offerIds.map((id: string) => {
             const result = super.setItemById(uid, id, {
                 sellerId: organizationId,
-                offerId: organizationId
+                offererId: organizationId
             }, options)
             return result
         })

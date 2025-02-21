@@ -163,11 +163,9 @@ export default class EventService {
             case 'organizer': {
                 if (eventDesign.mutable?.organizationId) {
                     const organizerLogo = await this.organizationModel.getLogoUrl(eventDesign.mutable.organizationId)
-                    Object.assign(eventPatch, {
-                        organizationId: eventDesign.mutable.organizationId,
-                        organizerName: eventDesign.mutable.organizationName,
-                        organizerLogo,
-                    })
+                    eventPatch.organizerId = eventDesign.mutable.organizationId
+                    eventPatch.organizerName = eventDesign.mutable.organizationName
+                    eventPatch.organizerLogo = organizerLogo
                 }
                 break;
             }
