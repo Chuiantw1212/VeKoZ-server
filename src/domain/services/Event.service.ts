@@ -125,7 +125,7 @@ export default class EventService {
                 eventPatch.name = eventDesign.mutable.value
                 break;
             }
-            case 'date': {
+            case 'dates': {
                 const startDate = eventDesign.mutable.value[0]
                 const endDate = eventDesign.mutable.value[1]
                 eventPatch.startDate = startDate
