@@ -52,60 +52,11 @@ export default class EventService {
         const event: IEvent = {
             isPublic: false, // 預設非公開
         }
-        let dateDesignIndex: number = -1
-        designsWithFormField.forEach(async (design, index) => {
-            /**
-             * 注意要跟 patchEventForm 那邊的switch case交叉檢查
-             */
-            switch (design.formField) {
-                case 'banner': {
-                    event.banner = design.mutable?.value
-                    break;
-                }
-                case 'name': {
-                    event.name = design.mutable?.value
-                    break;
-                }
-                case 'description': {
-                    event.description = design.mutable?.value
-                    break;
-                }
-                case 'date': {
-                    const startDate = design.mutable?.value[0]
-                    const endDate = design.mutable?.value[1]
-                    event.startDate = startDate
-                    event.endDate = endDate
-                    const startHour = new Date(startDate).getHours()
-                    if (6 <= startHour && startHour < 12) {
-                        event.startHour = 'morning'
-                    }
-                    if (12 <= startHour && startHour < 18) {
-                        event.startHour = 'afternoon'
-                    }
-                    if (18 <= startHour && startHour < 24) {
-                        event.startHour = 'evening'
-                    }
-                    dateDesignIndex = index
-                    break;
-                }
-                case 'organizer': {
-                    if (design.mutable?.organizationId) {
-                        const organizerLogo = await this.organizationModel.getLogoUrl(design.mutable.organizationId)
-                        event.organizerLogo = organizerLogo
-                        event.organizerId = design.mutable.organizationId
-                        event.organizerName = design.mutable?.organizationName
-                    }
-                    break;
-                }
-                case 'performers': {
-                    event.performerIds = design.mutable?.memberIds
-                    event.organizerName = design.mutable?.organizationName
-                    break;
-                }
-                case 'place': {
-                    event.locationAddressRegion = design.mutable?.placeAddressRegion
-                    break;
-                }
+        // 更新EventMaster
+        designsWithFormField.forEach(async (design: ITemplateDesign) => {
+            const eventPatch = await this.extractFormField(uid, design)
+            if (eventPatch) {
+                Object.assign(event, eventPatch)
             }
         })
         // 儲存事件Master
@@ -125,82 +76,92 @@ export default class EventService {
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
         const designIds = designDocs.map(doc => doc.id ?? '')
         // 更新事件Master
-        const dateDesignId = designIds[dateDesignIndex]
-        await this.eventModel.mergeEventById(uid, String(newEvent.id), {
-            dateDesignId,
-            designIds,
+        const dateDesign = designDocs.find(design => {
+            return design.formField === 'date'
         })
+        if (dateDesign) {
+            await this.eventModel.mergeEventById(uid, String(newEvent.id), {
+                dateDesignId: dateDesign.id,
+                designIds,
+            })
+        }
         return newEvent // 回傳完整Event才有機會，未來打開新事件時不用重新get
     }
 
     async patchEventForm(uid: string, eventDesign: ITemplateDesign): Promise<number> {
-        if (!eventDesign.id || !eventDesign.eventId) {
+        if (!eventDesign.id || !eventDesign.eventId || !eventDesign.mutable) {
             throw 'id或是eventId不存在'
         }
         // 更新EventDesigns
         const count = await this.eventDesignModel.patchEventDesignById(uid, eventDesign.id, eventDesign)
-        /**
-         * 注意要跟 createForm 那邊的switch case交叉檢查
-         */
+        // 更新EventMaster
+        const eventPatch = await this.extractFormField(uid, eventDesign)
+        if (eventPatch) {
+            await this.eventModel.mergeEventById(uid, eventDesign.eventId, eventPatch)
+        }
+        return count
+    }
+
+    private async extractFormField(uid: string, eventDesign: ITemplateDesign) {
+        if (!eventDesign.mutable || !eventDesign.eventId) {
+            return
+        }
+        const eventPatch: IEvent = {}
         switch (eventDesign.formField) {
+            case 'location': {
+                eventPatch.locationId = eventDesign.mutable.placeId
+                eventPatch.locationAddressRegion = eventDesign.mutable.placeAddressRegion
+                break;
+            }
             case 'banner': {
-                await this.eventModel.mergeEventById(uid, eventDesign.eventId, {
-                    banner: eventDesign.mutable?.value ?? ''
-                })
+                eventPatch.banner = eventDesign.mutable.value
                 break;
             }
             case 'description': {
-                await this.eventModel.mergeEventById(uid, eventDesign.eventId, {
-                    description: eventDesign.mutable?.value ?? ''
-                })
+                eventPatch.description = eventDesign.mutable.value
                 break;
             }
             case 'name': {
-                await this.eventModel.mergeEventById(uid, eventDesign.eventId, {
-                    name: eventDesign.mutable?.value ?? ''
-                })
+                eventPatch.name = eventDesign.mutable.value
                 break;
             }
             case 'date': {
-                const startDate = eventDesign.mutable?.value[0] ?? ''
-                const endDate = eventDesign.mutable?.value[1] ?? ''
-                const eventDatePatch: IEvent = {
-                    startDate,
-                    endDate
-                }
+                const startDate = eventDesign.mutable.value[0]
+                const endDate = eventDesign.mutable.value[1]
+                eventPatch.startDate = startDate
+                eventPatch.endDate = endDate
                 const startHour = new Date(startDate).getHours()
                 if (6 <= startHour && startHour < 12) {
-                    eventDatePatch.startHour = 'morning'
+                    eventPatch.startHour = 'morning'
                 }
                 if (12 <= startHour && startHour < 18) {
-                    eventDatePatch.startHour = 'afternoon'
+                    eventPatch.startHour = 'afternoon'
                 }
                 if (18 <= startHour && startHour < 24) {
-                    eventDatePatch.startHour = 'evening'
+                    eventPatch.startHour = 'evening'
                 }
-                await this.eventModel.mergeEventById(uid, eventDesign.eventId, eventDatePatch)
                 break;
             }
             case 'organizer': {
                 if (eventDesign.mutable?.organizationId) {
                     const organizerLogo = await this.organizationModel.getLogoUrl(eventDesign.mutable.organizationId)
-                    await this.eventModel.mergeEventById(uid, eventDesign.eventId, {
+                    Object.assign(eventPatch, {
                         organizationId: eventDesign.mutable.organizationId,
-                        organizerName: eventDesign.mutable?.organizationName,
+                        organizerName: eventDesign.mutable.organizationName,
                         organizerLogo,
                     })
                 }
                 break;
             }
             default: {
-                return count
+                return {}
             }
         }
         // 一但觸發更新關鍵字列表
         if (['name', 'description'].includes(eventDesign.formField)) {
             this.updateEventKeywordsById(uid, eventDesign.eventId)
         }
-        return count
+        return eventPatch
     }
 
     /**
