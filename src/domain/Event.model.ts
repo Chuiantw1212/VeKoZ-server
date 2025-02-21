@@ -15,13 +15,11 @@ export default class EventModel extends FirestoreAdapter {
      * @returns 
      */
     async createEvent(uid: string, event: IEvent): Promise<IEvent> {
-        if (event.startDate) {
-            event.startDate = super.formatTimestamp(event.startDate)
-        }
-        if (event.endDate) {
-            event.endDate = super.formatTimestamp(event.endDate)
-        }
+        event.startDate = super.formatTimestamp(event.startDate)
+        event.endDate = super.formatTimestamp(event.endDate)
         const newEventDoc: IEvent = await super.createItem(uid, event) as IEvent
+        event.startDate = super.formatDate(event.startDate)
+        event.endDate = super.formatDate(event.endDate)
         return newEventDoc
     }
 

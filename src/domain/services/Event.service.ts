@@ -53,8 +53,12 @@ export default class EventService {
             isPublic: false, // 預設非公開
         }
         // 更新EventMaster
-        designsWithFormField.forEach(async (design: ITemplateDesign) => {
-            const eventPatch = await this.extractFormField(uid, design)
+        const eventPatchePromises = designsWithFormField.map((design: ITemplateDesign) => {
+            const eventPatch = this.extractFormField(uid, design)
+            return eventPatch
+        })
+        const eventPatches = await Promise.all(eventPatchePromises)
+        eventPatches.forEach(eventPatch => {
             if (eventPatch) {
                 Object.assign(event, eventPatch)
             }
@@ -77,7 +81,7 @@ export default class EventService {
         const designIds = designDocs.map(doc => doc.id ?? '')
         // 更新事件Master
         const dateDesign = designDocs.find(design => {
-            return design.formField === 'date'
+            return design.formField === 'dates'
         })
         if (dateDesign) {
             await this.eventModel.mergeEventById(uid, String(newEvent.id), {
@@ -95,15 +99,21 @@ export default class EventService {
         // 更新EventDesigns
         const count = await this.eventDesignModel.patchEventDesignById(uid, eventDesign.id, eventDesign)
         // 更新EventMaster
-        const eventPatch = await this.extractFormField(uid, eventDesign)
-        if (eventPatch) {
-            await this.eventModel.mergeEventById(uid, eventDesign.eventId, eventPatch)
+        if (eventDesign.formField) {
+            const eventPatch = await this.extractFormField(uid, eventDesign)
+            if (eventPatch) {
+                await this.eventModel.mergeEventById(uid, eventDesign.eventId, eventPatch)
+                // 已存的事件更新關鍵字列表
+                if (['name', 'description'].includes(eventDesign.formField)) {
+                    this.updateEventKeywordsById(uid, eventDesign.eventId)
+                }
+            }
         }
         return count
     }
 
     private async extractFormField(uid: string, eventDesign: ITemplateDesign) {
-        if (!eventDesign.mutable || !eventDesign.eventId) {
+        if (!eventDesign.mutable) {
             return
         }
         const eventPatch: IEvent = {}
@@ -156,10 +166,6 @@ export default class EventService {
             default: {
                 return {}
             }
-        }
-        // 一但觸發更新關鍵字列表
-        if (['name', 'description'].includes(eventDesign.formField)) {
-            this.updateEventKeywordsById(uid, eventDesign.eventId)
         }
         return eventPatch
     }
