@@ -1,7 +1,8 @@
 export interface IOffer extends IOfferQuery {
     id: string,
     name: string,
-    sku: number,
+    inventoryValue: number,
+    inventoryMaxValue: number,
     price: number,
 }
 

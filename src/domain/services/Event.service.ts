@@ -268,10 +268,15 @@ export default class EventService {
     }
 
     async deleteEvent(uid: string, id: string): Promise<number> {
-        const event: IEventTemplate | 0 = await this.eventModel.getEventById(id)
+        const event: IEvent | 0 = await this.eventModel.getEventById(id)
         if (!event) {
             return 0
         }
+        // 先確認訂單狀態，先全部讀出來
+        
+        const offerIds = event.offerIds ?? []
+        const offerPromises = this.offerModel.deleteOfferByEventId(uid, id)
+        // 再刪去其他資料
         const designIds = event.designIds ?? []
         if (!designIds.length) {
             console.trace('資料有誤, event.designIds不存在', id)

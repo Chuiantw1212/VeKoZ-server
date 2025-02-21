@@ -9,6 +9,11 @@ export default class OfferModel extends FirestoreAdapter {
         super(data)
     }
 
+    async deleteOfferById(uid: string, id: string): Promise<number> {
+        // const count = await super.deleteItemsByQuery([['uid', '==', uid], ['eventId', '==', eventId]])
+        // return count
+    }
+
     async getOfferList(uid: string): Promise<IOffer[]> {
         const offers: IOffer[] = await super.getItemsByQuery([['uid', '==', uid]]) as IOffer[]
         return offers
