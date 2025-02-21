@@ -284,7 +284,7 @@ export default class FirestoreAdapter extends VenoniaCRUD {
         if (options.max && count >= options.max) {
             message = `資料數量已達上限: ${count} > ${options.max}`
         }
-        if (options.min && count <= options.min) {
+        if (options.min && count < options.min) {
             message = `資料數量低於下限: ${count} < ${options.min}`
         }
         if (options.absolute && count !== options.absolute) {

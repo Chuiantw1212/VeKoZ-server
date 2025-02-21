@@ -1,4 +1,5 @@
 export interface IOffer extends IOfferQuery {
+    uid: string,
     id: string,
     name: string,
     inventoryValue: number,
@@ -12,11 +13,10 @@ export interface IOffer extends IOfferQuery {
 }
 
 export interface IOfferQuery {
-    uid: string,
-    categoryId: string,
-    eventId: string,
-    offererId: string,
-    sellerId: string,
-    validFrom: any,
-    validThrough: any,
+    categoryId?: string,
+    eventId?: string,
+    offererId?: string,
+    sellerId?: string,
+    validFrom?: any,
+    validThrough?: any,
 }

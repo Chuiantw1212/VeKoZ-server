@@ -1,12 +1,34 @@
 import FirestoreAdapter from '../adapters/Firestore.adapter'
 import { IEvent } from '../entities/event'
-import { IOffer } from '../entities/offer'
+import { IOffer, IOfferQuery } from '../entities/offer'
 import { ICrudOptions } from '../ports/out.crud'
 import type { IModelPorts } from '../ports/out.model'
 
 export default class OfferModel extends FirestoreAdapter {
     constructor(data: IModelPorts) {
         super(data)
+    }
+
+    async updateOffersValidTime(uid: string, offerCategoryIds: string[], data: IOfferQuery) {
+        const options: ICrudOptions = {
+            count: {
+                min: 1,
+            },
+            merge: true,
+        }
+        if (data.validFrom) {
+            data.validFrom = super.formatTimestamp(data.validFrom)
+        }
+        if (data.validThrough) {
+            data.validThrough = super.formatTimestamp(data.validThrough)
+        }
+        console.log({
+            data
+        })
+        const promises = offerCategoryIds.map(async categoryId => {
+            return await super.setItemsByQuery([['uid', '==', uid], ['categoryId', '==', categoryId]], data, options)
+        })
+        await Promise.all(promises)
     }
 
     async deleteOffers(uid: string, eventId: string): Promise<number> {

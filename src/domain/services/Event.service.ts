@@ -236,7 +236,7 @@ export default class EventService {
         if (!updateEventReq.id) {
             throw 'event.id不存在'
         }
-        const { dateDesignId, startDate, endDate, isPublic } = updateEventReq
+        const { dateDesignId, startDate, endDate, isPublic, offerCategoryIds } = updateEventReq
         if (dateDesignId && startDate && endDate) {
             const originEventDesign: ITemplateDesign = await this.eventDesignModel.getEventDesignById(dateDesignId)
             if (originEventDesign.mutable) {
@@ -244,7 +244,12 @@ export default class EventService {
             }
             await this.eventDesignModel.patchEventDesignById(uid, dateDesignId, originEventDesign)
         }
-        // SQL
+        if (offerCategoryIds && startDate && endDate) {
+            await this.offerModel.updateOffersValidTime(uid, offerCategoryIds, {
+                validFrom: startDate,
+                validThrough: endDate
+            })
+        }
         const newEvent: IEvent = {}
         if (isPublic !== null) { // false !== null
             newEvent.isPublic = isPublic
