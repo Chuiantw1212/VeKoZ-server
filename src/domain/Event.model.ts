@@ -104,7 +104,16 @@ export default class EventModel extends FirestoreAdapter {
             return second.startDate - first.startDate
         })
 
-        return allEvents as IEvent[]
+        // 節省流量
+        const requiredFiels = ['id', 'banner', 'name', 'startDate', 'endDate', 'organizerName', 'organizerLogo']
+        const minimumEvents = allEvents.map((event: IEvent) => {
+            const miniEvent: IEvent = {}
+            requiredFiels.forEach(field => {
+                miniEvent[field] = event[field]
+            })
+            return miniEvent
+        })
+        return minimumEvents as IEvent[]
     }
 
     /**

@@ -5,7 +5,7 @@ import type { ITemplateDesign } from "./eventTemplate";
  * https://schema.org/Event
  */
 export interface IEvent extends IEventSEO {
-    // [key: string]: any
+    [key: string]: any
     uid?: string;
     id?: string; // doc id
     // DetailIds
