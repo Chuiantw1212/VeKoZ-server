@@ -19,6 +19,20 @@ export default class OfferModel extends FirestoreAdapter {
         return await super.setItemById(uid, id, data, options)
     }
 
+    async deleteNotInCatrgory(uid: string, categoryId: string, offerIds: string[]) {
+        const options: ICrudOptions = {
+            count: {
+                min: offerIds.length
+            }
+        }
+        const count = await super.deleteItemsByQuery([
+            ['uid', '==', uid],
+            ['categoryId', '==', categoryId],
+            ['id', 'not-in', offerIds]
+        ], options)
+        return count
+    }
+
     async updateOffersValidTime(uid: string, offerCategoryIds: string[], data: IOfferQuery) {
         const options: ICrudOptions = {
             count: {
@@ -72,5 +86,11 @@ export default class OfferModel extends FirestoreAdapter {
         })
         const resultOffers = await Promise.all(offerPromiese) as IOffer[]
         return resultOffers
+    }
+
+    async createOffer(uid: string, offer: IOffer) {
+        offer.validFrom = super.formatTimestamp(offer.validFrom)
+        offer.validThrough = super.formatTimestamp(offer.validThrough)
+        return await super.createItem(uid, offer)
     }
 }

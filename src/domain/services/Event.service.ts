@@ -131,19 +131,26 @@ export default class EventService {
         }
         // 更新EventMaster
         const eventPatch = await this.extractFormField(eventDesign, uid)
-        // 例外處理offers
-        if (eventDesign.formField === 'offers') {
-            eventDesign.mutable.offers?.forEach(offer => {
-                if (offer.id) {
-                    // 更新既有offer
-                    this.offerModel.setOfferById(uid, offer.id, offer)
-                } else {
-                    // 新增offer
-                }
-                // 刪除不存在的
-
-            })
-        }
+        // // 例外處理offers
+        // if (eventDesign.formField === 'offers') {
+        //     const categoryId = eventDesign.mutable.categoryId
+        //     if (eventDesign.mutable.offers) {
+        //         const offerPromises = eventDesign.mutable.offers.map(async offer => {
+        //             if (offer.id) {
+        //                 // 更新既有offer
+        //                 this.offerModel.setOfferById(uid, offer.id, offer)
+        //                 return offer.id
+        //             } else {
+        //                 // 新增offer
+        //                 const newOffer = await this.offerModel.createOffer(uid, offer)
+        //                 return newOffer.id
+        //             }
+        //         })
+        //         // 刪除不存在的offers
+        //         const offerIds = await Promise.all(offerPromises)
+        //         this.offerModel.deleteNotInCatrgory(uid, categoryId, offerIds)
+        //     }
+        // }
         // 更新event
         if (eventPatch) {
             await this.eventModel.mergeEventById(uid, eventDesign.eventId, eventPatch)
