@@ -28,7 +28,7 @@ router.use(bearer())
             const publicUrl: string = await OrganizationService.storeLogo(user.uid, newOrganization.id, logo)
             newOrganization.logo = publicUrl
         }
-        await OrganizationService.mergeUniqueDoc(user.uid, newOrganization)
+        await OrganizationService.updateOrganization(user.uid, newOrganization)
         return newOrganization
     })
     .put('/organization/:id', async ({ request, bearer, params }) => {
@@ -44,7 +44,7 @@ router.use(bearer())
             const publicUrl: string = await OrganizationService.storeLogo(user.uid, organization.id, organization.logo)
             organization.logo = publicUrl
         }
-        await OrganizationService.mergeUniqueDoc(user.uid, organization)
+        await OrganizationService.updateOrganization(user.uid, organization)
     })
     .delete('/organization/:id', async ({ bearer, params }) => {
         // TODO: 新增的管理者也可以刪除組織嗎？

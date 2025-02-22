@@ -2,28 +2,33 @@ import type { IOrganization, IOrganizationMember } from '../../entities/organiza
 import OrganizationModel from '../Organization.model'
 import OrganizationMemberModel from '../OrganizationMember.model';
 import EventModel from '../Event.model';
+import OfferModel from '../OfferModel';
 import { IEvent } from '../../entities/event';
 
 interface Idependency {
     organizationModel: OrganizationModel;
     organizationMemberModel: OrganizationMemberModel
-    eventModel: EventModel
+    eventModel: EventModel,
+    offerModel: OfferModel,
 }
 
 export default class OrganizationService {
     protected organizationModel: OrganizationModel
     protected organizationMemberModel: OrganizationMemberModel
     protected eventModel: EventModel
+    protected offerModel: OfferModel
 
     constructor(dependency: Idependency) {
         const {
             organizationModel,
             organizationMemberModel,
-            eventModel
+            eventModel,
+            offerModel,
         } = dependency
         this.organizationModel = organizationModel
         this.organizationMemberModel = organizationMemberModel
         this.eventModel = eventModel
+        this.offerModel = offerModel
     }
 
     async storeLogo(uid: string, id: string, logo: any) {
@@ -59,8 +64,15 @@ export default class OrganizationService {
     /**
      * 更新組織
      */
-    async mergeUniqueDoc(uid: string, organization: IOrganization) {
-        return await this.organizationModel.mergeOrganizationById(uid, organization.id, organization)
+    async updateOrganization(uid: string, organization: IOrganization) {
+        const count = await this.organizationModel.mergeOrganizationById(uid, organization.id, organization)
+        this.offerModel.updateOfferGroupByOffererId(uid, organization.id, {
+            offererName: organization.name,
+        })
+        this.offerModel.updateOfferGroupBySellerId(uid, organization.id, {
+            sellerName: organization.name,
+        })
+        return count
     }
 
     /**

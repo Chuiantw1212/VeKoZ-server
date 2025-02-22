@@ -142,6 +142,7 @@ import offerController from './adapters/client.in/offer.ctrl'
             organizationModel,
             organizationMemberModel,
             eventModel,
+            offerModel,
         }),
         PlaceService: new PlaceService({
             placeModel,

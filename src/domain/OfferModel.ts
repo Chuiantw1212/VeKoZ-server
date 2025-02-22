@@ -9,11 +9,8 @@ export default class OfferModel extends FirestoreAdapter {
         super(data)
     }
 
-    async setOfferByEventId(uid: string, eventId: string, data: IOfferQuery) {
+    async updateOfferGroupByEventId(uid: string, eventId: string, data: IOffer) {
         const options: ICrudOptions = {
-            count: {
-                absolute: 1,
-            },
             merge: true,
         }
         const count = await super.setItemsByQuery([
@@ -23,7 +20,29 @@ export default class OfferModel extends FirestoreAdapter {
         return count
     }
 
-    async setOfferById(uid: string, id: string, data: IOfferQuery) {
+    async updateOfferGroupByOffererId(uid: string, offererId: string, data: IOffer) {
+        const options: ICrudOptions = {
+            merge: true,
+        }
+        const count = await super.setItemsByQuery([
+            ['uid', '==', uid],
+            ['offererId', '==', offererId]
+        ], data, options)
+        return count
+    }
+
+    async updateOfferGroupBySellerId(uid: string, sellerId: string, data: IOffer) {
+        const options: ICrudOptions = {
+            merge: true,
+        }
+        const count = await super.setItemsByQuery([
+            ['uid', '==', uid],
+            ['sellerId', '==', sellerId]
+        ], data, options)
+        return count
+    }
+
+    async setOfferById(uid: string, id: string, data: IOffer) {
         const options: ICrudOptions = {
             count: {
                 absolute: 1,
@@ -42,7 +61,7 @@ export default class OfferModel extends FirestoreAdapter {
         return count
     }
 
-    async updateOffersValidTime(uid: string, offerCategoryIds: string[], data: IOfferQuery) {
+    async updateOffersValidTime(uid: string, offerCategoryIds: string[], data: IOffer) {
         const options: ICrudOptions = {
             count: {
                 min: 1,

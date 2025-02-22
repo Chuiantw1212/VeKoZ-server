@@ -124,7 +124,7 @@ export default class EventService {
         const eventPatch = await this.extractFormField(eventDesign, uid)
         // 例外處理offers
         if (eventDesign.formField === 'name') {
-            this.offerModel.setOfferByEventId(uid, eventDesign.eventId, {
+            this.offerModel.updateOfferGroupByEventId(uid, eventDesign.eventId, {
                 eventName: eventDesign.mutable.value
             })
         }
