@@ -5,13 +5,13 @@ export interface IOffer extends IOfferQuery {
     inventoryValue: number,
     price: number,
     categoryName: string,
-    eventName: string,
     offererName: string,
     sellerName: string,
     availableAtOrFrom: string | 'VeKoZ'
 }
 
 export interface IOfferQuery {
+    eventName?: string,
     inventoryMaxValue?: number,
     categoryId?: string,
     eventId?: string,

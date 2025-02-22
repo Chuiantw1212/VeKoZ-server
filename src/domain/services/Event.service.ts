@@ -122,7 +122,12 @@ export default class EventService {
         }
         // 更新EventMaster
         const eventPatch = await this.extractFormField(eventDesign, uid)
-        // // 例外處理offers
+        // 例外處理offers
+        if (eventDesign.formField === 'name') {
+            this.offerModel.setOfferByEventId(uid, eventDesign.eventId, {
+                eventName: eventDesign.mutable.value
+            })
+        }
         if (eventDesign.formField === 'offers') {
             const categoryId = eventDesign.mutable.categoryId
             if (categoryId && eventDesign.mutable.offers) {

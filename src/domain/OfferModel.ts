@@ -9,6 +9,20 @@ export default class OfferModel extends FirestoreAdapter {
         super(data)
     }
 
+    async setOfferByEventId(uid: string, eventId: string, data: IOfferQuery) {
+        const options: ICrudOptions = {
+            count: {
+                absolute: 1,
+            },
+            merge: true,
+        }
+        const count = await super.setItemsByQuery([
+            ['uid', '==', uid],
+            ['eventId', '==', eventId]
+        ], data, options)
+        return count
+    }
+
     async setOfferById(uid: string, id: string, data: IOfferQuery) {
         const options: ICrudOptions = {
             count: {
@@ -72,16 +86,6 @@ export default class OfferModel extends FirestoreAdapter {
         })
         return offers
     }
-
-    // async createOffers(uid: string, offers: IOffer[]): Promise<IOffer[]> {
-    //     const offerPromiese = offers.map(offer => {
-    //         offer.validFrom = super.formatTimestamp(offer.validFrom)
-    //         offer.validThrough = super.formatTimestamp(offer.validThrough)
-    //         return super.createItem(uid, offer)
-    //     })
-    //     const resultOffers = await Promise.all(offerPromiese) as IOffer[]
-    //     return resultOffers
-    // }
 
     async createOffer(uid: string, offer: IOffer,): Promise<IOffer> {
         if (offer.validFrom) {
