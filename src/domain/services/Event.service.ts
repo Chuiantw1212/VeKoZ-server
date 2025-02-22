@@ -6,6 +6,7 @@ import EventDesignModel from '../EventDesign.model';
 import OrganizationModel from '../Organization.model';
 import NlpAdapter from '../../adapters/nlp.out';
 import OfferModel from '../OfferModel';
+import { IOffer } from '../../entities/offer';
 
 interface Idependency {
     eventModel: EventModel;
@@ -80,25 +81,15 @@ export default class EventService {
             if (design.type === 'offers' && design.mutable && design.mutable.offers) {
                 const categoryId = crypto.randomUUID()
                 const categoryName = design.mutable.label ?? ''
-                const newOffers = structuredClone(design.mutable.offers)
-                newOffers.forEach(offer => {
-                    offer.inventoryValue = offer.inventoryMaxValue ?? 0
-                    offer.eventId = event.id ?? ''
-                    offer.eventName = event.name ?? ''
-                    offer.categoryId = categoryId // composite key
-                    offer.categoryName = categoryName
-                    offer.sellerId = event.organizerId ?? ''
-                    offer.sellerName = event.organizerName ?? ''
-                    offer.offererId = event.organizerId ?? ''
-                    offer.offererName = event.organizerName ?? ''
-                    offer.validFrom = event.startDate
-                    offer.validThrough = event.endDate
-                    offer.availableAtOrFrom = 'VeKoZ' // composite key
-                    return offer
+                const newOfferPromises = design.mutable.offers.map(offer => {
+                    const newOffer = this.convertNewOffer(offer, event)
+                    newOffer.categoryId = categoryId // composite key
+                    newOffer.categoryName = categoryName
+                    return this.offerModel.createOffer(uid, newOffer)
                 })
-                const createdOffers = await this.offerModel.createOffers(uid, newOffers)
+                const createdOffers = await Promise.all(newOfferPromises)
                 design.mutable.categoryId = categoryId
-                design.mutable.offers.forEach((offer, index) => { // 這步驟沒意義，因為更新不回去
+                design.mutable.offers.forEach((offer, index) => {
                     offer.id = createdOffers[index].id
                 })
                 offerCategoryIds.push(categoryId)
@@ -132,25 +123,32 @@ export default class EventService {
         // 更新EventMaster
         const eventPatch = await this.extractFormField(eventDesign, uid)
         // // 例外處理offers
-        // if (eventDesign.formField === 'offers') {
-        //     const categoryId = eventDesign.mutable.categoryId
-        //     if (eventDesign.mutable.offers) {
-        //         const offerPromises = eventDesign.mutable.offers.map(async offer => {
-        //             if (offer.id) {
-        //                 // 更新既有offer
-        //                 this.offerModel.setOfferById(uid, offer.id, offer)
-        //                 return offer.id
-        //             } else {
-        //                 // 新增offer
-        //                 const newOffer = await this.offerModel.createOffer(uid, offer)
-        //                 return newOffer.id
-        //             }
-        //         })
-        //         // 刪除不存在的offers
-        //         const offerIds = await Promise.all(offerPromises)
-        //         this.offerModel.deleteNotInCatrgory(uid, categoryId, offerIds)
-        //     }
-        // }
+        if (eventDesign.formField === 'offers') {
+            const categoryId = eventDesign.mutable.categoryId
+            if (categoryId && eventDesign.mutable.offers) {
+                const offerIdPromises = eventDesign.mutable.offers.map(async offer => {
+                    if (offer.id) {
+                        // 更新既有offer
+                        this.offerModel.setOfferById(uid, offer.id, offer)
+                        return offer.id
+                    } else {
+                        // 新增offer
+                        const event = await this.eventModel.getEventById(String(eventDesign.eventId))
+                        if (event) {
+                            const newOffer = this.convertNewOffer(offer, event)
+                            newOffer.categoryId = categoryId
+                            newOffer.categoryName = eventDesign.mutable?.label ?? ''
+                            const createdOffer = await this.offerModel.createOffer(uid, newOffer)
+                            return String(createdOffer.id)
+                        }
+                    }
+                    return ''
+                })
+                // 刪除不存在的offers
+                const offerIds = await Promise.all(offerIdPromises)
+                this.offerModel.deleteNotInCatrgory(uid, categoryId, offerIds)
+            }
+        }
         // 更新event
         if (eventPatch) {
             await this.eventModel.mergeEventById(uid, eventDesign.eventId, eventPatch)
@@ -160,6 +158,22 @@ export default class EventService {
             }
         }
         return count
+    }
+
+    private convertNewOffer(offer: IOffer, event: IEvent) {
+        const newOffer: IOffer = structuredClone(offer)
+        newOffer.inventoryMaxValue = offer.inventoryMaxValue ?? 0
+        newOffer.inventoryValue = offer.inventoryMaxValue ?? 0
+        newOffer.eventId = event.id ?? ''
+        newOffer.eventName = event.name ?? ''
+        newOffer.sellerId = event.organizerId ?? ''
+        newOffer.sellerName = event.organizerName ?? ''
+        newOffer.offererId = event.organizerId ?? ''
+        newOffer.offererName = event.organizerName ?? ''
+        newOffer.validFrom = event.startDate
+        newOffer.validThrough = event.endDate
+        newOffer.availableAtOrFrom = 'VeKoZ' // composite key
+        return newOffer
     }
 
     private async extractFormField(eventDesign: ITemplateDesign, uid: string) {

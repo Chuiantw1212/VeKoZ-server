@@ -51,7 +51,7 @@ export interface ITemplateDesignMutable {
     urlName?: string,
     urlValue?: string,
     // 票券
-    categoryId: string,
+    categoryId?: string,
     offers?: IOffer[]
 }
 

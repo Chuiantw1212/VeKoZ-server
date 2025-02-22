@@ -1,6 +1,6 @@
 export interface IOffer extends IOfferQuery {
-    uid: string,
-    id: string,
+    uid?: string,
+    id?: string,
     name: string,
     inventoryValue: number,
     price: number,

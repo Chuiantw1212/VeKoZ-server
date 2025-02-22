@@ -20,16 +20,11 @@ export default class OfferModel extends FirestoreAdapter {
     }
 
     async deleteNotInCatrgory(uid: string, categoryId: string, offerIds: string[]) {
-        const options: ICrudOptions = {
-            count: {
-                min: offerIds.length
-            }
-        }
         const count = await super.deleteItemsByQuery([
             ['uid', '==', uid],
             ['categoryId', '==', categoryId],
             ['id', 'not-in', offerIds]
-        ], options)
+        ])
         return count
     }
 
@@ -78,19 +73,23 @@ export default class OfferModel extends FirestoreAdapter {
         return offers
     }
 
-    async createOffers(uid: string, offers: IOffer[]): Promise<IOffer[]> {
-        const offerPromiese = offers.map(offer => {
-            offer.validFrom = super.formatTimestamp(offer.validFrom)
-            offer.validThrough = super.formatTimestamp(offer.validThrough)
-            return super.createItem(uid, offer)
-        })
-        const resultOffers = await Promise.all(offerPromiese) as IOffer[]
-        return resultOffers
-    }
+    // async createOffers(uid: string, offers: IOffer[]): Promise<IOffer[]> {
+    //     const offerPromiese = offers.map(offer => {
+    //         offer.validFrom = super.formatTimestamp(offer.validFrom)
+    //         offer.validThrough = super.formatTimestamp(offer.validThrough)
+    //         return super.createItem(uid, offer)
+    //     })
+    //     const resultOffers = await Promise.all(offerPromiese) as IOffer[]
+    //     return resultOffers
+    // }
 
-    async createOffer(uid: string, offer: IOffer) {
-        offer.validFrom = super.formatTimestamp(offer.validFrom)
-        offer.validThrough = super.formatTimestamp(offer.validThrough)
-        return await super.createItem(uid, offer)
+    async createOffer(uid: string, offer: IOffer,): Promise<IOffer> {
+        if (offer.validFrom) {
+            offer.validFrom = super.formatTimestamp(offer.validFrom)
+        }
+        if (offer.validThrough) {
+            offer.validThrough = super.formatTimestamp(offer.validThrough)
+        }
+        return await super.createItem(uid, offer) as IOffer
     }
 }
