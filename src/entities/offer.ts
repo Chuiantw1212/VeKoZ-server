@@ -5,6 +5,7 @@ export interface IOffer extends IOfferQuery {
     inventoryValue?: number,
     price?: number,
     eventName?: string,
+    eventIsPublic?: boolean,
     categoryName?: string,
     offererName?: string,
     sellerName?: string,

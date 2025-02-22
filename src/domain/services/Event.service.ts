@@ -171,6 +171,7 @@ export default class EventService {
         newOffer.inventoryValue = offer.inventoryMaxValue ?? 0
         newOffer.eventId = event.id ?? ''
         newOffer.eventName = event.name ?? ''
+        newOffer.eventIsPublic = event.isPublic
         newOffer.sellerId = event.organizerId ?? ''
         newOffer.sellerName = event.organizerName ?? ''
         newOffer.offererId = event.organizerId ?? ''
