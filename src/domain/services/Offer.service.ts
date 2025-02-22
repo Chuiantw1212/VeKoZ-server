@@ -18,4 +18,8 @@ export default class OfferService {
     async queryOfferList(uid: string) {
         return await this.offerModel.getOfferList(uid)
     }
+
+    async setOffersByCategoryId(uid: string, categoryId: string, offer: IOffer) {
+        return await this.offerModel.updateOfferGroupByCategoryId(uid, categoryId, offer)
+    }
 }

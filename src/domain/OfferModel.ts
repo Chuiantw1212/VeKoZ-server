@@ -9,6 +9,17 @@ export default class OfferModel extends FirestoreAdapter {
         super(data)
     }
 
+    async updateOfferGroupByCategoryId(uid: string, categoryId: string, data: IOffer) {
+        const options: ICrudOptions = {
+            merge: true,
+        }
+        const count = await super.setItemsByQuery([
+            ['uid', '==', uid],
+            ['categoryId', '==', categoryId]
+        ], data, options)
+        return count
+    }
+
     async updateOfferGroupByEventId(uid: string, eventId: string, data: IOffer) {
         const options: ICrudOptions = {
             merge: true,
@@ -61,7 +72,7 @@ export default class OfferModel extends FirestoreAdapter {
         return count
     }
 
-    async updateOffersValidTime(uid: string, offerCategoryIds: string[], data: IOffer) {
+    async updateOfferGroup(uid: string, offerCategoryIds: string[], data: IOffer) {
         const options: ICrudOptions = {
             count: {
                 min: 1,
@@ -98,7 +109,10 @@ export default class OfferModel extends FirestoreAdapter {
     }
 
     async getOfferList(uid: string): Promise<IOffer[]> {
-        const offers: IOffer[] = await super.getItemsByQuery([['uid', '==', uid]]) as IOffer[]
+        const options: ICrudOptions = {
+            orderBy: ['validFrom', 'desc',]
+        }
+        const offers: IOffer[] = await super.getItemsByQuery([['uid', '==', uid]], options) as IOffer[]
         offers.forEach(offer => {
             offer.validFrom = super.formatDate(offer.validFrom)
             offer.validThrough = super.formatDate(offer.validThrough)

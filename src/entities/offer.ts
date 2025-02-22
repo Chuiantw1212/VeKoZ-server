@@ -3,6 +3,7 @@ export interface IOffer extends IOfferQuery {
     id?: string,
     name?: string,
     inventoryValue?: number,
+    showInventoryValue?: boolean,
     price?: number,
     eventName?: string,
     eventIsPublic?: boolean,

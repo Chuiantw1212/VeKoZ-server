@@ -169,6 +169,7 @@ export default class EventService {
         const newOffer: IOffer = structuredClone(offer)
         newOffer.inventoryMaxValue = offer.inventoryMaxValue ?? 0
         newOffer.inventoryValue = offer.inventoryMaxValue ?? 0
+        newOffer.showInventoryValue = offer.showInventoryValue ?? false
         newOffer.eventId = event.id ?? ''
         newOffer.eventName = event.name ?? ''
         newOffer.eventIsPublic = event.isPublic
@@ -231,12 +232,6 @@ export default class EventService {
                 }
                 break;
             }
-            // case 'offers': {
-            //     if (eventDesign.mutable.offers) {
-            //         eventPatch.offerIds = await this.offerModel.setOffers(uid, eventDesign.mutable.offers)
-            //     }
-            //     break;
-            // }
             default: {
                 return {}
             }
@@ -288,9 +283,10 @@ export default class EventService {
             await this.eventDesignModel.patchEventDesignById(uid, dateDesignId, originEventDesign)
         }
         if (offerCategoryIds && startDate && endDate) {
-            await this.offerModel.updateOffersValidTime(uid, offerCategoryIds, {
+            await this.offerModel.updateOfferGroup(uid, offerCategoryIds, {
                 validFrom: startDate,
-                validThrough: endDate
+                validThrough: endDate,
+                eventIsPublic: isPublic,
             })
         }
         const newEvent: IEvent = {}

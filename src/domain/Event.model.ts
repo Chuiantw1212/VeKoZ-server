@@ -108,7 +108,7 @@ export default class EventModel extends FirestoreAdapter {
         const requiredFiels = [
             'id', 'banner', 'name', 'startDate', 'endDate', 'organizerName',
             'organizerLogo', 'offerCategoryIds', 'dateDesignId',
-            'locationAddressRegion', 'hasVirtualLocation']
+            'locationAddressRegion', 'hasVirtualLocation', 'isPublic']
         const minimumEvents = allEvents.map((event: IEvent) => {
             const miniEvent: IEvent = {}
             requiredFiels.forEach(field => {
