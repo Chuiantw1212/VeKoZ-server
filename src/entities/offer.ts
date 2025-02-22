@@ -3,7 +3,6 @@ export interface IOffer extends IOfferQuery {
     id: string,
     name: string,
     inventoryValue: number,
-    inventoryMaxValue: number,
     price: number,
     categoryName: string,
     eventName: string,
@@ -13,6 +12,7 @@ export interface IOffer extends IOfferQuery {
 }
 
 export interface IOfferQuery {
+    inventoryMaxValue?: number,
     categoryId?: string,
     eventId?: string,
     offererId?: string,

@@ -9,6 +9,16 @@ export default class OfferModel extends FirestoreAdapter {
         super(data)
     }
 
+    async setOfferById(uid: string, id: string, data: IOfferQuery) {
+        const options: ICrudOptions = {
+            count: {
+                absolute: 1,
+            },
+            merge: true,
+        }
+        return await super.setItemById(uid, id, data, options)
+    }
+
     async updateOffersValidTime(uid: string, offerCategoryIds: string[], data: IOfferQuery) {
         const options: ICrudOptions = {
             count: {
@@ -22,9 +32,6 @@ export default class OfferModel extends FirestoreAdapter {
         if (data.validThrough) {
             data.validThrough = super.formatTimestamp(data.validThrough)
         }
-        console.log({
-            data
-        })
         const promises = offerCategoryIds.map(async categoryId => {
             return await super.setItemsByQuery([['uid', '==', uid], ['categoryId', '==', categoryId]], data, options)
         })
@@ -66,36 +73,4 @@ export default class OfferModel extends FirestoreAdapter {
         const resultOffers = await Promise.all(offerPromiese) as IOffer[]
         return resultOffers
     }
-
-    // async initOffersById(uid: string, event: IEvent) {
-    //     const offerIds = event.offerIds
-    //     const organizerId = event.organizerId
-    //     const eventId = event.id
-    //     const eventName = event.name
-    //     const organizerName = event.organizerName
-    //     const eventStartDate = event.startDate as string
-    //     const eventEndDate = event.endDate as string
-    //     if (!offerIds || !organizerId || !eventId) {
-    //         return
-    //     }
-    //     const options: ICrudOptions = {
-    //         merge: true,
-    //         count: {
-    //             absolute: 1
-    //         }
-    //     }
-    //     offerIds.map((id: string) => {
-    //         const result = super.setItemById(uid, id, {
-    //             sellerId: organizerId,
-    //             sellerName: organizerName,
-    //             offererId: organizerId,
-    //             offererName: organizerName,
-    //             eventId,
-    //             eventName,
-    //             validFrom: super.formatTimestamp(eventStartDate),
-    //             validThrough: super.formatTimestamp(eventEndDate),
-    //         }, options)
-    //         return result
-    //     })
-    // }
 }

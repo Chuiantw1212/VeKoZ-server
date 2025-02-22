@@ -82,7 +82,7 @@ export default class EventService {
                 const categoryName = design.mutable.label ?? ''
                 const newOffers = structuredClone(design.mutable.offers)
                 newOffers.forEach(offer => {
-                    offer.inventoryValue = offer.inventoryMaxValue
+                    offer.inventoryValue = offer.inventoryMaxValue ?? 0
                     offer.eventId = event.id ?? ''
                     offer.eventName = event.name ?? ''
                     offer.categoryId = categoryId // composite key
@@ -98,7 +98,7 @@ export default class EventService {
                 })
                 const createdOffers = await this.offerModel.createOffers(uid, newOffers)
                 design.mutable.categoryId = categoryId
-                design.mutable.offers.forEach((offer, index) => {
+                design.mutable.offers.forEach((offer, index) => { // 這步驟沒意義，因為更新不回去
                     offer.id = createdOffers[index].id
                 })
                 offerCategoryIds.push(categoryId)
@@ -106,12 +106,13 @@ export default class EventService {
             return this.eventDesignModel.createDesign(uid, design)
         })
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
+        newEvent.designs = designDocs
         const designIds = designDocs.map(doc => doc.id ?? '')
         // 回頭更新事件Master
         const dateDesign = designDocs.find(design => {
             return design.formField === 'dates' // 唯一一個
         })
-        await this.eventModel.mergeEventById(uid, String(newEvent.id), {
+        this.eventModel.mergeEventById(uid, String(newEvent.id), {
             dateDesignId: dateDesign?.id,
             designIds,
             offerCategoryIds,
@@ -133,12 +134,14 @@ export default class EventService {
         // 例外處理offers
         if (eventDesign.formField === 'offers') {
             eventDesign.mutable.offers?.forEach(offer => {
-                console.log({
-                    offer
-                })
                 if (offer.id) {
-
+                    // 更新既有offer
+                    this.offerModel.setOfferById(uid, offer.id, offer)
+                } else {
+                    // 新增offer
                 }
+                // 刪除不存在的
+
             })
         }
         // 更新event
