@@ -176,8 +176,8 @@ export default class EventService {
 
     private convertNewOffer(offer: IOffer, event: IEvent) {
         const newOffer: IOffer = structuredClone(offer)
-        newOffer.inventoryMaxValue = offer.inventoryMaxValue ?? 0
-        newOffer.inventoryValue = offer.inventoryMaxValue ?? 0
+        newOffer.inventoryMaxValue = offer.inventoryMaxValue ?? 10
+        newOffer.inventoryValue = offer.inventoryMaxValue ?? 10
         newOffer.showInventoryValue = offer.showInventoryValue ?? false
         newOffer.eventId = event.id ?? ''
         newOffer.eventName = event.name ?? ''
