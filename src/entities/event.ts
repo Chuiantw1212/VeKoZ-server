@@ -15,6 +15,7 @@ export interface IEvent extends IEventSEO {
     locationId?: string
     offerCategoryIds?: string[]
     locationAddress?: string,
+    eventStatus?: 'cancelled' | 'movedOnline' | 'postponed' | 'rescheduled' | 'scheduled' | 'ended' // 暫定
 }
 interface IEventSEO extends IEventQuery {
     banner?: string,

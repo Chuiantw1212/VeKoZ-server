@@ -374,7 +374,20 @@ export default class EventService {
             const keywords = this.nlpAdapter.cutForSearch(query.keywords as string)
             query.keywords = keywords
         }
+
+        const currentTime = new Date().getTime()
         const events = await this.eventModel.queryEventList(query) as IEvent[]
+        // events.forEach(event => {
+        //     if (event.endDate) {
+        //         const endTime = new Date(event.endDate).getTime()
+        //         if (currentTime >= endTime) {
+        //             event.eventStatus = 'ended' // 用來判斷是否該月曆事件可編輯
+        //             this.eventModel.mergeEventById(uid, event.id, {
+        //                 eventStatus: 'ended'
+        //             })
+        //         }
+        //     }
+        // })
         return events
     }
 }
