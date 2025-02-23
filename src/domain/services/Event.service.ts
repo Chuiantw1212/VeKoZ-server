@@ -78,18 +78,18 @@ export default class EventService {
         const designDocPromises = eventTemplate.designs.map(async (design) => {
             delete design.id // 重要，不然會污染到模板資料
             // 特殊處理Offer
-            if (design.type === 'offers' && design.mutable && design.mutable.offers) {
+            if (design.type === 'offers' && design && design.offers) {
                 const categoryId = crypto.randomUUID()
-                const categoryName = design.mutable.label ?? ''
-                const newOfferPromises = design.mutable.offers.map(offer => {
+                const categoryName = design.label ?? ''
+                const newOfferPromises = design.offers.map(offer => {
                     const newOffer = this.convertNewOffer(offer, event)
                     newOffer.categoryId = categoryId // composite key
                     newOffer.categoryName = categoryName
                     return this.offerModel.createOffer(uid, newOffer)
                 })
                 const createdOffers = await Promise.all(newOfferPromises)
-                design.mutable.categoryId = categoryId
-                design.mutable.offers.forEach((offer, index) => {
+                design.categoryId = categoryId
+                design.offers.forEach((offer, index) => {
                     offer.id = createdOffers[index].id
                 })
                 offerCategoryIds.push(categoryId)
@@ -113,7 +113,7 @@ export default class EventService {
     }
 
     async patchEventForm(uid: string, eventDesign: ITemplateDesign): Promise<number> {
-        if (!eventDesign.id || !eventDesign.eventId || !eventDesign.mutable) {
+        if (!eventDesign.id || !eventDesign.eventId) {
             throw 'id或是eventId不存在'
         }
         // 更新EventDesigns
@@ -126,13 +126,13 @@ export default class EventService {
         // 例外處理offers
         if (eventDesign.formField === 'name') {
             this.offerModel.updateOfferGroupByEventId(uid, eventDesign.eventId, {
-                eventName: eventDesign.mutable.value
+                eventName: eventDesign.value
             })
         }
         if (eventDesign.formField === 'offers') {
-            const categoryId = eventDesign.mutable.categoryId
-            if (categoryId && eventDesign.mutable.offers) {
-                const offerIdPromises = eventDesign.mutable.offers.map(async offer => {
+            const categoryId = eventDesign.categoryId
+            if (categoryId && eventDesign.offers) {
+                const offerIdPromises = eventDesign.offers.map(async offer => {
                     if (offer.id) {
                         // 更新既有offer
                         this.offerModel.setOfferById(uid, offer.id, offer)
@@ -143,7 +143,7 @@ export default class EventService {
                         if (event) {
                             const newOffer = this.convertNewOffer(offer, event)
                             newOffer.categoryId = categoryId
-                            newOffer.categoryName = eventDesign.mutable?.label ?? ''
+                            newOffer.categoryName = eventDesign.label
                             const createdOffer = await this.offerModel.createOffer(uid, newOffer)
                             return String(createdOffer.id)
                         }
@@ -184,32 +184,32 @@ export default class EventService {
         return newOffer
     }
 
-    private async extractFormField(eventDesign: ITemplateDesign, uid: string) {
-        if (!eventDesign.mutable) {
+    private async extractFormField(eventDesign: ITemplateDesign) {
+        if (!eventDesign) {
             return
         }
         const eventPatch: IEvent = {}
         switch (eventDesign.formField) {
             case 'location': {
-                eventPatch.locationId = eventDesign.mutable.placeId
-                eventPatch.locationAddressRegion = eventDesign.mutable.placeAddressRegion
+                eventPatch.locationId = eventDesign.placeId
+                eventPatch.locationAddressRegion = eventDesign.placeAddressRegion
                 break;
             }
             case 'banner': {
-                eventPatch.banner = eventDesign.mutable.value
+                eventPatch.banner = eventDesign.value
                 break;
             }
             case 'description': {
-                eventPatch.description = eventDesign.mutable.value
+                eventPatch.description = eventDesign.value
                 break;
             }
             case 'name': {
-                eventPatch.name = eventDesign.mutable.value
+                eventPatch.name = eventDesign.value
                 break;
             }
             case 'dates': {
-                const startDate = eventDesign.mutable.value[0]
-                const endDate = eventDesign.mutable.value[1]
+                const startDate = eventDesign.value[0]
+                const endDate = eventDesign.value[1]
                 eventPatch.startDate = startDate
                 eventPatch.endDate = endDate
                 const startHour = new Date(startDate).getHours()
@@ -225,10 +225,10 @@ export default class EventService {
                 break;
             }
             case 'organizer': {
-                if (eventDesign.mutable?.organizationId) {
-                    const organizerLogo = await this.organizationModel.getLogoUrl(eventDesign.mutable.organizationId)
-                    eventPatch.organizerId = eventDesign.mutable.organizationId
-                    eventPatch.organizerName = eventDesign.mutable.organizationName
+                if (eventDesign.organizationId) {
+                    const organizerLogo = await this.organizationModel.getLogoUrl(eventDesign.organizationId)
+                    eventPatch.organizerId = eventDesign.organizationId
+                    eventPatch.organizerName = eventDesign.organizationName
                     eventPatch.organizerLogo = organizerLogo
                 }
                 break;
@@ -278,8 +278,8 @@ export default class EventService {
         const { dateDesignId, startDate, endDate, isPublic, offerCategoryIds } = updateEventReq
         if (dateDesignId && startDate && endDate) {
             const originEventDesign: ITemplateDesign = await this.eventDesignModel.getEventDesignById(dateDesignId)
-            if (originEventDesign.mutable) {
-                originEventDesign.mutable.value = [startDate, endDate]
+            if (originEventDesign) {
+                originEventDesign.value = [startDate, endDate]
             }
             await this.eventDesignModel.patchEventDesignById(uid, dateDesignId, originEventDesign)
         }

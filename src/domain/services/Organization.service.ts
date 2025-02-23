@@ -77,14 +77,10 @@ export default class OrganizationService {
         })
         console.log('setByOrganizationId')
         this.eventTemplateDesignModel.setByOrganizationId(uid, organization.id, {
-            mutable: {
-                organizationName: organization.name,
-            }
+            organizationName: organization.name,
         })
         this.eventDesignModel.setByOrganizationId(uid, organization.id, {
-            mutable: {
-                organizationName: organization.name,
-            }
+            organizationName: organization.name,
         })
         return count
     }
