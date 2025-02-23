@@ -94,6 +94,7 @@ export default class EventService {
                 })
                 offerCategoryIds.push(categoryId)
             }
+            design.eventId = newEvent.id
             return this.eventDesignModel.createDesign(uid, design)
         })
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]

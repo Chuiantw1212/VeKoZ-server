@@ -83,8 +83,8 @@ export default class OrganizationModel extends FirestoreAdapter {
         return count
     }
 
-    async getOrganizationList() {
-        const organizationList = await super.getItemsByQuery([]) as IOrganization[]
+    async getOrganizationList(uid: string,) {
+        const organizationList = await super.getItemsByQuery([['uid', '==', uid]]) as IOrganization[]
         return organizationList
     }
 }

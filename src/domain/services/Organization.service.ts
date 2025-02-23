@@ -79,8 +79,8 @@ export default class OrganizationService {
      * 取得列表
      * @returns 
      */
-    async getOrganizationList() {
-        const list: IOrganization[] = await this.organizationModel.getOrganizationList()
+    async getOrganizationList(uid: string,) {
+        const list: IOrganization[] = await this.organizationModel.getOrganizationList(uid)
         return list
     }
 

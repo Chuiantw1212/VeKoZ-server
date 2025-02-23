@@ -5,9 +5,10 @@ import { bearer } from '@elysiajs/bearer'
 
 const router = new Elysia()
 router.use(bearer())
-    .get('/organization/list', async () => {
-        const { OrganizationService, } = AccessGlobalService.locals
-        const organizations: IOrganization[] = await OrganizationService.getOrganizationList()
+    .get('/organization/list', async ({ bearer }) => {
+        const { AuthService, OrganizationService, } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const organizations: IOrganization[] = await OrganizationService.getOrganizationList(user.uid)
         return organizations
     })
     .get('/organization/:id/member/list', async ({ bearer, params }) => {
