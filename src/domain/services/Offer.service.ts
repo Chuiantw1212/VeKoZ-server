@@ -1,5 +1,5 @@
 import OfferModel from '../OfferModel';
-import type { IOffer } from '../../entities/offer';
+import type { IOffer, IOfferQuery } from '../../entities/offer';
 import { ICrudOptions } from '../../ports/out.crud';
 
 interface Idependency {
@@ -15,8 +15,8 @@ export default class OfferService {
         this.offerModel = offerModel
     }
 
-    async queryOfferList(uid: string) {
-        return await this.offerModel.getOfferList(uid)
+    async queryOfferList(query: IOfferQuery) {
+        return await this.offerModel.getOfferList(query)
     }
 
     async setOffersByCategoryId(uid: string, categoryId: string, offer: IOffer) {

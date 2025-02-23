@@ -108,11 +108,15 @@ export default class OfferModel extends FirestoreAdapter {
         }
     }
 
-    async getOfferList(uid: string): Promise<IOffer[]> {
+    async getOfferList(query: IOfferQuery): Promise<IOffer[]> {
         const options: ICrudOptions = {
-            orderBy: ['validFrom', 'desc',]
+            // orderBy: ['validFrom', 'desc',]
         }
-        const offers: IOffer[] = await super.getItemsByQuery([['uid', '==', uid]], options) as IOffer[]
+        const wheres = []
+        if (query.eventId) {
+            wheres.push(['eventId', '==', query.eventId])
+        }
+        const offers: IOffer[] = await super.getItemsByQuery(wheres, options) as IOffer[]
         offers.forEach(offer => {
             offer.validFrom = super.formatDate(offer.validFrom)
             offer.validThrough = super.formatDate(offer.validThrough)
