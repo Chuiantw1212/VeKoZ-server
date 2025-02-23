@@ -32,16 +32,6 @@ router.use(bearer())
         const result = await EventService.patchEventForm(user.uid, templateDesign)
         return result
     })
-    // /**
-    //  * 變更
-    //  */
-    // .patch('/event/:id', async function ({ request, bearer }) {
-    //     const { AuthService, EventService } = AccessGlobalService.locals
-    //     const user = await AuthService.verifyIdToken(bearer)
-    //     const templateDesign = await request.json() as ITemplateDesign
-    //     const result = await EventService.patchEventForm(user.uid, templateDesign)
-    //     return result
-    // })
     .get('/event/:id', async function ({ params, bearer }) {
         const { AuthService, EventService } = AccessGlobalService.locals
         const { id } = params

@@ -60,7 +60,7 @@ export default class EventService {
         }
         // 更新EventMaster
         const eventPatchePromises = designsWithFormField.map((design: ITemplateDesign) => {
-            const eventPatch = this.extractFormField(design, uid)
+            const eventPatch = this.extractFormField(design)
             return eventPatch
         })
         const eventPatches = await Promise.all(eventPatchePromises)
@@ -124,8 +124,14 @@ export default class EventService {
             return count
         }
         // 更新EventMaster
-        const eventPatch = await this.extractFormField(eventDesign, uid)
-        // 例外處理offers
+        const eventPatch = await this.extractFormField(eventDesign)
+        // 例外Details
+        if (eventDesign.formField === 'organizer') {
+            this.offerModel.updateOfferGroupByOffererId(uid, String(eventDesign.organizationId), {
+                offererId: eventDesign.organizationId,
+                offererName: eventDesign.organizationName
+            })
+        }
         if (eventDesign.formField === 'name') {
             this.offerModel.updateOfferGroupByEventId(uid, eventDesign.eventId, {
                 eventName: eventDesign.value
