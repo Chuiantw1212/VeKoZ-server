@@ -1,15 +1,20 @@
-import type { IOrganization, IOrganizationMember } from '../../entities/organization';
 import OrganizationModel from '../Organization.model'
 import OrganizationMemberModel from '../OrganizationMember.model';
 import EventModel from '../Event.model';
 import OfferModel from '../OfferModel';
+import EventTemplateDesignModel from '../EventTemplateDesign.model';
+import EventDesignModel from '../EventDesign.model';
+
 import { IEvent } from '../../entities/event';
+import type { IOrganization, IOrganizationMember } from '../../entities/organization';
 
 interface Idependency {
     organizationModel: OrganizationModel;
     organizationMemberModel: OrganizationMemberModel
     eventModel: EventModel,
     offerModel: OfferModel,
+    eventTemplateDesignModel: EventTemplateDesignModel,
+    eventDesignModel: EventDesignModel,
 }
 
 export default class OrganizationService {
@@ -17,18 +22,16 @@ export default class OrganizationService {
     protected organizationMemberModel: OrganizationMemberModel
     protected eventModel: EventModel
     protected offerModel: OfferModel
+    protected eventTemplateDesignModel: EventTemplateDesignModel
+    protected eventDesignModel: EventDesignModel
 
     constructor(dependency: Idependency) {
-        const {
-            organizationModel,
-            organizationMemberModel,
-            eventModel,
-            offerModel,
-        } = dependency
-        this.organizationModel = organizationModel
-        this.organizationMemberModel = organizationMemberModel
-        this.eventModel = eventModel
-        this.offerModel = offerModel
+        this.organizationModel = dependency.organizationModel
+        this.organizationMemberModel = dependency.organizationMemberModel
+        this.eventModel = dependency.eventModel
+        this.offerModel = dependency.offerModel
+        this.eventTemplateDesignModel = dependency.eventTemplateDesignModel
+        this.eventDesignModel = dependency.eventDesignModel
     }
 
     async storeLogo(uid: string, id: string, logo: any) {
@@ -72,6 +75,7 @@ export default class OrganizationService {
         this.offerModel.updateOfferGroupBySellerId(uid, organization.id, {
             sellerName: organization.name,
         })
+        this.eventTemplateDesignModel.setByOrganizationId()
         return count
     }
 

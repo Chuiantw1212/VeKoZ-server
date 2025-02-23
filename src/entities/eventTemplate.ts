@@ -73,4 +73,7 @@ export interface IPatchTemplateDesignReq {
     id: string,
     mutable: any,
     type: string,
+    // 需要連動的Id
+    placeId?: string,
+    organizatoinId?: string,
 }

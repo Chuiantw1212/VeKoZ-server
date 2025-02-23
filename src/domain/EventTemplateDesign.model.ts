@@ -14,6 +14,10 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
         }
     }
 
+    async setByOrganizationId(uid: string, organizerId: string,) {
+
+    }
+
     /**
      * 建立品項
      * @param uid 

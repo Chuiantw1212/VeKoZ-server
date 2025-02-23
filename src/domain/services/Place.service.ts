@@ -1,15 +1,18 @@
 import PlaceModel from '../Place.model'
+import EventTemplateModel from '../EventTemplate.model';
 import type { IPlace } from '../../entities/place';
 
 interface Idependency {
     placeModel: PlaceModel;
 }
+
 export default class PlaceService {
     protected placeModel: PlaceModel = null as any
 
     constructor(dependency: Idependency) {
         const {
             placeModel,
+            
         } = dependency
         this.placeModel = placeModel
     }
@@ -55,6 +58,9 @@ export default class PlaceService {
      * @returns 
      */
     async mergePlaceById(uid: string, id: string, data: any) {
-        return await this.placeModel.mergePlaceById(uid, id, data)
+        const count = await this.placeModel.mergePlaceById(uid, id, data)
+        // 更新模板資料
+
+        return
     }
 }
