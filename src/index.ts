@@ -143,6 +143,8 @@ import offerController from './adapters/client.in/offer.ctrl'
             organizationMemberModel,
             eventModel,
             offerModel,
+            eventDesignModel,
+            eventTemplateDesignModel,
         }),
         PlaceService: new PlaceService({
             placeModel,

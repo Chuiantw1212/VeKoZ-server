@@ -75,7 +75,17 @@ export default class OrganizationService {
         this.offerModel.updateOfferGroupBySellerId(uid, organization.id, {
             sellerName: organization.name,
         })
-        this.eventTemplateDesignModel.setByOrganizationId()
+        console.log('setByOrganizationId')
+        this.eventTemplateDesignModel.setByOrganizationId(uid, organization.id, {
+            mutable: {
+                organizationName: organization.name,
+            }
+        })
+        this.eventDesignModel.setByOrganizationId(uid, organization.id, {
+            mutable: {
+                organizationName: organization.name,
+            }
+        })
         return count
     }
 

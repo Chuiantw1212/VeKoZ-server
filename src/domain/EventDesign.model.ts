@@ -13,6 +13,13 @@ export default class EventDesignModel extends FirestoreAdapter {
         }
     }
 
+    async setByOrganizationId(uid: string, organizationId: string, data: ITemplateDesign) {
+        const options = {
+            merge: true,
+        }
+        return await super.setItemsByQuery([['uid', '==', uid], ['organizationId', '==', organizationId]], data, options)
+    }
+
     /**
      * 建立品項
      * @param uid 
