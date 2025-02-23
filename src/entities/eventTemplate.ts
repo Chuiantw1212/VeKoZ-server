@@ -18,7 +18,7 @@ export interface IEventTemplate {
 export interface ITemplateDesign {
     id?: string,
     eventId?: string,
-    type: string,
+    type?: string,
     mutable?: ITemplateDesignMutable,
     templateId?: string,
     formField?: string, // 讓連動更新欄位

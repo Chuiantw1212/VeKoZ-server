@@ -14,8 +14,11 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
         }
     }
 
-    async setByOrganizationId(uid: string, organizerId: string,) {
-
+    async setByOrganizationId(uid: string, organizationId: string, data: ITemplateDesign) {
+        const options = {
+            merge: true,
+        }
+        return await super.setItemsByQuery([['uid', '==', uid], ['organizationId', '==', organizationId]], data, options)
     }
 
     /**
