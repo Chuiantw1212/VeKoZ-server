@@ -100,15 +100,14 @@ export default class EventService {
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
         newEvent.designs = designDocs
         const designIds = designDocs.map(doc => doc.id ?? '')
+        newEvent.designIds = designIds
         // 回頭更新事件Master
         const dateDesign = designDocs.find(design => {
             return design.formField === 'dates' // 唯一一個
         })
-        this.eventModel.mergeEventById(uid, String(newEvent.id), {
-            dateDesignId: dateDesign?.id,
-            designIds,
-            offerCategoryIds,
-        })
+        newEvent.dateDesignId = dateDesign?.id
+        newEvent.offerCategoryIds = offerCategoryIds
+        this.eventModel.mergeEventById(uid, String(newEvent.id), newEvent)
         return newEvent // 回傳完整Event才有機會，未來打開新事件時不用重新get
     }
 
