@@ -9,17 +9,13 @@ export interface IEventTemplate {
     id?: string; // doc id
     designs?: ITemplateDesign[]
     designIds?: string[],
-    mutable?: {
-        type: string,
-    },
     type?: string,
 }
 
-export interface ITemplateDesign {
+export interface ITemplateDesign extends ITemplateDesignMutable {
     id?: string,
     eventId?: string,
     type?: string,
-    mutable?: ITemplateDesignMutable,
     templateId?: string,
     formField?: string, // 讓連動更新欄位
     required?: boolean,
@@ -71,9 +67,9 @@ export interface IDeleteTemplateDesignReq {
 
 export interface IPatchTemplateDesignReq {
     id: string,
-    mutable: any,
     type: string,
     // 需要連動的Id
     placeId?: string,
     organizatoinId?: string,
+    value: any,
 }

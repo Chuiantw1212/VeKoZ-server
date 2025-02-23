@@ -105,9 +105,7 @@ export default class EventTemplateService {
 
     async postDesign(uid: string, data: IPostTemplateDesignReq): Promise<string> {
         const templateDesign: ITemplateDesign = Object.assign({
-            mutable: { // 必要的，不然會顯示出錯
-                label: '',
-            },
+            label: '',
         }, data)
         const newDesign = await this.eventTemplateDesignModel.createTemplateDesign(uid, templateDesign)
         return newDesign.id

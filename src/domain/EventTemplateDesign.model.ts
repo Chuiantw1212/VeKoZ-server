@@ -32,10 +32,9 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
     }
 
     /**
-     * 修改Mutable
+     * 修改
      * @param uid 
      * @param id 
-     * @param mutable 
      * @returns 
      */
     async patchDesignById(uid: string, id: string, data: IPatchTemplateDesignReq): Promise<number> {
@@ -46,11 +45,11 @@ export default class EventTemplateDesignModel extends FirestoreAdapter {
             merge: true
         }
         // 對Blob特殊處理
-        if (data.type === 'banner' && typeof data.mutable.value !== 'string') {
-            const publicUrl = await this.storeBanner(id, data.mutable.value)
-            data.mutable.value = publicUrl
+        if (data.type === 'banner' && typeof data.value !== 'string') {
+            const publicUrl = await this.storeBanner(id, data.value)
+            data.value = publicUrl
         }
-        // 儲存DesignMutableValue
+        // 儲存DesignValue
         const count = await super.setItemById(uid, id, data, options)
         return count
     }
