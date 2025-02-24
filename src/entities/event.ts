@@ -35,6 +35,7 @@ export interface IEventQuery {
     locationAddressRegion?: string,
     hasVirtualLocation?: boolean,
     isPublic?: boolean,
+    limit?: number,
 }
 
 export interface IEventEmail {

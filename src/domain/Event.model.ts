@@ -61,6 +61,9 @@ export default class EventModel extends FirestoreAdapter {
         const options: ICrudOptions = {
             orderBy: ['startDate', 'asc'],
         }
+        if (query.limit) {
+            options.limit = query.limit
+        }
         // 必須放在最後的區域選擇
         let hasOnSite = query.locationAddressRegion
         if (query.locationAddressRegion) {
@@ -104,7 +107,7 @@ export default class EventModel extends FirestoreAdapter {
             return second.startDate - first.startDate
         })
 
-        // 節省流量
+        // 節省流量，只給出必要的欄位
         const requiredFiels = [
             'id', 'banner', 'name', 'startDate', 'endDate', 'organizerName',
             'organizerLogo', 'offerCategoryIds', 'dateDesignId',
