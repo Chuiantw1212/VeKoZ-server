@@ -11,7 +11,6 @@ import { IOffer } from '../../entities/offer';
 interface Idependency {
     eventModel: EventModel;
     eventDesignModel: EventDesignModel;
-    eventActorModel: EventActorModel;
     organizationModel: OrganizationModel
     nlpAdapter: NlpAdapter,
     offerModel: OfferModel

@@ -16,7 +16,6 @@ import PlaceModel from './domain/Place.model'
 import SelectModel from './domain/Select.model';
 import EventModel from './domain/Event.model'
 import EventDesignModel from './domain/EventDesign.model'
-import EventActorModel from './domain/EventActor.model'
 import EventTemplateModel from './domain/EventTemplate.model'
 import EventTemplateDesignModel from './domain/EventTemplateDesign.model'
 import OrganizationModel from './domain/Organization.model'
@@ -87,9 +86,6 @@ import offerController from './adapters/client.in/offer.ctrl'
         collection: firebase.getCollection('eventDesigns'),
         publicBucket: firebase.getPublicBucket()
     })
-    const eventActorModel = new EventActorModel({
-        collection: firebase.getCollection('eventActors')
-    })
     const eventTemplateModel = new EventTemplateModel({
         collection: firebase.getCollection('eventTemplates')
     })
@@ -129,7 +125,6 @@ import offerController from './adapters/client.in/offer.ctrl'
         EventService: new EventService({
             eventModel,
             eventDesignModel,
-            eventActorModel,
             organizationModel,
             nlpAdapter,
             offerModel,
