@@ -20,6 +20,9 @@ export default class UserService {
     }
 
     async getUser(uid: string) {
+        /**
+         * 如果是被id查詢，就不需要這些不必要的非公開資料
+         */
         const user: IUser = await this.userModel.getUser(uid)
         if (user.id) {
             const userPreference = await this.userPreferenceModel.getPreference(user.id)
@@ -51,5 +54,21 @@ export default class UserService {
             user.preference = userPreference
         }
         return user
+    }
+
+    /**
+     * 覆蓋用戶資訊
+     */
+    async setUser(uid: string, user: IUser) {
+        // check seo availability
+        if (user.seoName) {
+            const isValid = await this.userModel.checkSeoNameAvailable(uid, user.seoName)
+            if (!isValid) {
+                delete user.seoName
+            }
+        }
+        // set data
+        const count = await this.userModel.setUser(uid, user,)
+        return count
     }
 }

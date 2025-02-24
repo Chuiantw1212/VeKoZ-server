@@ -12,6 +12,8 @@ export interface IUser {
     phoneNumber: string,
     providerId: string,
     preference?: IUserPreference,
+    // seo使用
+    seoName?: string,
 }
 
 /**
