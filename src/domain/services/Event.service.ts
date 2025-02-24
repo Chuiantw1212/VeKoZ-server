@@ -1,7 +1,6 @@
 import type { IEventTemplate, ITemplateDesign, } from '../../entities/eventTemplate';
 import type { IEvent, IEventQuery, } from '../../entities/event';
 import EventModel from '../Event.model'
-import EventActorModel from '../EventActor.model'
 import EventDesignModel from '../EventDesign.model';
 import OrganizationModel from '../Organization.model';
 import NlpAdapter from '../../adapters/nlp.out';
@@ -197,6 +196,10 @@ export default class EventService {
         }
         const eventPatch: IEvent = {}
         switch (eventDesign.formField) {
+            case 'performers': {
+                eventPatch.memberIds = eventDesign.memberIds
+                eventPatch.memberNames = eventDesign.memberNames
+            }
             case 'location': {
                 eventPatch.locationId = eventDesign.placeId
                 eventPatch.locationAddressRegion = eventDesign.placeAddressRegion
@@ -258,15 +261,24 @@ export default class EventService {
 
         // 優先欄位
         const organizationName = String(event.organizerName)
+        const memberNames: string[] = event.memberNames
+        const beforeCut = [organizationName, ...memberNames]
+        const searchNames: string[] = []
+        beforeCut.forEach(name => {
+            const cutForSearchNames = this.nlpAdapter.cutForSearch(name)
+            searchNames.push(...cutForSearchNames)
+        })
+        // 移除重複
+        const filteredSearchNames = searchNames.filter(function (item, pos, self) {
+            return self.indexOf(item) == pos;
+        })
 
-        // 需要篩選欄位
-        const description = event.description
-        const name = event.name
-        const fullText = `${name}。${description}`
+        // 截取關鍵字
+        const fullText = `${event.name},${event.description}`
         const extractedWords = this.nlpAdapter.extractKeywords(fullText)
-        const newKeywords = [organizationName, ...extractedWords].slice(0, 30)
 
         // 回存
+        const newKeywords = [...filteredSearchNames, ...extractedWords]
         this.eventModel.mergeEventById(uid, eventId, {
             keywords: newKeywords
         })
