@@ -21,8 +21,15 @@ router.use(bearer())
         const { AuthService, UserService } = AccessGlobalService.locals
         const userIdToken = await AuthService.verifyIdToken(bearer)
         const user = await request.json() as IUser
-        const userCreated = await UserService.setUser(userIdToken.uid, user)
-        return userCreated
+        const count = await UserService.setUser(userIdToken.uid, user)
+        return count
+    })
+    .patch('/user/:id/seo-name', async ({ bearer, request }) => {
+        const { AuthService, UserService } = AccessGlobalService.locals
+        const userIdToken = await AuthService.verifyIdToken(bearer)
+        const user = await request.json() as IUser
+        const count = await UserService.setUserSeoName(userIdToken.uid, user)
+        return count
     })
     .patch('/user/preference', async ({ bearer, request }) => {
         const { AuthService, UserService } = AccessGlobalService.locals

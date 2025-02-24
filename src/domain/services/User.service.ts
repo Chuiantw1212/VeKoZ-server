@@ -57,17 +57,35 @@ export default class UserService {
     }
 
     /**
-     * 覆蓋用戶資訊
+     * 要確認所以獨立出來
+     * @param uid 
+     * @param user 
+     * @returns 
      */
-    async setUser(uid: string, user: IUser) {
-        // check seo availability
+    async setUserSeoName(uid: string, user: IUser) {
         if (user.seoName) {
             const isValid = await this.userModel.checkSeoNameAvailable(uid, user.seoName)
             if (!isValid) {
-                delete user.seoName
+                throw '該網址已存在'
             }
         }
-        // set data
+        const count = await this.userModel.setUser(uid, user,)
+        return count
+    }
+
+    /**
+     * 合併用戶資訊
+     */
+    async setUser(uid: string, user: IUser) {
+        // check seo availability
+        delete user.seoName
+        // if (user.seoName) {
+        //     throw '該網址已存在'
+        //     const isValid = await this.userModel.checkSeoNameAvailable(uid, user.seoName)
+        //     if (!isValid) {
+        //     }
+        // }
+        // // set data
         const count = await this.userModel.setUser(uid, user,)
         return count
     }
