@@ -73,11 +73,12 @@ export default class NlpAdapter {
     }
 
     /**
-     * 將有意義的名字便於搜尋使用
+     * 將有意義的名字便於搜尋使用，這邊上限20保留10給別的指令
      * @param text 
      * @returns 
+     * https://firebase.google.com/docs/firestore/query-data/queries#limits_on_or_queries
      */
-    cutForSearch(text: string) {
+    cutForSearch(text: string, limit = 20) {
         const cnText = this.fromTaiwanToChina(text)
         const cnWords: string[] = this.jieba.cutForSearch(cnText)
         const meaningfulWords = cnWords.filter(word => {
@@ -87,6 +88,6 @@ export default class NlpAdapter {
             const twWord = this.fromChinaToTaiwan(cnWord)
             return twWord
         })
-        return twTexts
+        return twTexts.slice(0, limit)
     }
 }
