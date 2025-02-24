@@ -15,6 +15,10 @@ export default class OfferService {
         this.offerModel = offerModel
     }
 
+    async setOfferById(uid: string, id: string, offer: IOffer) {
+        return await this.offerModel.setOfferById(uid, id, offer)
+    }
+
     async queryOfferList(query: IOfferQuery) {
         return await this.offerModel.getOfferList(query)
     }

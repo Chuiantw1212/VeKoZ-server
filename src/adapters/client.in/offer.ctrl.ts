@@ -19,4 +19,12 @@ router.use(bearer())
         const count = await OfferService.setOffersByCategoryId(user.uid, categoryId, offer)
         return count
     })
+    .patch('/offer/:offerId', async ({ request, bearer, params }) => {
+        const { AuthService, OfferService } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const { offerId } = params
+        const offer = await request.json() as IOffer
+        const count = await OfferService.setOfferById(user.uid, offerId, offer)
+        return count
+    })
 export default router
