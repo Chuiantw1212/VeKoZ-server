@@ -19,11 +19,21 @@ export default class UserService {
         this.userPreferenceModel = userPreferenceModel
     }
 
-    async getUser(uid: string) {
+    async getUserBySeoName(uid: string) {
+        const user: IUser = await this.userModel.getUserBySeoName(uid)
+        return user
+    }
+
+    /**
+     * 用uid找出包含偏好+個人資料
+     * @param uid 
+     * @returns 
+     */
+    async getUserByUid(uid: string) {
         /**
          * 如果是被id查詢，就不需要這些不必要的非公開資料
          */
-        const user: IUser = await this.userModel.getUser(uid)
+        const user: IUser = await this.userModel.getUserByUid(uid)
         if (user.id) {
             const userPreference = await this.userPreferenceModel.getPreference(user.id)
             user.preference = userPreference

@@ -7,7 +7,13 @@ router.use(bearer())
     .get('/user', async ({ bearer }) => {
         const { AuthService, UserService } = AccessGlobalService.locals
         const userIdToken = await AuthService.verifyIdToken(bearer)
-        const user = await UserService.getUser(userIdToken.uid)
+        const user = await UserService.getUserByUid(userIdToken.uid)
+        return user
+    })
+    .get('/user/:seoName', async ({ params }) => {
+        const { UserService } = AccessGlobalService.locals
+        const { seoName } = params
+        const user = await UserService.getUserBySeoName(seoName)
         return user
     })
     .post('/user', async ({ bearer, request }) => {

@@ -4,13 +4,14 @@
  * 這邊屬於私密資料，一定要跟別的資料區分開來。
  */
 export interface IUser {
+    [key: string]: any,
     id?: string,
-    uid: string,
-    displayName: string,
-    email: string,
-    photoURL: string,
-    phoneNumber: string,
-    providerId: string,
+    uid?: string,
+    displayName?: string,
+    email?: string,
+    photoURL?: string,
+    phoneNumber?: string,
+    providerId?: string,
     preference?: IUserPreference,
     // seo使用
     seoName?: string,
