@@ -42,12 +42,12 @@ export class FirebaseAdapter {
     }
     async verifyIdToken(idToken: string | null): Promise<DecodedIdToken> {
         if (!idToken) {
-            throw 'idToken is not given.'
+            throw '找不到身份識別(ID Token)，請重新登入或向開發人員抱怨Q_Q'
         }
         const replacedToken = idToken.replace('Bearer ', '')
         const decodedToken: DecodedIdToken = await this.auth.verifyIdToken(replacedToken)
         if (!decodedToken) {
-            throw '未知的用戶'
+            throw '找不到身份(ID)，請重新登入或向開發人員抱怨Q_Q'
         }
         return decodedToken
     }
