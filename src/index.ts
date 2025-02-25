@@ -22,6 +22,7 @@ import OrganizationModel from './domain/Organization.model'
 import OrganizationMemberModel from './domain/OrganizationMember.model'
 import UserModel from './domain/User.model'
 import UserPreferenceModel from './domain/UserPreference.model'
+import UserTemplateModel from './domain/UserTemplate.model'
 import OfferModel from './domain/OfferModel'
 // services
 import MetaService from './domain/services/Meta.service';
@@ -31,6 +32,7 @@ import OrganizationService from './domain/services/Organization.service'
 import AuthService from './domain/services/Auth.service'
 import PlaceService from './domain/services/Place.service'
 import UserService from './domain/services/User.service'
+import UserTemplaceService from './domain/services/UserTemplate.service'
 import GoogleService from './domain/services/Google.service'
 import OfferService from './domain/services/Offer.service'
 import { ILocals } from './entities/app';
@@ -41,9 +43,11 @@ import eventTemplateController from './adapters/client.in/eventTemplate.ctrl'
 import organizationController from './adapters/client.in/organization.ctrl'
 import placeController from './adapters/client.in/place.ctrl'
 import userController from './adapters/client.in/user.ctrl'
+import userTemplateController from './adapters/client.in/userTemplate.ctrl'
 import googleController from './adapters/client.in/google.ctrl'
 import metaController from './adapters/client.in/meta.ctrl'
 import offerController from './adapters/client.in/offer.ctrl'
+import UserTemplateController from './domain/UserTemplate.model'
 
 (async () => {
     const app = new Elysia({ adapter: node() })
@@ -109,6 +113,9 @@ import offerController from './adapters/client.in/offer.ctrl'
     const userPreferenceModel = new UserPreferenceModel({
         collection: firebase.getCollection('userPreferences')
     })
+    const userTemplateModel = new UserTemplateModel({
+        collection: firebase.getCollection('userTemplates')
+    })
     const offerModel = new OfferModel({
         collection: firebase.getCollection('offers')
     })
@@ -149,6 +156,10 @@ import offerController from './adapters/client.in/offer.ctrl'
             userModel,
             userPreferenceModel
         }),
+        UserTemplateService: new UserTemplaceService({
+            userModel,
+            userTemplateModel,
+        }),
         GoogleService: new GoogleService({
             calendar: googleCalendar,
         }),
@@ -179,6 +190,7 @@ import offerController from './adapters/client.in/offer.ctrl'
         .use(organizationController)
         .use(placeController)
         .use(userController)
+        .use(userTemplateController)
         .use(googleController)
         .use(metaController)
         .use(offerController)
