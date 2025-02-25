@@ -4,7 +4,7 @@ import { bearer } from '@elysiajs/bearer'
 import { IUser } from '../../entities/user'
 const router = new Elysia()
 router.use(bearer())
-    .get('/userTemplate/:templateId', async ({ bearer }) => {
+    .get('/UserDesign/:templateId', async ({ bearer }) => {
         const { AuthService, UserService } = AccessGlobalService.locals
         const userIdToken = await AuthService.verifyIdToken(bearer)
         // const user = await UserService.getUserByUid(userIdToken.uid)

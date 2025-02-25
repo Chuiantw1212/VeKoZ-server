@@ -1,25 +1,25 @@
 import UserModel from '../User.model'
-import UserTemplateModel from '../UserTemplate.model';
+import UserDesignModel from '../UserDesign.model';
 import type { IUser, IUserPreference } from '../../entities/user';
 
 interface Idependency {
     userModel: UserModel;
-    userTemplateModel: UserTemplateModel
+    userDesignModel: UserDesignModel
 }
 export default class UserService {
     protected userModel: UserModel
-    protected userTemplateModel: UserTemplateModel
+    protected userDesignModel: UserDesignModel
 
     constructor(dependency: Idependency) {
         const {
             userModel,
-            userTemplateModel,
+            userDesignModel,
         } = dependency
         this.userModel = userModel
-        this.userTemplateModel = userTemplateModel
+        this.userDesignModel = userDesignModel
     }
 
-    async getUserTemplate(id: string) {
+    async getUserDesign(id: string) {
 
     }
 }

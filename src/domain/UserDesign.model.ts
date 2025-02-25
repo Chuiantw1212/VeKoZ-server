@@ -3,7 +3,7 @@ import { IUser } from '../entities/user'
 import { ICrudOptions } from '../ports/out.crud'
 import type { IModelPorts } from '../ports/out.model'
 
-export default class UserTemplateModel extends Firestore {
+export default class UserDesignModel extends Firestore {
     constructor(data: IModelPorts) {
         super(data)
     }
@@ -12,7 +12,7 @@ export default class UserTemplateModel extends Firestore {
      * @param id 
      * @returns 
      */
-    async getUserTemplateById(id: string): Promise<IUser> {
+    async getUserDesignById(id: string): Promise<IUser> {
         const items: IUser[] = await super.getItemsByQuery([['id', '==', id]], {
             count: {
                 range: [0, 1]
