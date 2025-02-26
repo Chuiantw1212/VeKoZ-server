@@ -15,13 +15,13 @@ export default class UserDesignModel extends Firestore {
             },
             merge: true
         }
-        // 對Blob特殊處理
-        if (design.type === 'avatar' && typeof design.value !== 'string') {
-            // const publicUrl = await this.storeAvatar(designId, design.value)
-            // design.value = publicUrl
-        }
         const count = await super.setItemById(uid, designId, design, options)
         return count
+    }
+
+    async uploadAvatar(design: IUserDesign) {
+        const publicUrl = await super.uploadUniqueImage(String(design.id), design.value)
+        return publicUrl
     }
 
     /**
