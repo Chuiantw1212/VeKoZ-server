@@ -76,10 +76,12 @@ export default class UserService {
     * @param user 
     */
     async addUserDesigns(uid: string, designs: IUserDesign[]) {
+        const user = await this.userModel.getUserByUid(uid)
         const userPatch: IUser = {}
         const designPromies = designs.map(async design => {
             const designPatch = this.extractUserPatch(design)
             Object.assign(userPatch, designPatch)
+            design.id = user.id
             const createdDesign = await this.userDesignModel.createDesign(uid, design)
             return createdDesign
         })
