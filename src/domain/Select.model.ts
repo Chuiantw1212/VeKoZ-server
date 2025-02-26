@@ -1,7 +1,7 @@
 import type { IOptionsItem, } from '../entities/select'
 import { Query, QuerySnapshot, DocumentReference, DocumentData, } from 'firebase-admin/firestore'
 import type { IModelPorts } from '../ports/out.model'
-import FirestoreAdapter from '../adapters/Firestore.adapter'
+import FirestoreAdapter from '../adapters/Firestore.out'
 import { ICrudOptions } from '../ports/out.crud'
 import { ISelectDocData } from '../entities/select'
 

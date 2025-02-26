@@ -1,4 +1,4 @@
-import FirestoreAdapter from '../adapters/Firestore.adapter'
+import FirestoreAdapter from '../adapters/Firestore.out'
 import { IEvent } from '../entities/event'
 import { IOffer, IOfferQuery } from '../entities/offer'
 import { ICrudOptions } from '../ports/out.crud'

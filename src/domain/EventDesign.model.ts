@@ -1,4 +1,4 @@
-import FirestoreAdapter from '../adapters/Firestore.adapter'
+import FirestoreAdapter from '../adapters/Firestore.out'
 import type { IModelPorts, IBlob } from '../ports/out.model'
 import type { ICrudOptions } from '../ports/out.crud'
 import { IPatchTemplateDesignReq, ITemplateDesign } from '../entities/eventTemplate'

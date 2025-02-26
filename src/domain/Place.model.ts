@@ -1,4 +1,4 @@
-import FirestoreAdapter from '../adapters/Firestore.adapter'
+import FirestoreAdapter from '../adapters/Firestore.out'
 import { IPlace } from '../entities/place'
 import type { IModelPorts } from '../ports/out.model'
 

@@ -1,5 +1,5 @@
-import FirestoreAdapter from '../adapters/Firestore.adapter'
-import type { IModelPorts, IBlob } from '../ports/out.model'
+import FirestoreAdapter from '../adapters/Firestore.out'
+import type { IModelPorts, } from '../ports/out.model'
 import type { ICrudOptions } from '../ports/out.crud'
 import { ITemplateDesign, IPatchTemplateDesignReq } from '../entities/eventTemplate'
 import type { Storage, } from 'firebase-admin/storage'

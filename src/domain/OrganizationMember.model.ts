@@ -1,4 +1,4 @@
-import FirestoreAdapter from '../adapters/Firestore.adapter'
+import FirestoreAdapter from '../adapters/Firestore.out'
 import type { IModelPorts } from '../ports/out.model'
 
 export default class OrganizationMemberModel extends FirestoreAdapter{
