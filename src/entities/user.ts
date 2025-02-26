@@ -1,16 +1,15 @@
 /**
- * 來自Firebase的用戶資料。
- * 是否公開。
- * 這邊屬於私密資料，一定要跟別的資料區分開來。
+ * 來自Firebase的用戶資料，參考Schema.org整合
+ * https://schema.org/Person
  */
 export interface IUser {
     [key: string]: any,
     id?: string,
     uid?: string,
-    displayName?: string,
+    name?: string,
     email?: string,
-    photoURL?: string,
-    phoneNumber?: string,
+    avatar?: string,
+    telephone?: string,
     providerId?: string,
     preference?: IUserPreference,
     // 講師個人頁

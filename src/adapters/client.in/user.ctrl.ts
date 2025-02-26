@@ -1,7 +1,7 @@
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
-import { IUser } from '../../entities/user'
+import { IUser, IUserDesign } from '../../entities/user'
 const router = new Elysia()
 router.use(bearer())
     .post('/user', async ({ bearer, request }) => {
@@ -14,11 +14,11 @@ router.use(bearer())
     .post('/user/designs', async ({ bearer, request }) => {
         const { AuthService, UserService } = AccessGlobalService.locals
         const userIdToken = await AuthService.verifyIdToken(bearer)
-        const user = await request.json() as IUser
-        const userCreated = await UserService.addUserDesigns(userIdToken.uid, user)
+        const userDesigns = await request.json() as IUserDesign[]
+        const userCreated = await UserService.addUserDesigns(userIdToken.uid, userDesigns)
         return userCreated
     })
-    .patch('/user/:id', async ({ bearer, request }) => {
+    .patch('/user', async ({ bearer, request }) => {
         const { AuthService, UserService } = AccessGlobalService.locals
         const userIdToken = await AuthService.verifyIdToken(bearer)
         const user = await request.json() as IUser
@@ -39,7 +39,7 @@ router.use(bearer())
         const user = await UserService.getUserBySeoName(seoName)
         return user
     })
-    .patch('/user/:id/seo-name', async ({ bearer, request }) => {
+    .patch('/user/seo-name', async ({ bearer, request }) => {
         const { AuthService, UserService } = AccessGlobalService.locals
         const userIdToken = await AuthService.verifyIdToken(bearer)
         const user = await request.json() as IUser
