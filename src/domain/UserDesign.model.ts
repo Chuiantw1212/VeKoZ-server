@@ -8,6 +8,10 @@ export default class UserDesignModel extends Firestore {
         super(data)
     }
 
+    // getUserDesignByUserId() {
+
+    // }
+
     /**
         * 建立品項
         * @param uid 

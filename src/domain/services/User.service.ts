@@ -40,8 +40,18 @@ export default class UserService {
          */
         const user: IUser = await this.userModel.getUserByUid(uid)
         if (user.id) {
+            // 抓取preference
             const userPreference = await this.userPreferenceModel.getPreference(user.id)
             user.preference = userPreference
+            // 抓取designs
+            const userDesignIds = user.designIds
+            if (userDesignIds) {
+                const promises = await userDesignIds?.map(designId => {
+                    return this.userDesignModel.getUserDesignById(designId)
+                })
+                const userDesigns = await Promise.all(promises)
+                user.designs = userDesigns
+            }
         }
         return user
     }
@@ -77,16 +87,16 @@ export default class UserService {
     */
     async addUserDesigns(uid: string, designs: IUserDesign[]) {
         const user = await this.userModel.getUserByUid(uid)
+        if (user.designIds) {
+            throw '設計已存在'
+        }
         const userPatch: IUser = {}
         const designPromies = designs.map(async design => {
             const designPatch = this.extractUserPatch(design)
             Object.assign(userPatch, designPatch)
-            design.id = user.id
+            design.userId = user.id
             const createdDesign = await this.userDesignModel.createDesign(uid, design)
             return createdDesign
-        })
-        console.log({
-            userPatch
         })
         const createdDesigns = await Promise.all(designPromies)
         const designIds = createdDesigns.map(design => design.id)
