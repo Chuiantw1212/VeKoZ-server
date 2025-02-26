@@ -1,11 +1,21 @@
 import Firestore from '../adapters/Firestore.adapter'
-import { IUser } from '../entities/user'
+import { IUser, IUserDesign } from '../entities/user'
 import { ICrudOptions } from '../ports/out.crud'
 import type { IModelPorts } from '../ports/out.model'
 
 export default class UserDesignModel extends Firestore {
     constructor(data: IModelPorts) {
         super(data)
+    }
+
+    /**
+        * 建立品項
+        * @param uid 
+        * @param userDesign 
+        * @returns 
+        */
+    async createDesign(uid: string, userDesign: IUserDesign) {
+        return await super.createItem(uid, userDesign)
     }
 
     /**

@@ -13,8 +13,14 @@ export interface IUser {
     phoneNumber?: string,
     providerId?: string,
     preference?: IUserPreference,
-    // seo使用
+    // 講師個人頁
     seoName?: string,
+    designIds?: string[],
+    designs?: IUserDesign[]
+}
+
+export interface IUserDesign {
+    id?: string,
 }
 
 /**

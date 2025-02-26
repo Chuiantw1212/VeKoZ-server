@@ -11,6 +11,13 @@ router.use(bearer())
         const userCreated = await UserService.addUser(userIdToken.uid, user)
         return userCreated
     })
+    .post('/user/designs', async ({ bearer, request }) => {
+        const { AuthService, UserService } = AccessGlobalService.locals
+        const userIdToken = await AuthService.verifyIdToken(bearer)
+        const user = await request.json() as IUser
+        const userCreated = await UserService.addUserDesigns(userIdToken.uid, user)
+        return userCreated
+    })
     .patch('/user/:id', async ({ bearer, request }) => {
         const { AuthService, UserService } = AccessGlobalService.locals
         const userIdToken = await AuthService.verifyIdToken(bearer)

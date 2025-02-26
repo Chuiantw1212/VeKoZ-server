@@ -43,7 +43,7 @@ import eventTemplateController from './adapters/client.in/eventTemplate.ctrl'
 import organizationController from './adapters/client.in/organization.ctrl'
 import placeController from './adapters/client.in/place.ctrl'
 import userController from './adapters/client.in/user.ctrl'
-import UserDesignController from './adapters/client.in/UserDesign.ctrl'
+import userDesignController from './adapters/client.in/userDesign.ctrl'
 import googleController from './adapters/client.in/google.ctrl'
 import metaController from './adapters/client.in/meta.ctrl'
 import offerController from './adapters/client.in/offer.ctrl'
@@ -153,7 +153,8 @@ import offerController from './adapters/client.in/offer.ctrl'
         AuthService: new AuthService(firebase),
         UserService: new UserService({
             userModel,
-            userPreferenceModel
+            userPreferenceModel,
+            userDesignModel,
         }),
         UserDesignService: new UserTemplaceService({
             userModel,
@@ -189,7 +190,7 @@ import offerController from './adapters/client.in/offer.ctrl'
         .use(organizationController)
         .use(placeController)
         .use(userController)
-        .use(UserDesignController)
+        .use(userDesignController)
         .use(googleController)
         .use(metaController)
         .use(offerController)

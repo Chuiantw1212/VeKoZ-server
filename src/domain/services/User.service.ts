@@ -1,22 +1,27 @@
 import UserModel from '../User.model'
 import UserPreferenceModel from '../UserPreference.model';
-import type { IUser, IUserPreference } from '../../entities/user';
+import UserDesignModel from '../UserDesign.model';
+import type { IUser, IUserDesign, IUserPreference } from '../../entities/user';
 
 interface Idependency {
-    userModel: UserModel;
+    userModel: UserModel
     userPreferenceModel: UserPreferenceModel
+    userDesignModel: UserDesignModel
 }
 export default class UserService {
     protected userModel: UserModel
     protected userPreferenceModel: UserPreferenceModel
+    protected userDesignModel: UserDesignModel
 
     constructor(dependency: Idependency) {
         const {
             userModel,
             userPreferenceModel,
+            userDesignModel,
         } = dependency
         this.userModel = userModel
         this.userPreferenceModel = userPreferenceModel
+        this.userDesignModel = userDesignModel
     }
 
     async getUserBySeoName(uid: string) {
@@ -64,6 +69,24 @@ export default class UserService {
             user.preference = userPreference
         }
         return user
+    }
+
+    /**
+    * 新增使用者
+    * @param user 
+    */
+    async addUserDesigns(uid: string, designs: IUserDesign[]) {
+        const designPromies = designs.map(async design => {
+            const createdDesign = await this.userDesignModel.createDesign(uid, design)
+            return createdDesign
+        })
+        const createdDesigns = await Promise.all(designPromies)
+        const designIds = createdDesigns.map(design => design.id)
+
+        const count = await await this.setUser(uid, {
+            designIds,
+        })
+        return count
     }
 
     /**
