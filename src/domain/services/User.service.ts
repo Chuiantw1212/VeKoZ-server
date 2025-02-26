@@ -82,7 +82,6 @@ export default class UserService {
         })
         const createdDesigns = await Promise.all(designPromies)
         const designIds = createdDesigns.map(design => design.id)
-
         const count = await await this.setUser(uid, {
             designIds,
         })
