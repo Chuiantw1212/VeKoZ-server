@@ -61,6 +61,7 @@ export default class EventDesignModel extends VekozModel {
             throw "typeof banner === 'string'"
         }
         const { type, buffer } = banner
+        // this.publicBucket.deleteBlobByPath(id)
         try {
             await this.publicBucket.deleteFiles({
                 prefix: `eventDesign/${id}`,

@@ -23,25 +23,8 @@ export default class OrganizationModel extends VekozModel {
      * @param logo 
      * @returns 
      */
-    async storeLogo(id: string, logo: IBlob) {
-        if (logo && typeof logo === 'string') {
-            throw "typeof logo === 'string'"
-        }
-        const { type, buffer } = logo
-        await this.publicBucket.deleteFiles({
-            prefix: `organization/${id}/logo`,
-        })
-        const uuid = crypto.randomUUID()
-        const blob = this.publicBucket.file(`organization/${id}/logo/${uuid}.${type}`)
-        const blobStream = blob.createWriteStream({
-            resumable: false,
-        })
-        const typedResult = Buffer.from(buffer)
-        // // Format Image
-        // const resizedBufferData = await sharp(typedResult).resize(80, 80).toBuffer();
-        // save buffer
-        blobStream.end(typedResult)
-        const publicUrl = blob.publicUrl()
+    async storeLogo(organizationId: string, logo: IBlob) {
+        const publicUrl = await super.uploadUniqueImage(`${organizationId}/logo`, logo)
         return publicUrl
     }
 
@@ -62,10 +45,8 @@ export default class OrganizationModel extends VekozModel {
      * @returns 
      */
     async deleteItem(uid: string, id: string) {
-        await super.deleteItemById(uid, id)
-        await this.publicBucket.deleteFiles({
-            prefix: `organizatoin/${id}`
-        })
+        await super.deleteItemById(uid, id) // 先用uid控權限
+        await super.deleteBlobFolderById(id)
         return true
     }
 

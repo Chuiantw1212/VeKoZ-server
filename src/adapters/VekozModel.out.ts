@@ -1,4 +1,4 @@
-import { IModelPorts, } from "../ports/out.model"
+import { IBlob, IModelPorts, } from "../ports/out.model"
 import type { ICrudOptions, IDataCountOptions } from "../ports/out.crud"
 import { CollectionReference, DocumentData, DocumentSnapshot, Query, QuerySnapshot, Timestamp } from "firebase-admin/firestore"
 import VenoniaCRUD from "../ports/out.crud"
@@ -23,6 +23,22 @@ export default class VekozModel extends VenoniaCRUD {
         if (publicBucket) {
             this.publicBucket = publicBucket
         }
+    }
+
+    protected async uploadUniqueImage(id: string, image: IBlob) {
+        if (!this.publicBucket) {
+            return
+        }
+        await this.publicBucket.deleteBlobByPath(id)
+        const publicUrl = await this.publicBucket.writeImageByPath(id, image)
+        return publicUrl
+    }
+
+    protected async deleteBlobFolderById(id: string) {
+        if (!this.publicBucket) {
+            return
+        }
+        await this.publicBucket.deleteBlobByPath(id)
     }
 
 

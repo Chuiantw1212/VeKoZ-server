@@ -96,7 +96,7 @@ import offerController from './adapters/client.in/offer.ctrl'
     })
     const organizationModel = new OrganizationModel({
         collection: firebase.getCollection('organizations'),
-        publicBucket: new BlobAdapter('organizations', publicBucket),,
+        publicBucket: new BlobAdapter('organizations', publicBucket),
     })
     const organizationMemberModel = new OrganizationMemberModel({
         collection: firebase.getCollection('organizationMembers')
