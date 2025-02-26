@@ -19,7 +19,11 @@ export interface IUser {
 }
 
 export interface IUserDesign {
+    [key: string]: any,
     id?: string,
+    formField?: string,
+    // 尚未歸類
+    value?: any
 }
 
 /**

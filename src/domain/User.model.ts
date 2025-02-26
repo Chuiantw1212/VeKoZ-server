@@ -64,7 +64,8 @@ export default class UserModel extends Firestore {
                 absolute: 1
             }
         }
-        const count = await super.setItemById(uid, String(user.id), user, options)
+        const count = await super.setItemsByQuery([['uid', '==', uid]], user, options)
+        // await super.setItemById(uid, String(user.id), user, options)
         return count
     }
 }

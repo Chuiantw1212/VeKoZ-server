@@ -113,7 +113,7 @@ import offerController from './adapters/client.in/offer.ctrl'
         collection: firebase.getCollection('userPreferences')
     })
     const userDesignModel = new UserDesignModel({
-        collection: firebase.getCollection('UserDesigns')
+        collection: firebase.getCollection('userDesigns')
     })
     const offerModel = new OfferModel({
         collection: firebase.getCollection('offers')

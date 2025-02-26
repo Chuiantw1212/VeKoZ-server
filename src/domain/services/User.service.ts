@@ -76,16 +76,45 @@ export default class UserService {
     * @param user 
     */
     async addUserDesigns(uid: string, designs: IUserDesign[]) {
+        const userPatch: IUser = {}
         const designPromies = designs.map(async design => {
+            const designPatch = this.extractUserPatch(design)
+            Object.assign(userPatch, designPatch)
             const createdDesign = await this.userDesignModel.createDesign(uid, design)
             return createdDesign
         })
+        console.log({
+            userPatch
+        })
         const createdDesigns = await Promise.all(designPromies)
         const designIds = createdDesigns.map(design => design.id)
-        const count = await await this.setUser(uid, {
+        const count = await this.setUser(uid, {
+            ...userPatch,
             designIds,
         })
         return count
+    }
+
+    /**
+     * 新增更新連動主檔
+     * @param design 
+     * @returns 
+     */
+    extractUserPatch(design: IUserDesign) {
+        if (!design.formField) {
+            return {}
+        }
+        const userPatch: IUser = {}
+        switch (design.formField) {
+            case 'description':
+            case 'avatar':
+            case 'name':
+            default: {
+                userPatch[design.formField] = design.value
+                break
+            }
+        }
+        return userPatch
     }
 
     /**
