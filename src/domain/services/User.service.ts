@@ -30,14 +30,11 @@ export default class UserService {
     }
 
     /**
-     * 用uid找出包含偏好+個人資料
+     * 用uid找出包含偏好+個人資料，如果是被id查詢，就不需要這些不必要的非公開資料
      * @param uid 
      * @returns 
      */
     async getUserByUid(uid: string) {
-        /**
-         * 如果是被id查詢，就不需要這些不必要的非公開資料
-         */
         const user: IUser = await this.userModel.getUserByUid(uid)
         if (user.id) {
             // 抓取preference
@@ -46,7 +43,7 @@ export default class UserService {
             // 抓取designs
             const userDesignIds = user.designIds
             if (userDesignIds) {
-                const promises = await userDesignIds?.map(designId => {
+                const promises = userDesignIds.map(designId => {
                     return this.userDesignModel.getUserDesignById(designId)
                 })
                 const userDesigns = await Promise.all(promises)

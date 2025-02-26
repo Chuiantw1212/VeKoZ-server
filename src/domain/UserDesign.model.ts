@@ -8,9 +8,10 @@ export default class UserDesignModel extends Firestore {
         super(data)
     }
 
-    // getUserDesignByUserId() {
-
-    // }
+    async setUserDesignById(uid: string, designId: string, design: IUserDesign) {
+        const count = await super.setItemById(uid, designId, design)
+        return count
+    }
 
     /**
         * 建立品項

@@ -8,6 +8,7 @@ import OrganizationService from '../domain/services/Organization.service'
 import AuthService from '../domain/services/Auth.service'
 import PlaceService from '../domain/services/Place.service'
 import UserService from "../domain/services/User.service"
+import UserDesignService from "../domain/services/UserDesign.service"
 import GoogleService from '../domain/services/Google.service'
 import OfferService from "../domain/services/Offer.service"
 
@@ -21,6 +22,7 @@ export interface ILocals {
     PlaceService: PlaceService,
     EventTemplateService: EventTemplateService,
     UserService: UserService,
+    UserDesignService: UserDesignService,
     GoogleService: GoogleService
     OfferService: OfferService
 }
