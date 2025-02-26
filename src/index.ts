@@ -9,12 +9,12 @@ import AccessGlobalService from './entities/app'
 import firebase from './adapters/firebase.out'
 import googleSecretManager from './adapters/googleSecretManager.out'
 import googleCalendar from './adapters/googleCalendar.out'
-import googleStoragePlugin from './adapters/googleStorage.out'
+import BlobAdapter from './adapters/BlobAdapter.out'
 import NlpAdapter from './adapters/nlp.out'
 // models
 import PlaceModel from './domain/Place.model'
 import SelectModel from './domain/Select.model';
-import EventModel from './domain/Event.model'
+import EventModel from './domain/services/Event.model'
 import EventDesignModel from './domain/EventDesign.model'
 import EventTemplateModel from './domain/EventTemplate.model'
 import EventTemplateDesignModel from './domain/EventTemplateDesign.model'
@@ -73,12 +73,10 @@ import offerController from './adapters/client.in/offer.ctrl'
     }
     await googleCalendar.setClient(FIREBASE_API_KEY)
 
-    // // // Load storage
-    // await googleStoragePlugin.setClient(FIREBASE_API_KEY)
-    // googleStoragePlugin.getPublicBucket()
     /**
      * Models
      */
+    const publicBucket = firebase.getPublicBucket()
     const selectModel = new SelectModel({
         collection: firebase.getCollection('selects'),
     })
@@ -87,18 +85,18 @@ import offerController from './adapters/client.in/offer.ctrl'
     })
     const eventDesignModel = new EventDesignModel({
         collection: firebase.getCollection('eventDesigns'),
-        publicBucket: firebase.getPublicBucket()
+        publicBucket: new BlobAdapter('eventDesigns', publicBucket),
     })
     const eventTemplateModel = new EventTemplateModel({
         collection: firebase.getCollection('eventTemplates')
     })
     const eventTemplateDesignModel = new EventTemplateDesignModel({
         collection: firebase.getCollection('eventTemplateDesigns'),
-        publicBucket: firebase.getPublicBucket()
+        publicBucket: new BlobAdapter('eventTemplateDesigns', publicBucket),
     })
     const organizationModel = new OrganizationModel({
         collection: firebase.getCollection('organizations'),
-        publicBucket: firebase.getPublicBucket()
+        publicBucket: new BlobAdapter('organizations', publicBucket),,
     })
     const organizationMemberModel = new OrganizationMemberModel({
         collection: firebase.getCollection('organizationMembers')
@@ -113,7 +111,8 @@ import offerController from './adapters/client.in/offer.ctrl'
         collection: firebase.getCollection('userPreferences')
     })
     const userDesignModel = new UserDesignModel({
-        collection: firebase.getCollection('userDesigns')
+        collection: firebase.getCollection('userDesigns'),
+        publicBucket: new BlobAdapter('userDesigns', publicBucket)
     })
     const offerModel = new OfferModel({
         collection: firebase.getCollection('offers')

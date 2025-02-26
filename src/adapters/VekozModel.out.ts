@@ -7,6 +7,7 @@ import VenoniaCRUD from "../ports/out.crud"
  */
 export default class VekozModel extends VenoniaCRUD {
     protected collection: IModelPorts['collection'] = null as any
+    //  protected collection: IModelPorts['collection'] = null as an
     protected error = {
         'collectionIsNotReady': 'Collection is not ready.',
         'docNoFound': 'Data not found by given condition',

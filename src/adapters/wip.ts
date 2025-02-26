@@ -16,12 +16,12 @@ export class GoogleStoragePlugin {
             auth: apiKey
         })
     }
-    async getPublicBucket() {
-        const options: storage_v1.Params$Resource$Buckets$List = {
-            project: 'votion-d92bc'
-        }
-        const googleBucket = await this.storage_v1.buckets.list(options)
-        return googleBucket
-    }
+    // async getPublicBucket() {
+    //     const options: storage_v1.Params$Resource$Buckets$List = {
+    //         project: 'votion-d92bc'
+    //     }
+    //     const googleBucket = await this.storage_v1.buckets.list(options)
+    //     return googleBucket
+    // }
 }
 export default new GoogleStoragePlugin()

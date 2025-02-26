@@ -1,10 +1,11 @@
 import { Storage } from "firebase-admin/storage"
 import { CollectionReference } from "firebase-admin/firestore"
+import BlobAdapter from "../adapters/BlobAdapter.out";
 
 export interface IModelPorts {
     collection?: CollectionReference,
-    publicBucket?: ReturnType<Storage['bucket']>,
-    privateBucket?: ReturnType<Storage['bucket']>,
+    publicBucket?: BlobAdapter,
+    privateBucket?: BlobAdapter,
 }
 
 export interface IBlob {
