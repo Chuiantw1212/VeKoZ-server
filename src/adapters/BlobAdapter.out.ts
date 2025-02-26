@@ -19,9 +19,13 @@ export default class BlobAdapter {
         if (image && typeof image === 'string') {
             throw "typeof image === 'string'"
         }
-        const { type, buffer } = image
-        const uuid = crypto.randomUUID()
-        const blob = this.bucket.file(`${this.prefix}/${path}/${uuid}.${type}`)
+        const imageType = image.type
+        if (!imageType) {
+            return ''
+        }
+        const buffer: ArrayBuffer = image.buffer
+        const uuid = crypto.randomUUID() // 避免快取問題
+        const blob = this.bucket.file(`${this.prefix}/${path}/${uuid}.${imageType}`)
         const blobStream = blob.createWriteStream({
             resumable: false,
         })

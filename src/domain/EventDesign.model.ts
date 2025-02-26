@@ -54,29 +54,8 @@ export default class EventDesignModel extends VekozModel {
      * @returns 
      */
     private async storeBanner(id: string, banner: IBlob): Promise<string> {
-        if (!banner) {
-            return ''
-        }
-        if (banner && typeof banner === 'string') {
-            throw "typeof banner === 'string'"
-        }
-        const { type, buffer } = banner
-        // this.publicBucket.deleteBlobByPath(id)
-        try {
-            await this.publicBucket.deleteFiles({
-                prefix: `eventDesign/${id}`,
-            },)
-        } catch (error) {
-            // 可能會因為沒資料可刪出錯
-        }
-        const blob = this.publicBucket.file(`eventDesign/${id}/banner.${type}`)
-        const blobStream = blob.createWriteStream({
-            resumable: false,
-        })
-        const typedResult = Buffer.from(buffer)
-        // save buffer
-        blobStream.end(typedResult)
-        const publicUrl = blob.publicUrl()
+        await super.deleteBlobFolderById(id)
+        const publicUrl = await super.uploadUniqueImage(`${id}/banner`, banner)
         return publicUrl
     }
 
@@ -96,18 +75,6 @@ export default class EventDesignModel extends VekozModel {
      * @returns 
      */
     async deleteDesignById(uid: string, id: string): Promise<number> {
-        try {
-            const getFilesResponse = await this.publicBucket.getFiles({
-                prefix: `eventDesign/${id}`,
-            })
-            const files = getFilesResponse[0]
-            const promises = files.map(async (file) => {
-                return file.delete()
-            })
-            await Promise.all(promises)
-        } catch (error) {
-            // 可能會因為沒資料可刪出錯
-        }
         const options = {
             count: {
                 range: [0, 1]
@@ -116,6 +83,7 @@ export default class EventDesignModel extends VekozModel {
         const count = await super.deleteItemById(uid, id,
             options
         )
+        await super.deleteBlobFolderById(id)
         return count
     }
 }

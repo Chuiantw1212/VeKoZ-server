@@ -24,36 +24,6 @@ export default class UserDesignModel extends Firestore {
         return count
     }
 
-    // private storeAvatar(designId: string, design: any) {
-    //     if (!banner) {
-    //         return ''
-    //     }
-    //     if (banner && typeof banner === 'string') {
-    //         throw "typeof banner === 'string'"
-    //     }
-    //     const imageType = banner.type
-    //     const buffer: ArrayBuffer = banner.buffer
-    //     if (!imageType) {
-    //         return ''
-    //     }
-    //     try {
-    //         await this.publicBucket.deleteFiles({
-    //             prefix: `eventTemplateDesign/${id}`,
-    //         },)
-    //     } catch (error) {
-    //         // 可能會因為沒資料可刪出錯
-    //     }
-    //     const blob = this.publicBucket.file(`eventTemplateDesign/${id}/banner.${imageType}`)
-    //     const blobStream = blob.createWriteStream({
-    //         resumable: false,
-    //     })
-    //     const typedResult = Buffer.from(buffer)
-    //     // save buffer
-    //     blobStream.end(typedResult)
-    //     const publicUrl = blob.publicUrl()
-    //     return publicUrl
-    // }
-
     /**
         * 建立品項
         * @param uid 

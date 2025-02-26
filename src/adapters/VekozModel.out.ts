@@ -25,12 +25,12 @@ export default class VekozModel extends VenoniaCRUD {
         }
     }
 
-    protected async uploadUniqueImage(id: string, image: IBlob) {
+    protected async uploadUniqueImage(path: string, image: IBlob): Promise<string> {
         if (!this.publicBucket) {
-            return
+            throw 'publicBucket未設定'
         }
-        await this.publicBucket.deleteBlobByPath(id)
-        const publicUrl = await this.publicBucket.writeImageByPath(id, image)
+        await this.publicBucket.deleteBlobByPath(path)
+        const publicUrl = await this.publicBucket.writeImageByPath(path, image)
         return publicUrl
     }
 

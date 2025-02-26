@@ -1,5 +1,5 @@
 import VekozModel from '../adapters/VekozModel.out'
-import type { IModelPorts, } from '../ports/out.model'
+import type { IBlob, IModelPorts, } from '../ports/out.model'
 import type { ICrudOptions } from '../ports/out.crud'
 import { ITemplateDesign, IPatchTemplateDesignReq } from '../entities/eventTemplate'
 
@@ -54,33 +54,8 @@ export default class EventTemplateDesignModel extends VekozModel {
      * @param logo 
      * @returns 
      */
-    private async storeBanner(id: string, banner: any): Promise<string> {
-        if (!banner) {
-            return ''
-        }
-        if (banner && typeof banner === 'string') {
-            throw "typeof banner === 'string'"
-        }
-        const imageType = banner.type
-        const buffer: ArrayBuffer = banner.buffer
-        if (!imageType) {
-            return ''
-        }
-        try {
-            await this.publicBucket.deleteFiles({
-                prefix: `eventTemplateDesign/${id}`,
-            },)
-        } catch (error) {
-            // 可能會因為沒資料可刪出錯
-        }
-        const blob = this.publicBucket.file(`eventTemplateDesign/${id}/banner.${imageType}`)
-        const blobStream = blob.createWriteStream({
-            resumable: false,
-        })
-        const typedResult = Buffer.from(buffer)
-        // save buffer
-        blobStream.end(typedResult)
-        const publicUrl = blob.publicUrl()
+    private async storeBanner(id: string, banner: IBlob): Promise<string> {
+        const publicUrl = await super.uploadUniqueImage(`${id}/banner`, banner)
         return publicUrl
     }
 
@@ -104,18 +79,6 @@ export default class EventTemplateDesignModel extends VekozModel {
         if (!id) {
             throw `id未提供`
         }
-        try {
-            const getFilesResponse = await this.publicBucket.getFiles({
-                prefix: `eventTemplateDesign/${id}`,
-            })
-            const files = getFilesResponse[0]
-            const promises = files.map(async (file) => {
-                return file.delete()
-            })
-            await Promise.all(promises)
-        } catch (error) {
-            // 可能會因為沒資料可刪出錯
-        }
         const options = {
             count: {
                 absolute: 1
@@ -124,6 +87,7 @@ export default class EventTemplateDesignModel extends VekozModel {
         const count = await super.deleteItemById(uid, id,
             options
         )
+        super.deleteBlobFolderById(id)
         return count
     }
 }
