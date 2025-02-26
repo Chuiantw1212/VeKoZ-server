@@ -1,16 +1,10 @@
 import VekozModel from '../adapters/VekozModel.out'
 import type { IModelPorts, IBlob } from '../ports/out.model'
 import type { ICrudOptions } from '../ports/out.crud'
-import { IPatchTemplateDesignReq, ITemplateDesign } from '../entities/eventTemplate'
-import type { Storage } from 'firebase-admin/storage'
+import { ITemplateDesign } from '../entities/eventTemplate'
 export default class EventDesignModel extends VekozModel {
-    private publicBucket: ReturnType<Storage['bucket']> = null as any
-
     constructor(data: IModelPorts) {
         super(data)
-        if (data.publicBucket) {
-            this.publicBucket = data.publicBucket
-        }
     }
 
     async setByOrganizationId(uid: string, organizationId: string, data: ITemplateDesign) {

@@ -7,11 +7,9 @@ interface IBlob {
 }
 
 export default class OrganizationModel extends VekozModel {
-    publicBucket: any = null
 
     constructor(data: IModelPorts) {
         super(data)
-        this.publicBucket = data.publicBucket
     }
 
     async createOrganization(uid: string, organization: IOrganization) {
