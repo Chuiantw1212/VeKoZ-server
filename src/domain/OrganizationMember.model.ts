@@ -1,7 +1,7 @@
-import FirestoreAdapter from '../adapters/Firestore.out'
+import VekozModel from '../adapters/VekozModel.out'
 import type { IModelPorts } from '../ports/out.model'
 
-export default class OrganizationMemberModel extends FirestoreAdapter{
+export default class OrganizationMemberModel extends VekozModel{
     constructor(data: IModelPorts) {
         super(data)
     }

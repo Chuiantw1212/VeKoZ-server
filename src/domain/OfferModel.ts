@@ -1,10 +1,10 @@
-import FirestoreAdapter from '../adapters/Firestore.out'
+import VekozModel from '../adapters/VekozModel.out'
 import { IEvent } from '../entities/event'
 import { IOffer, IOfferQuery } from '../entities/offer'
 import { ICrudOptions } from '../ports/out.crud'
 import type { IModelPorts } from '../ports/out.model'
 
-export default class OfferModel extends FirestoreAdapter {
+export default class OfferModel extends VekozModel {
     constructor(data: IModelPorts) {
         super(data)
     }

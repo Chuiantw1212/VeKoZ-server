@@ -1,8 +1,8 @@
-import FirestoreAdapter from '../adapters/Firestore.out'
+import VekozModel from '../adapters/VekozModel.out'
 import { IPlace } from '../entities/place'
 import type { IModelPorts } from '../ports/out.model'
 
-export default class PlaceModel extends FirestoreAdapter {
+export default class PlaceModel extends VekozModel {
     constructor(data: IModelPorts) {
         super(data)
     }

@@ -1,4 +1,4 @@
-import { CollectionReference,FirestoreAdapter} from 'firebase-admin/firestore'
+import { CollectionReference,VekozModel} from 'firebase-admin/firestore'
 
 export default class OrganizationRoleModel {
     protected collection: CollectionReference = null as any

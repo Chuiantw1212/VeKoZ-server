@@ -1,4 +1,4 @@
-import FirestoreAdapter from '../adapters/Firestore.out'
+import VekozModel from '../adapters/VekozModel.out'
 import type { IModelPorts } from '../ports/out.model'
 import { IOrganization } from '../entities/organization';
 interface IBlob {
@@ -6,7 +6,7 @@ interface IBlob {
     buffer: Buffer,
 }
 
-export default class OrganizationModel extends FirestoreAdapter {
+export default class OrganizationModel extends VekozModel {
     publicBucket: any = null
 
     constructor(data: IModelPorts) {

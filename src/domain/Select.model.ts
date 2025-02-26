@@ -1,11 +1,11 @@
 import type { IOptionsItem, } from '../entities/select'
 import { Query, QuerySnapshot, DocumentReference, DocumentData, } from 'firebase-admin/firestore'
 import type { IModelPorts } from '../ports/out.model'
-import FirestoreAdapter from '../adapters/Firestore.out'
+import VekozModel from '../adapters/VekozModel.out'
 import { ICrudOptions } from '../ports/out.crud'
 import { ISelectDocData } from '../entities/select'
 
-export default class SelectModel extends FirestoreAdapter {
+export default class SelectModel extends VekozModel {
     constructor(data: IModelPorts) {
         super(data)
     }

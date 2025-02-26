@@ -1,8 +1,8 @@
-import FirestoreAdapter from '../adapters/Firestore.out'
+import VekozModel from '../adapters/VekozModel.out'
 import type { IModelPorts } from '../ports/out.model'
 import { IEventTemplate } from '../entities/eventTemplate'
 
-export default class EventTemplateModel extends FirestoreAdapter {
+export default class EventTemplateModel extends VekozModel {
     constructor(data: IModelPorts) {
         super(data)
     }

@@ -1,4 +1,4 @@
-import Firestore from '../adapters/Firestore.out'
+import Firestore from '../adapters/VekozModel.out'
 import { IUserPreference } from '../entities/user'
 import type { IModelPorts } from '../ports/out.model'
 

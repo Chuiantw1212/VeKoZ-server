@@ -1,4 +1,4 @@
-import Firestore from '../adapters/Firestore.out'
+import Firestore from '../adapters/VekozModel.out'
 import { IUser, IUserDesign } from '../entities/user'
 import { ICrudOptions } from '../ports/out.crud'
 import type { IModelPorts } from '../ports/out.model'

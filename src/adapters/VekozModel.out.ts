@@ -5,7 +5,7 @@ import VenoniaCRUD from "../ports/out.crud"
 /**
  * 檔案的Naming要對應firestore的存取方式
  */
-export default class FirestoreAdapter extends VenoniaCRUD {
+export default class VekozModel extends VenoniaCRUD {
     protected collection: IModelPorts['collection'] = null as any
     protected error = {
         'collectionIsNotReady': 'Collection is not ready.',
