@@ -132,7 +132,7 @@ export default class UserService {
      * @param user 
      * @returns 
      */
-    async setUserSeoName(uid: string, user: IUser) {
+    async setUserSeo(uid: string, user: IUser) {
         if (user.seoName) {
             const isValid = await this.userModel.checkSeoNameAvailable(uid, user.seoName)
             if (!isValid) {
