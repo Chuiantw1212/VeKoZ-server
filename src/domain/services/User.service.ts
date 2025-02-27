@@ -136,7 +136,7 @@ export default class UserService {
         if (user.seoName) {
             const isValid = await this.userModel.checkSeoNameAvailable(uid, user.seoName)
             if (!isValid) {
-                throw '該網址已存在'
+                throw '變更失敗，該網址已存在'
             }
         }
         const count = await this.userModel.setUser(uid, user,)
