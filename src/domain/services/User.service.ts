@@ -40,15 +40,15 @@ export default class UserService {
             // 抓取preference
             const userPreference = await this.userPreferenceModel.getPreference(user.id)
             user.preference = userPreference
-            // 抓取designs
-            const userDesignIds = user.designIds
-            if (userDesignIds) {
-                const promises = userDesignIds.map(designId => {
-                    return this.userDesignModel.getUserDesignById(designId)
-                })
-                const userDesigns = await Promise.all(promises)
-                user.designs = userDesigns
-            }
+        }
+        // 抓取designs
+        const userDesignIds = user.designIds
+        if (userDesignIds) {
+            const promises = userDesignIds.map(designId => {
+                return this.userDesignModel.getUserDesignById(designId)
+            })
+            const userDesigns = await Promise.all(promises)
+            user.designs = userDesigns
         }
         return user
     }

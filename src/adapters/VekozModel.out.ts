@@ -153,6 +153,7 @@ export default class VekozModel extends VenoniaCRUD {
         const count = await this.checkQueryCount(query, options.count ?? {})
         const lastmod = Timestamp.fromDate(new Date())
         data.lastmod = lastmod
+        delete data.id // 避免覆蓋
         const docs = (await query.get()).docs
         const promiese = docs.map(doc => {
             return doc.ref.update(data, {
