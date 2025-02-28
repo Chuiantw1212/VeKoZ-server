@@ -242,8 +242,8 @@ export default class VekozModel extends VenoniaCRUD {
      * @returns 
      */
     protected formatTimestamp(isoDateString: string) {
-        if (!isoDateString) {
-            return
+        if (!isoDateString || typeof isoDateString !== 'string') {
+            return isoDateString
         }
         return Timestamp.fromDate(new Date(isoDateString))
     }
