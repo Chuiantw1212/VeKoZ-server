@@ -22,7 +22,6 @@ interface IEventSEO extends IEventQuery {
     name?: string,
     description?: string,
     performerNames?: string[],
-    performerIds?: string[],
     organizerName?: string, // organizerName
     organizerLogo?: string,
 }
@@ -36,6 +35,7 @@ export interface IEventQuery {
     hasVirtualLocation?: boolean,
     isPublic?: boolean,
     limit?: number,
+    performerIds?: string[],
 }
 
 export interface IEventEmail {

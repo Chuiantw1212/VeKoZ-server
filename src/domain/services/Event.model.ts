@@ -57,7 +57,13 @@ export default class EventModel extends VekozModel {
         if (String(query.isPublic) === 'false') {
             wheres.push(['isPublic', '==', false])
         }
-
+        if (query.performerIds) {
+            if (!Array.isArray(query.performerIds)) {
+                wheres.push(['performerIds', 'array-contains-any', [query.performerIds]])
+            } else {
+                wheres.push(['performerIds', 'array-contains-any', query.performerIds])
+            }
+        }
         const options: ICrudOptions = {
             orderBy: ['startDate', 'asc'],
         }
