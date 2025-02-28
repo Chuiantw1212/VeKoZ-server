@@ -152,11 +152,12 @@ export default class VekozModel extends VenoniaCRUD {
         const query: Query = await this.getQuery(wheres)
         const count = await this.checkQueryCount(query, options.count ?? {})
         const lastmod = Timestamp.fromDate(new Date())
-        data.lastmod = lastmod
-        delete data.id // 避免覆蓋
+        const dataCopy = structuredClone(data)
+        dataCopy.lastmod = lastmod
+        delete dataCopy.id // 避免覆蓋, 注意structed clone問題
         const docs = (await query.get()).docs
         const promiese = docs.map(doc => {
-            return doc.ref.update(data, {
+            return doc.ref.update(dataCopy, {
                 merge: options?.merge
             })
         })
@@ -273,6 +274,10 @@ export default class VekozModel extends VenoniaCRUD {
             const field = where[0]
             const operator = where[1]
             const value = where[2]
+            if (!value) {
+                console.trace('Query condition value is undefined.')
+                // throw 'Query condition value is undefined.'
+            }
             query = query.where(field, operator, value)
         })
         if (options?.orderBy) {
@@ -308,7 +313,6 @@ export default class VekozModel extends VenoniaCRUD {
             message = `資料數量範圍不合: ${count} 不在 ${options.range} 中`
         }
         if (message) {
-            console.trace(message)
             throw message
         }
         return count

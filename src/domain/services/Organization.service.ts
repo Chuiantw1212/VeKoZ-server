@@ -75,7 +75,6 @@ export default class OrganizationService {
         this.offerModel.updateOfferGroupBySellerId(uid, organization.id, {
             sellerName: organization.name,
         })
-        console.log('setByOrganizationId')
         this.eventTemplateDesignModel.setByOrganizationId(uid, organization.id, {
             organizationName: organization.name,
         })

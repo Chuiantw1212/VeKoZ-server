@@ -261,7 +261,7 @@ export default class EventService {
 
         // 優先欄位
         const organizationName = String(event.organizerName)
-        const memberNames: string[] = event.memberNames
+        const memberNames: string[] = event.memberNames ?? []
         const beforeCut = [organizationName, ...memberNames]
         const searchNames: string[] = []
         beforeCut.forEach(name => {
@@ -335,7 +335,6 @@ export default class EventService {
             const isAllDetailMissing = eventTemplateDesigns.every(value => !value)
             if (isAllDetailMissing) {
                 if (uid) {
-                    console.error('event.designs皆為0', id)
                     this.eventModel.deleteByEventId(uid, id)
                 }
                 return 0
@@ -356,12 +355,12 @@ export default class EventService {
         // 先刪除票券
         const offerDeletedCount = await this.offerModel.deleteOffers(uid, String(event.id))
         if (!offerDeletedCount) {
-            console.error('票券未成功刪除')
+            console.trace('票券未成功刪除')
         }
         // 再刪去其他資料
         const designIds = event.designIds ?? []
         if (!designIds.length) {
-            console.error('資料有誤, event.designIds不存在', id)
+            console.trace('資料有誤, event.designIds不存在', id)
         }
         const masterPromise = this.eventModel.deleteByEventId(uid, id)
         const detailPromises = designIds?.map(designId => {
