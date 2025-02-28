@@ -253,9 +253,12 @@ export default class VekozModel extends VenoniaCRUD {
      * @param timestamp 
      * @returns 
      */
-    protected formatDate(timestamp: Timestamp) {
+    protected formatDate(timestamp: any) {
         if (!timestamp) {
             return
+        }
+        if (timestamp.hasOwnProperty('_seconds')) {
+            return new Date(timestamp['_seconds'] * 1000).toISOString()
         }
         return new Date(timestamp.seconds * 1000).toISOString()
     }
