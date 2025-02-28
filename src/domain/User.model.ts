@@ -1,13 +1,18 @@
 import Firestore from '../adapters/VekozModel.out'
 import { IUser } from '../entities/user'
 import { ICrudOptions } from '../ports/out.crud'
-import type { IModelPorts } from '../ports/out.model'
+import type { IBlob, IModelPorts } from '../ports/out.model'
 
 export default class UserModel extends Firestore {
     private fieldWhiteList: string[] = ['id', 'description', 'name', 'seoName', 'seoTitle']
 
     constructor(data: IModelPorts) {
         super(data)
+    }
+
+    async uploadAvatar(id: string, avatar: IBlob): Promise<string> {
+        const publicUrl = await super.uploadUniqueImage(`${id}/avatar`, avatar)
+        return publicUrl
     }
 
     /**

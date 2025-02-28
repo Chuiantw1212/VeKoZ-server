@@ -2,6 +2,7 @@ import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
 import { IUser, IUserDesign } from '../../entities/user'
+import { IBlob } from '../../ports/out.model'
 const router = new Elysia()
 router.use(bearer())
     .post('/user', async ({ bearer, request }) => {
@@ -16,6 +17,13 @@ router.use(bearer())
         const userIdToken = await AuthService.verifyIdToken(bearer)
         const user = await request.json() as IUser
         const count = await UserService.setUser(userIdToken.uid, user)
+        return count
+    })
+    .patch('/user/avater', async ({ bearer, request }) => {
+        const { AuthService, UserService } = AccessGlobalService.locals
+        const userIdToken = await AuthService.verifyIdToken(bearer)
+        const avatar = await request.json() as IBlob
+        const count = await UserService.uploadUserAvatar(userIdToken.uid, avatar)
         return count
     })
     // 不帶參數，只使用ID Token抓自己的資料

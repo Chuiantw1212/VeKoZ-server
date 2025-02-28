@@ -105,7 +105,8 @@ import offerController from './adapters/client.in/offer.ctrl'
         collection: firebase.getCollection('places')
     })
     const userModel = new UserModel({
-        collection: firebase.getCollection('users')
+        collection: firebase.getCollection('users'),
+        publicBucket: new BlobAdapter('users', publicBucket)
     })
     const userPreferenceModel = new UserPreferenceModel({
         collection: firebase.getCollection('userPreferences')

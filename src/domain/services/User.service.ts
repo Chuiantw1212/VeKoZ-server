@@ -2,6 +2,7 @@ import UserModel from '../User.model'
 import UserPreferenceModel from '../UserPreference.model';
 import UserDesignModel from '../UserDesign.model';
 import type { IUser, IUserDesign, IUserPreference } from '../../entities/user';
+import { IBlob } from '../../ports/out.model';
 
 interface Idependency {
     userModel: UserModel
@@ -22,6 +23,12 @@ export default class UserService {
         this.userModel = userModel
         this.userPreferenceModel = userPreferenceModel
         this.userDesignModel = userDesignModel
+    }
+
+    async uploadUserAvatar(uid: string, avatar: IBlob): Promise<string> {
+        const user = await this.getUserByUid(uid)
+        const publicUrl = await this.userModel.uploadAvatar(String(user.id), avatar)
+        return publicUrl
     }
 
     async getUserBySeoName(uid: string) {
@@ -156,6 +163,12 @@ export default class UserService {
         //     }
         // }
         // // set data
+        if (user.seoName) {
+            const isValid = await this.userModel.checkSeoNameAvailable(uid, user.seoName)
+            if (!isValid) {
+                throw '變更失敗，該網址已存在'
+            }
+        }
         const count = await this.userModel.setUser(uid, user,)
         return count
     }
