@@ -197,8 +197,8 @@ export default class EventService {
         const eventPatch: IEvent = {}
         switch (eventDesign.formField) {
             case 'performers': {
-                eventPatch.memberIds = eventDesign.memberIds
-                eventPatch.memberNames = eventDesign.memberNames
+                eventPatch.performerIds = eventDesign.memberIds
+                eventPatch.performerNames = eventDesign.memberNames
             }
             case 'location': {
                 eventPatch.locationId = eventDesign.placeId

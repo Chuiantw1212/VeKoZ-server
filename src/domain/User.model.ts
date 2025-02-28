@@ -4,8 +4,6 @@ import { ICrudOptions } from '../ports/out.crud'
 import type { IBlob, IModelPorts } from '../ports/out.model'
 
 export default class UserModel extends Firestore {
-    private fieldWhiteList: string[] = ['id', 'description', 'name', 'seoName', 'seoTitle']
-
     constructor(data: IModelPorts) {
         super(data)
     }
@@ -25,8 +23,10 @@ export default class UserModel extends Firestore {
             }
         }) as IUser[]
         const user = users[0]
+
         const publicUser: IUser = {}
-        this.fieldWhiteList.forEach(field => {
+        const fieldWhiteList: string[] = ['id', 'description', 'name', 'seoName', 'seoTitle', 'avatar', 'sameAs']
+        fieldWhiteList.forEach(field => {
             publicUser[field] = user[field]
         })
         return publicUser
