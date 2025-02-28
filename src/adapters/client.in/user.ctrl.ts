@@ -19,7 +19,7 @@ router.use(bearer())
         const count = await UserService.setUser(userIdToken.uid, user)
         return count
     })
-    .patch('/user/avater', async ({ bearer, request }) => {
+    .put('/user/avatar', async ({ bearer, request }) => {
         const { AuthService, UserService } = AccessGlobalService.locals
         const userIdToken = await AuthService.verifyIdToken(bearer)
         const avatar = await request.json() as IBlob
