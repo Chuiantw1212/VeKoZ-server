@@ -80,10 +80,10 @@ export default class OfferModel extends VekozModel {
             merge: true,
         }
         if (data.validFrom) {
-            data.validFrom = super.formatTimestamp(data.validFrom)
+            data.validFrom = super.formatDate(data.validFrom)
         }
         if (data.validThrough) {
-            data.validThrough = super.formatTimestamp(data.validThrough)
+            data.validThrough = super.formatDate(data.validThrough)
         }
         const promises = offerCategoryIds.map(async categoryId => {
             return await super.setItemsByQuery([['uid', '==', uid], ['categoryId', '==', categoryId]], data, options)
@@ -126,10 +126,10 @@ export default class OfferModel extends VekozModel {
 
     async createOffer(uid: string, offer: IOffer,): Promise<IOffer> {
         if (offer.validFrom) {
-            offer.validFrom = super.formatTimestamp(offer.validFrom)
+            offer.validFrom = super.formatDate(offer.validFrom)
         }
         if (offer.validThrough) {
-            offer.validThrough = super.formatTimestamp(offer.validThrough)
+            offer.validThrough = super.formatDate(offer.validThrough)
         }
         return await super.createItem(uid, offer) as IOffer
     }
