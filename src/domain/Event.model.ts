@@ -39,13 +39,13 @@ export default class EventModel extends VekozModel {
         if (query.organizerId) {
             wheres.push(['organizerId', '==', query.organizerId])
         }
-        if (query.startDate) {
+        if (query.startDate && typeof query.startDate === 'string') {
             const startDate = new Date(query.startDate)
             if (!isNaN(startDate.getTime())) {
                 wheres.push(['startDate', '>=', startDate])
             }
         }
-        if (query.endDate) {
+        if (query.endDate && typeof query.endDate === 'string') {
             const endDate = new Date(query.endDate)
             if (!isNaN(endDate.getTime())) {
                 wheres.push(['endDate', '<=', endDate])
@@ -143,12 +143,13 @@ export default class EventModel extends VekozModel {
         const events = await super.getItemsByQuery([['id', '==', id]]) as IEvent[]
         if (events) {
             const event = events[0]
-            // if (event.startDate) {
-            //     event.startDate = super.formatDate(event.startDate)
-            // }
-            // if (event.endDate) {
-            //     event.endDate = super.formatDate(event.endDate)
-            // }
+            delete event.keywords // 前端不需要知道的資料
+            if (event.startDate) {
+                event.startDate = super.formatDate(event.startDate)
+            }
+            if (event.endDate) {
+                event.endDate = super.formatDate(event.endDate)
+            }
             return event
         }
         return 0
@@ -163,9 +164,6 @@ export default class EventModel extends VekozModel {
      */
     async mergeEventById(uid: string, id: string, event: IEvent): Promise<number> {
         delete event.designs // 防呆
-        console.log({
-            event
-        })
         if (typeof event.startDate === 'string') {
             event.startDate = super.formatDate(event.startDate)
         }

@@ -206,7 +206,13 @@ export default class EventService {
             }
             case 'location': {
                 eventPatch.locationId = eventDesign.placeId
+                eventPatch.locationAddress = eventDesign.placeAddress
                 eventPatch.locationAddressRegion = eventDesign.placeAddressRegion
+                break;
+            }
+            case 'virtualLocation': {
+                eventPatch.virtualLocationName = eventDesign.urlName
+                eventPatch.virtualLocationValue = eventDesign.urlValue
                 break;
             }
             case 'banner': {
@@ -266,7 +272,7 @@ export default class EventService {
         // 優先欄位
         const organizationName = String(event.organizerName)
         const memberNames: string[] = event.memberNames ?? []
-        const beforeCut = [organizationName, ...memberNames]
+        const beforeCut = [organizationName, ...memberNames,]
         const searchNames: string[] = []
         beforeCut.forEach(name => {
             const cutForSearchNames = this.nlpAdapter.cutForSearch(name)
