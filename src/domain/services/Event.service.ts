@@ -1,6 +1,6 @@
 import type { IEventTemplate, ITemplateDesign, } from '../../entities/eventTemplate';
 import type { IEvent, IEventQuery, } from '../../entities/event';
-import EventModel from './Event.model'
+import EventModel from '../Event.model'
 import EventDesignModel from '../EventDesign.model';
 import OrganizationModel from '../Organization.model';
 import NlpAdapter from '../../adapters/nlp.out';

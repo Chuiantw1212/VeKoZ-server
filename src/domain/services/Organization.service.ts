@@ -1,6 +1,6 @@
 import OrganizationModel from '../Organization.model'
 import OrganizationMemberModel from '../OrganizationMember.model';
-import EventModel from './Event.model';
+import EventModel from '../Event.model';
 import OfferModel from '../OfferModel';
 import EventTemplateDesignModel from '../EventTemplateDesign.model';
 import EventDesignModel from '../EventDesign.model';

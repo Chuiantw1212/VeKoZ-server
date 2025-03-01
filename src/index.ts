@@ -14,7 +14,7 @@ import NlpAdapter from './adapters/nlp.out'
 // models
 import PlaceModel from './domain/Place.model'
 import SelectModel from './domain/Select.model';
-import EventModel from './domain/services/Event.model'
+import EventModel from './domain/Event.model'
 import EventDesignModel from './domain/EventDesign.model'
 import EventTemplateModel from './domain/EventTemplate.model'
 import EventTemplateDesignModel from './domain/EventTemplateDesign.model'
