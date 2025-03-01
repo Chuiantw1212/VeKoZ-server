@@ -21,7 +21,7 @@ router.use(bearer())
         const { AuthService, UserService, UserDesignService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const userDesign = await request.json() as IUserDesign
-        const count = await UserDesignService.patchUserDesign(user.uid, userDesign)
-        return count
+        const userPatch = await UserDesignService.patchUserDesign(user.uid, userDesign)
+        return userPatch
     })
 export default router

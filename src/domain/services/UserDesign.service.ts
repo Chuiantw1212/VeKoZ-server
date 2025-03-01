@@ -26,24 +26,25 @@ export default class UserService {
 
     async patchUserDesign(uid: string, userDesign: IUserDesign) {
         const userPatch: IUser = {}
-        switch (userDesign.formField) {
-            case "description": {
-                userPatch[userDesign.formField] = userDesign.value
-            }
-            case "avatar": {
-                if (typeof userDesign.value !== 'string') {
-                    const publicUrl = await this.userDesignModel.uploadAvatar(userDesign)
-                    userPatch.avatar = publicUrl
+        if (userDesign.formField) {
+            switch (userDesign.formField) {
+                case "avatar": {
+                    if (typeof userDesign.value !== 'string') {
+                        const publicUrl = await this.userDesignModel.uploadAvatar(userDesign)
+                        userPatch.avatar = publicUrl
+                    }
                 }
-            }
-            default: {
-                // do nothing
+                case "seoTitle":
+                case "description":
+                default: {
+                    userPatch[userDesign.formField] = userDesign.value
+                }
             }
         }
         if (Object.keys(userPatch).length) {
             this.userModel.setUser(uid, userPatch)
         }
-        const count = await this.userDesignModel.setUserDesignById(uid, String(userDesign.id), userDesign)
-        return count
+        await this.userDesignModel.setUserDesignById(uid, String(userDesign.id), userDesign)
+        return userPatch
     }
 }
