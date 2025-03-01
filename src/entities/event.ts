@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase-admin/firestore";
 import type { ITemplateDesign } from "./eventTemplate";
 
 /**
@@ -27,9 +28,9 @@ interface IEventSEO extends IEventQuery {
 }
 export interface IEventQuery {
     organizerId?: string,
-    startDate?: string | Date,
+    startDate?: string | Date | Timestamp,
     startHour?: string,
-    endDate?: string | Date,
+    endDate?: string | Date | Timestamp,
     keywords?: string[] | string,
     locationAddressRegion?: string,
     hasVirtualLocation?: boolean,

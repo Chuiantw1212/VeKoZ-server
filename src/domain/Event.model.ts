@@ -24,8 +24,8 @@ export default class EventModel extends VekozModel {
             event.endDate = super.formatDate(event.endDate)
         }
         const newEventDoc: IEvent = await super.createItem(uid, event) as IEvent
-        event.startDate = super.formatDate(event.startDate)
-        event.endDate = super.formatDate(event.endDate)
+        // event.startDate = super.formatDate(event.startDate)
+        // event.endDate = super.formatDate(event.endDate)
         return newEventDoc
     }
 
@@ -109,7 +109,7 @@ export default class EventModel extends VekozModel {
                 if (docData.startDate) {
                     docData.startDate = super.formatDate(docData.startDate)
                 }
-                if (docData.endDate) {
+                if (docData.endDate && typeof docData.endDate !== 'string') {
                     docData.endDate = super.formatDate(docData.endDate)
                 }
             })
@@ -143,12 +143,12 @@ export default class EventModel extends VekozModel {
         const events = await super.getItemsByQuery([['id', '==', id]]) as IEvent[]
         if (events) {
             const event = events[0]
-            if (event.startDate) {
-                event.startDate = super.formatDate(event.startDate)
-            }
-            if (event.endDate) {
-                event.endDate = super.formatDate(event.endDate)
-            }
+            // if (event.startDate) {
+            //     event.startDate = super.formatDate(event.startDate)
+            // }
+            // if (event.endDate) {
+            //     event.endDate = super.formatDate(event.endDate)
+            // }
             return event
         }
         return 0
@@ -163,7 +163,9 @@ export default class EventModel extends VekozModel {
      */
     async mergeEventById(uid: string, id: string, event: IEvent): Promise<number> {
         delete event.designs // 防呆
-
+        console.log({
+            event
+        })
         if (typeof event.startDate === 'string') {
             event.startDate = super.formatDate(event.startDate)
         }

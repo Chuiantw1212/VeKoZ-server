@@ -242,11 +242,16 @@ export default class VekozModel extends VenoniaCRUD {
      * @param timestamp 
      * @returns 
      */
-    protected formatDate(timestamp: any) {
-        if (!timestamp) {
+    protected formatDate(timestamp: string | Timestamp | Date) {
+        if (!timestamp || timestamp instanceof Date) {
             return timestamp
         }
-        return new Date()
+        if (typeof timestamp === 'string') {
+            return new Date(timestamp)
+        }
+        if (timestamp instanceof Timestamp) {
+            return new Date(timestamp.seconds * 1000)
+        }
     }
 
     /**
