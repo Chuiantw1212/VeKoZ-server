@@ -15,8 +15,12 @@ export default class EventModel extends VekozModel {
      * @returns 
      */
     async createEvent(uid: string, event: IEvent): Promise<IEvent> {
-        event.startDate = super.formatTimestamp(event.startDate)
-        event.endDate = super.formatTimestamp(event.endDate)
+        if (typeof event.startDate === 'string') {
+            event.startDate = super.formatDate(event.startDate)
+        }
+        if (typeof event.endDate === 'string') {
+            event.endDate = super.formatDate(event.endDate)
+        }
         const newEventDoc: IEvent = await super.createItem(uid, event) as IEvent
         event.startDate = super.formatDate(event.startDate)
         event.endDate = super.formatDate(event.endDate)
@@ -156,11 +160,11 @@ export default class EventModel extends VekozModel {
      * @returns 
      */
     async mergeEventById(uid: string, id: string, event: IEvent): Promise<number> {
-        if (event.startDate) {
-            event.startDate = super.formatTimestamp(event.startDate)
+        if (typeof event.startDate === 'string') {
+            event.startDate = super.formatDate(event.startDate)
         }
-        if (event.endDate) {
-            event.endDate = super.formatTimestamp(event.endDate)
+        if (typeof event.endDate === 'string') {
+            event.endDate = super.formatDate(event.endDate)
         }
         const dataAccessOptions = {
             count: {

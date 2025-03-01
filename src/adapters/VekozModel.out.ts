@@ -237,30 +237,16 @@ export default class VekozModel extends VenoniaCRUD {
     }
 
     /**
-     * 從ISO轉為Timestamp
-     * @param isoDateString 
-     * @returns 
-     */
-    protected formatTimestamp(isoDateString: string) {
-        if (!isoDateString || typeof isoDateString !== 'string') {
-            return isoDateString
-        }
-        return Timestamp.fromDate(new Date(isoDateString))
-    }
-
-    /**
-     * 從Timestamp轉為Date
+     * 從client端接收到的date一定是isoString
+     * 從string轉為Date
      * @param timestamp 
      * @returns 
      */
     protected formatDate(timestamp: any) {
         if (!timestamp) {
-            return
+            return timestamp
         }
-        if (timestamp.hasOwnProperty('_seconds')) {
-            return new Date(timestamp['_seconds'] * 1000).toISOString()
-        }
-        return new Date(timestamp.seconds * 1000).toISOString()
+        return new Date()
     }
 
     /**

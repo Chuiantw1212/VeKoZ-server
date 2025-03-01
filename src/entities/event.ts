@@ -27,9 +27,9 @@ interface IEventSEO extends IEventQuery {
 }
 export interface IEventQuery {
     organizerId?: string,
-    startDate?: any,
+    startDate?: string | Date,
     startHour?: string,
-    endDate?: any,
+    endDate?: string | Date,
     keywords?: string[] | string,
     locationAddressRegion?: string,
     hasVirtualLocation?: boolean,
