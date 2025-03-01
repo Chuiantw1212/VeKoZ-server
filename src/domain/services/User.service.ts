@@ -13,7 +13,6 @@ export default class UserService {
     protected userModel: UserModel
     protected userPreferenceModel: UserPreferenceModel
     protected userDesignModel: UserDesignModel
-    private fieldWhiteList: string[] = ['id', 'description', 'name', 'seoName', 'seoTitle', 'designIds']
 
     constructor(dependency: Idependency) {
         const {
@@ -38,7 +37,8 @@ export default class UserService {
     async getUserBySeoName(uid: string) {
         const user: IUser = await this.userModel.getUserBySeoName(uid)
         const publicUser: IUser = {}
-        this.fieldWhiteList.forEach(field => {
+        const fieldWhiteList: string[] = ['id', 'description', 'name', 'seoName', 'seoTitle', 'designIds', 'avatar']
+        fieldWhiteList.forEach(field => {
             publicUser[field] = user[field]
         })
         if (publicUser.designIds) {
