@@ -15,6 +15,8 @@ export default class EventModel extends VekozModel {
      * @returns 
      */
     async createEvent(uid: string, event: IEvent): Promise<IEvent> {
+        delete event.designs // 防呆
+
         if (typeof event.startDate === 'string') {
             event.startDate = super.formatDate(event.startDate)
         }
@@ -160,6 +162,8 @@ export default class EventModel extends VekozModel {
      * @returns 
      */
     async mergeEventById(uid: string, id: string, event: IEvent): Promise<number> {
+        delete event.designs // 防呆
+
         if (typeof event.startDate === 'string') {
             event.startDate = super.formatDate(event.startDate)
         }

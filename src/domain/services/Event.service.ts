@@ -49,8 +49,7 @@ export default class EventService {
             throw 'designs不存在'
         }
         // 建立sql與noSql的關聯，修改時，用collection資料覆蓋SQL
-        const templateDesigns: ITemplateDesign[] = eventTemplate.designs as ITemplateDesign[]
-        const designsWithFormField = templateDesigns.filter(design => {
+        const designsWithFormField = eventTemplate.designs.filter(design => {
             return design.formField
         })
         const event: IEvent = {
@@ -109,7 +108,9 @@ export default class EventService {
         }
         this.eventModel.mergeEventById(uid, String(newEvent.id), eventPatch)
         Object.assign(newEvent, eventPatch)
-        return newEvent // 回傳完整Event才有機會，未來打開新事件時不用重新get
+        // 回傳完整Event才有機會，未來打開新事件時不用重新get。在解壓縮用id撈出完整design
+        newEvent.designs = eventTemplate.designs
+        return newEvent
     }
 
     async patchEventForm(uid: string, eventDesign: ITemplateDesign): Promise<number> {
