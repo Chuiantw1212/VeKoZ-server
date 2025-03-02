@@ -6,8 +6,8 @@ export interface IOrganization {
     name: string;
     uid: string;
     id: string; // doc id
-    logo: string;
-    founder: string; // 擁有者
+    logo?: string;
+    banner?: string;
     googleCalendarId: string,
 }
 

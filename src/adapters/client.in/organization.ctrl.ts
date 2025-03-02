@@ -28,30 +28,14 @@ router.use(bearer())
         const { OrganizationService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const organization: IOrganization = await request.json() as any
-        const logo = organization.logo // 暫存logo
-        organization.logo = ''
-        let newOrganization: IOrganization = await OrganizationService.newItem(user.uid, organization)
-        if (logo && typeof logo !== 'string') {
-            const publicUrl: string = await OrganizationService.storeLogo(user.uid, newOrganization.id, logo)
-            newOrganization.logo = publicUrl
-        }
-        await OrganizationService.updateOrganization(user.uid, newOrganization)
+        const newOrganization = await OrganizationService.newItem(user.uid, organization)
         return newOrganization
     })
-    .put('/organization/:id', async ({ request, bearer, params }) => {
+    .put('/organization', async ({ request, bearer }) => {
         const { OrganizationService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const { id } = params
-        const organization: IOrganization = await OrganizationService.getItem(id)
         let newOrganization: IOrganization = await request.json() as any
-        Object.assign(organization, {
-            ...newOrganization
-        })
-        if (typeof organization.logo !== 'string') {
-            const publicUrl: string = await OrganizationService.storeLogo(user.uid, organization.id, organization.logo)
-            organization.logo = publicUrl
-        }
-        await OrganizationService.updateOrganization(user.uid, organization)
+        await OrganizationService.updateOrganization(user.uid, newOrganization)
     })
     .delete('/organization/:id', async ({ bearer, params }) => {
         // TODO: 新增的管理者也可以刪除組織嗎？

@@ -34,26 +34,18 @@ export default class OrganizationService {
         this.eventDesignModel = dependency.eventDesignModel
     }
 
-    async storeLogo(uid: string, id: string, logo: any) {
-        const logoUrl = await this.organizationModel.storeLogo(id, logo)
-        const eventListL: IEvent[] = await this.eventModel.queryEventList({
-            organizerId: id,
-        })
-        eventListL.forEach((event: IEvent) => {
-            this.eventModel.mergeEventById(uid, String(event.id), {
-                organizerLogo: logoUrl,
-            })
-        })
-        return logoUrl
-    }
-
     /**
      * 新增組織
      * @param uid UserUid
      * @param organization 
      */
     async newItem(uid: string, organization: IOrganization) {
-        return await this.organizationModel.createOrganization(uid, organization) as IOrganization
+        const logo = organization.logo // 暫存logo
+        organization.logo = ''
+        let newOrganization: IOrganization = await this.organizationModel.createOrganization(uid, organization)
+        newOrganization.logo = logo
+        await this.updateOrganization(uid, organization)
+        return newOrganization
     }
 
     /**
@@ -68,7 +60,35 @@ export default class OrganizationService {
      * 更新組織
      */
     async updateOrganization(uid: string, organization: IOrganization) {
+        const tempLogo = organization.logo
+        const tempBanner = organization.banner
+        delete organization.logo
+        delete organization.banner
+
         const count = await this.organizationModel.mergeOrganizationById(uid, organization.id, organization)
+        if (count) {
+            // 有count表示有權限，不然就是bug了
+            if (tempLogo && typeof tempLogo !== 'string') {
+                const publicUrl: string = await this.organizationModel.storeLogo(organization.id, tempLogo)
+                organization.logo = publicUrl
+                // 更新Event Organizer Logo
+                const eventListL: IEvent[] = await this.eventModel.queryEventList({
+                    organizerId: organization.id,
+                })
+                eventListL.forEach((event: IEvent) => {
+                    this.eventModel.mergeEventById(uid, String(event.id), {
+                        organizerLogo: publicUrl,
+                    })
+                })
+            }
+            if (tempBanner && typeof tempBanner !== 'string') {
+                const publicUrl: string = await this.organizationModel.storeBanner(organization.id, tempBanner)
+                organization.banner = publicUrl
+            }
+        }
+        // 另外儲存banner與logo連結
+        await this.organizationModel.mergeOrganizationById(uid, organization.id, organization)
+
         this.offerModel.updateOfferGroupByOffererId(uid, organization.id, {
             offererName: organization.name,
         })

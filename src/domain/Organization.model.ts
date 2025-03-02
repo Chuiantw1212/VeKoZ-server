@@ -1,6 +1,7 @@
 import VekozModel from '../adapters/VekozModel.out'
 import type { IModelPorts } from '../ports/out.model'
 import { IOrganization } from '../entities/organization';
+import { ICrudOptions } from '../ports/out.crud';
 interface IBlob {
     type: string;
     buffer: Buffer,
@@ -12,9 +13,9 @@ export default class OrganizationModel extends VekozModel {
         super(data)
     }
 
-    async createOrganization(uid: string, organization: IOrganization) {
+    async createOrganization(uid: string, organization: IOrganization): Promise<IOrganization> {
         const newOrganization = await super.createItem(uid, organization)
-        return newOrganization
+        return newOrganization as IOrganization
     }
 
     /**
@@ -25,6 +26,11 @@ export default class OrganizationModel extends VekozModel {
      */
     async storeLogo(organizationId: string, logo: IBlob) {
         const publicUrl = await super.uploadUniqueImage(`${organizationId}/logo`, logo)
+        return publicUrl
+    }
+
+    async storeBanner(organizationId: string, banner: IBlob) {
+        const publicUrl = await super.uploadUniqueImage(`${organizationId}/banner`, banner)
         return publicUrl
     }
 
@@ -56,9 +62,14 @@ export default class OrganizationModel extends VekozModel {
     }
 
     async mergeOrganizationById(uid: string, id: string, organization: IOrganization): Promise<number> {
-        const count = super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], organization, {
+        const options: ICrudOptions = {
             merge: true,
-        })
+            count: {
+                absolute: 1
+            }
+        }
+
+        const count = super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], organization, options)
         return count
     }
 
