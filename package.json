@@ -7,18 +7,18 @@
 	"dependencies": {
 		"@elysiajs/bearer": "^1.2.0",
 		"@elysiajs/cors": "^1.2.0",
-		"@elysiajs/node": "^1.2.5",
-		"@google-cloud/cloud-sql-connector": "^1.6.0",
+		"@elysiajs/node": "^1.2.6",
+		"@google-cloud/cloud-sql-connector": "^1.6.1",
 		"@google-cloud/secret-manager": "^5.6.0",
 		"@node-rs/jieba": "^2.0.1",
-		"@types/node": "^22.13.0",
-		"elysia": "^1.2.11",
-		"firebase-admin": "^13.0.2",
+		"@types/node": "^22.13.8",
+		"elysia": "^1.2.24",
+		"firebase-admin": "^13.1.0",
 		"googleapis": "^144.0.0",
 		"opencc-js": "^1.0.5",
-		"pg": "^8.13.1",
-		"tsx": "^4.19.2",
-		"typescript": "^5.7.3"
+		"pg": "^8.13.3",
+		"tsx": "^4.19.3",
+		"typescript": "^5.8.2"
 	},
 	"devDependencies": {
 		"@types/opencc-js": "^1.0.3",
