@@ -34,10 +34,16 @@ router.use(bearer())
         return user
     })
     // 帶參數抓公開的使用者資料
-    .get('/user/:seoName', async ({ params }) => {
+    .get('/user/:userId', async ({ params }) => {
+        const { UserService } = AccessGlobalService.locals
+        const { userId } = params
+        const user = await UserService.getUserPublicInfo('id', userId)
+        return user
+    })
+    .get('/user/seo/:seoName', async ({ params }) => {
         const { UserService } = AccessGlobalService.locals
         const { seoName } = params
-        const user = await UserService.getUserBySeoName(seoName)
+        const user = await UserService.getUserPublicInfo('seoName', seoName)
         return user
     })
     .patch('/user/seo', async ({ bearer, request }) => {

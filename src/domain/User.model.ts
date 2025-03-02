@@ -16,14 +16,13 @@ export default class UserModel extends Firestore {
     /**
      * 取得用戶資料，這邊並不會拿到偏好資料，而且應該用白名單確保個資不流出
      */
-    async getUserBySeoName(seoName: string) {
-        const users: IUser[] = await super.getItemsByQuery([['seoName', '==', seoName]], {
+    async getPublicInfo(field: string, value: string) {
+        const users: IUser[] = await super.getItemsByQuery([[field, '==', value]], {
             count: {
                 range: [0, 1]
             }
         }) as IUser[]
         const user = users[0]
-
         const publicUser: IUser = {}
         const fieldWhiteList: string[] = ['id', 'description', 'name', 'seoName', 'seoTitle', 'avatar', 'sameAs']
         fieldWhiteList.forEach(field => {

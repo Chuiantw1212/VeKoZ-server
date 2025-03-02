@@ -201,16 +201,19 @@ export default class EventService {
         const eventPatch: IEvent = {}
         switch (eventDesign.formField) {
             case 'performers': {
+                // 配合關鍵字更新，不另外關聯資料
                 eventPatch.performerIds = eventDesign.memberIds
                 eventPatch.performerNames = eventDesign.memberNames
             }
             case 'location': {
+                // 配合即時搜尋，不另外關聯資料
                 eventPatch.locationId = eventDesign.placeId
                 eventPatch.locationAddress = eventDesign.placeAddress
                 eventPatch.locationAddressRegion = eventDesign.placeAddressRegion
                 break;
             }
             case 'virtualLocation': {
+                // 配合即時搜尋，不另外關聯資料
                 eventPatch.virtualLocationName = eventDesign.urlName
                 eventPatch.virtualLocationValue = eventDesign.urlValue
                 break;
@@ -245,6 +248,7 @@ export default class EventService {
                 break;
             }
             case 'organizer': {
+                // 配合即時搜尋，不另外關聯資料
                 if (eventDesign.organizationId) {
                     const organizerLogo = await this.organizationModel.getLogoUrl(eventDesign.organizationId)
                     eventPatch.organizerId = eventDesign.organizationId

@@ -34,21 +34,22 @@ export default class UserService {
         return publicUrl
     }
 
-    async getUserBySeoName(uid: string) {
-        const user: IUser = await this.userModel.getUserBySeoName(uid)
-        const publicUser: IUser = {}
-        const fieldWhiteList: string[] = ['id', 'description', 'name', 'seoName', 'seoTitle', 'designIds', 'avatar']
-        fieldWhiteList.forEach(field => {
-            publicUser[field] = user[field]
-        })
-        if (publicUser.designIds) {
-            const promises = publicUser.designIds.map(id => {
+    /**
+     * 抓取公開資料
+     * @param field id或是seoName
+     * @param value 
+     * @returns 
+     */
+    async getUserPublicInfo(field: string, value: string) {
+        let user: IUser = await this.userModel.getPublicInfo(field, value)
+        if (user.designIds) {
+            const promises = user.designIds.map(id => {
                 return this.userDesignModel.getUserDesignById(id)
             })
             const userDesigns: IUserDesign[] = await Promise.all(promises)
-            publicUser.designs = userDesigns
+            user.designs = userDesigns
         }
-        return publicUser
+        return user
     }
 
     /**

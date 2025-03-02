@@ -117,10 +117,10 @@ export default class OfferModel extends VekozModel {
             wheres.push(['eventId', '==', query.eventId])
         }
         const offers: IOffer[] = await super.getItemsByQuery(wheres, options) as IOffer[]
-        // offers.forEach(offer => {
-        //     offer.validFrom = super.formatDate(offer.validFrom)
-        //     offer.validThrough = super.formatDate(offer.validThrough)
-        // })
+        offers.forEach(offer => {
+            offer.validFrom = super.formatDate(offer.validFrom)
+            offer.validThrough = super.formatDate(offer.validThrough)
+        })
         return offers
     }
 
