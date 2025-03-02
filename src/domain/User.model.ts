@@ -23,6 +23,9 @@ export default class UserModel extends Firestore {
             }
         }) as IUser[]
         const user = users[0]
+        if (!user) {
+            return {}
+        }
         const publicUser: IUser = {}
         const fieldWhiteList: string[] = ['id', 'description', 'name', 'seoName', 'seoTitle', 'avatar', 'sameAs']
         fieldWhiteList.forEach(field => {

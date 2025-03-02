@@ -41,7 +41,10 @@ export default class UserService {
      * @returns 
      */
     async getUserPublicInfo(field: string, value: string) {
-        let user: IUser = await this.userModel.getPublicInfo(field, value)
+        const user: IUser = await this.userModel.getPublicInfo(field, value)
+        if (!user) {
+            return '用戶不存在'
+        }
         if (user.designIds) {
             const promises = user.designIds.map(id => {
                 return this.userDesignModel.getUserDesignById(id)
