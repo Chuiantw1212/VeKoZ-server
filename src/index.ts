@@ -3,7 +3,7 @@ import { Elysia } from 'elysia'
 import { node } from '@elysiajs/node'
 import { cors } from '@elysiajs/cors'
 import path from 'path'
-// // entities
+// entities
 import AccessGlobalService from './entities/app'
 // adapters
 import firebase from './adapters/firebase.out'
@@ -11,6 +11,7 @@ import googleSecretManager from './adapters/googleSecretManager.out'
 import googleCalendar from './adapters/googleCalendar.out'
 import BlobAdapter from './adapters/BlobAdapter.out'
 import NlpAdapter from './adapters/nlp.out'
+import EmailAdapter from './adapters/email.out'
 // models
 import PlaceModel from './domain/Place.model'
 import SelectModel from './domain/Select.model';
@@ -29,6 +30,7 @@ import MetaService from './domain/services/Meta.service';
 import EventService from './domain/services/Event.service';
 import EventTemplateService from './domain/services/EventTemplate.service'
 import OrganizationService from './domain/services/Organization.service'
+import OrganizationMemberService from './domain/services/OrganizationMember.service'
 import AuthService from './domain/services/Auth.service'
 import PlaceService from './domain/services/Place.service'
 import UserService from './domain/services/User.service'
@@ -41,12 +43,14 @@ import rootController from './adapters/client.in/root.ctrl'
 import eventController from './adapters/client.in/event.ctrl'
 import eventTemplateController from './adapters/client.in/eventTemplate.ctrl'
 import organizationController from './adapters/client.in/organization.ctrl'
+import organizationMemberController from './adapters/client.in/organizationMember.ctrl'
 import placeController from './adapters/client.in/place.ctrl'
 import userController from './adapters/client.in/user.ctrl'
 import userDesignController from './adapters/client.in/userDesign.ctrl'
 import googleController from './adapters/client.in/google.ctrl'
 import metaController from './adapters/client.in/meta.ctrl'
 import offerController from './adapters/client.in/offer.ctrl'
+import EmailAdapter from './adapters/email.out'
 
 (async () => {
     const app = new Elysia({ adapter: node() })
@@ -72,6 +76,8 @@ import offerController from './adapters/client.in/offer.ctrl'
         console.trace('FIREBASE_API_KEY:', error.message)
     }
     await googleCalendar.setClient(FIREBASE_API_KEY)
+    const nlpAdapter = new NlpAdapter()
+    const emailAdapter = new EmailAdapter(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
 
     /**
      * Models
@@ -119,8 +125,6 @@ import offerController from './adapters/client.in/offer.ctrl'
         collection: firebase.getCollection('offers')
     })
 
-    const nlpAdapter = new NlpAdapter()
-
     /**
      * Services
      */
@@ -141,11 +145,13 @@ import offerController from './adapters/client.in/offer.ctrl'
         }),
         OrganizationService: new OrganizationService({
             organizationModel,
-            organizationMemberModel,
             eventModel,
             offerModel,
             eventDesignModel,
             eventTemplateDesignModel,
+        }),
+        OrganizationMemberService: new OrganizationMemberService({
+            organizationMemberModel,
         }),
         PlaceService: new PlaceService({
             placeModel,
@@ -194,6 +200,7 @@ import offerController from './adapters/client.in/offer.ctrl'
         .use(googleController)
         .use(metaController)
         .use(offerController)
+        .use(organizationMemberController)
 
     // Start Listening
     app.listen(8080, ({ hostname, port }) => {

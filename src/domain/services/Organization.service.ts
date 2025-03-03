@@ -1,5 +1,5 @@
 import OrganizationModel from '../Organization.model'
-import OrganizationMemberModel from '../OrganizationMember.model';
+// import OrganizationMemberModel from '../OrganizationMember.model';
 import EventModel from '../Event.model';
 import OfferModel from '../OfferModel';
 import EventTemplateDesignModel from '../EventTemplateDesign.model';
@@ -10,7 +10,7 @@ import type { IOrganization, IOrganizationMember } from '../../entities/organiza
 
 interface Idependency {
     organizationModel: OrganizationModel;
-    organizationMemberModel: OrganizationMemberModel
+    // organizationMemberModel: OrganizationMemberModel
     eventModel: EventModel,
     offerModel: OfferModel,
     eventTemplateDesignModel: EventTemplateDesignModel,
@@ -19,7 +19,7 @@ interface Idependency {
 
 export default class OrganizationService {
     protected organizationModel: OrganizationModel
-    protected organizationMemberModel: OrganizationMemberModel
+    // protected organizationMemberModel: OrganizationMemberModel
     protected eventModel: EventModel
     protected offerModel: OfferModel
     protected eventTemplateDesignModel: EventTemplateDesignModel
@@ -27,7 +27,7 @@ export default class OrganizationService {
 
     constructor(dependency: Idependency) {
         this.organizationModel = dependency.organizationModel
-        this.organizationMemberModel = dependency.organizationMemberModel
+        // this.organizationMemberModel = dependency.organizationMemberModel
         this.eventModel = dependency.eventModel
         this.offerModel = dependency.offerModel
         this.eventTemplateDesignModel = dependency.eventTemplateDesignModel
@@ -116,16 +116,16 @@ export default class OrganizationService {
         return list
     }
 
-    /**
-     * 取得成員列表
-     * @param uid 使用者uid
-     * @param organizationId 企業文件Id
-     * @returns 
-     */
-    async getMemberList(uid: string, organizationId: string): Promise<IOrganizationMember[]> {
-        const list: IOrganizationMember[] = await this.organizationMemberModel.getMemberList(uid, organizationId) as IOrganizationMember[]
-        return list
-    }
+    // /**
+    //  * 取得成員列表
+    //  * @param uid 使用者uid
+    //  * @param organizationId 企業文件Id
+    //  * @returns 
+    //  */
+    // async getMemberList(uid: string, organizationId: string): Promise<IOrganizationMember[]> {
+    //     const list: IOrganizationMember[] = await this.organizationMemberModel.getMemberList(uid, organizationId) as IOrganizationMember[]
+    //     return list
+    // }
 
     /**
      * 刪除組織

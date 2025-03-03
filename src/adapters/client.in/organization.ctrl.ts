@@ -17,13 +17,6 @@ router.use(bearer())
         const organizations: IOrganization[] = await OrganizationService.getOrganizationList(user.uid)
         return organizations
     })
-    .get('/organization/:id/member/list', async ({ bearer, params }) => {
-        const { AuthService, OrganizationService, } = AccessGlobalService.locals
-        const { id } = params
-        const user = await AuthService.verifyIdToken(bearer)
-        const organizationMembers: IOrganizationMember[] = await OrganizationService.getMemberList(user.uid, id)
-        return organizationMembers
-    })
     .post('/organization', async ({ request, bearer }) => {
         const { OrganizationService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)

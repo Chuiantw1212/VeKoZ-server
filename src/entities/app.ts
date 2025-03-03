@@ -5,6 +5,7 @@ import MetaService from "../domain/services/Meta.service"
 import EventService from "../domain/services/Event.service"
 import EventTemplateService from "../domain/services/EventTemplate.service"
 import OrganizationService from '../domain/services/Organization.service'
+import OrganizationMemberService from "../domain/services/OrganizationMember.service"
 import AuthService from '../domain/services/Auth.service'
 import PlaceService from '../domain/services/Place.service'
 import UserService from "../domain/services/User.service"
@@ -18,6 +19,7 @@ export interface ILocals {
     MetaService: MetaService,
     EventService: EventService,
     OrganizationService: OrganizationService,
+    OrganizationMemberService: OrganizationMemberService,
     AuthService: AuthService,
     PlaceService: PlaceService,
     EventTemplateService: EventTemplateService,
