@@ -17,7 +17,7 @@ export default class UserModel extends Firestore {
      * 取得用戶資料，這邊並不會拿到偏好資料，而且應該用白名單確保個資不流出
      */
     async getPublicInfo(field: string, value: string) {
-        const users: IUser[] = await super.getItemsByQuery([[field, '==', value]], {
+        const users: IUser[] = await super.getItemsByQuery([[field, '==', value], ['isPublic', '==', true]], {
             count: {
                 range: [0, 1]
             }

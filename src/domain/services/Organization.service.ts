@@ -42,7 +42,10 @@ export default class OrganizationService {
     async newItem(uid: string, organization: IOrganization) {
         const logo = organization.logo // 暫存logo
         organization.logo = ''
-        let newOrganization: IOrganization = await this.organizationModel.createOrganization(uid, organization)
+        const defaultOrganization: IOrganization = Object.assign({
+            sameAs: [], // 必要
+        }, organization)
+        let newOrganization: IOrganization = await this.organizationModel.createOrganization(uid, defaultOrganization)
         newOrganization.logo = logo
         await this.updateOrganization(uid, organization)
         return newOrganization

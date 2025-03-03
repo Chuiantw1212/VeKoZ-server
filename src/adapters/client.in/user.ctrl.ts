@@ -33,13 +33,18 @@ router.use(bearer())
         const user = await UserService.getUserByUid(userIdToken.uid)
         return user
     })
-    // 帶參數抓公開的使用者資料
+    /**
+     * 因主辦事件關聯產生的公開資料抓取，不可隱藏
+     */
     .get('/user/:userId', async ({ params }) => {
         const { UserService } = AccessGlobalService.locals
         const { userId } = params
         const user = await UserService.getUserPublicInfo('id', userId)
         return user
     })
+    /**
+     * 造訪用戶個人頁，可隱藏
+     */
     .get('/user/seo/:seoName', async ({ params }) => {
         const { UserService } = AccessGlobalService.locals
         const { seoName } = params

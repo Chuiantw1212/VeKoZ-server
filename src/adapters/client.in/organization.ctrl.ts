@@ -31,7 +31,7 @@ router.use(bearer())
         const newOrganization = await OrganizationService.newItem(user.uid, organization)
         return newOrganization
     })
-    .put('/organization', async ({ request, bearer }) => {
+    .patch('/organization', async ({ request, bearer }) => {
         const { OrganizationService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         let newOrganization: IOrganization = await request.json() as any
