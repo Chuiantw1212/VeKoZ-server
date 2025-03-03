@@ -50,7 +50,6 @@ import userDesignController from './adapters/client.in/userDesign.ctrl'
 import googleController from './adapters/client.in/google.ctrl'
 import metaController from './adapters/client.in/meta.ctrl'
 import offerController from './adapters/client.in/offer.ctrl'
-import EmailAdapter from './adapters/email.out'
 
 (async () => {
     const app = new Elysia({ adapter: node() })
