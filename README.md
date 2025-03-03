@@ -1,5 +1,13 @@
 # 📦 VeKoZ-server 核心技術架構
 
+## 開發須知
+
+### Application Default
+
+```bs
+gcloud auth application-default login
+```
+
 ## 🚀 Elysia.js
 
 VeKoZ-server 採用 **Elysia.js** 作為伺服器框架，專注於提供 **高效能、低延遲、高吞吐** 的 API 服務，特別適合 **前後端分離**、**高併發** 與 **非同步請求** 的應用場景。Elysia.js 在架構設計上，充分利用了 Node.js 的非阻塞 I/O 特性，實現了極高的效能與擴展性。
