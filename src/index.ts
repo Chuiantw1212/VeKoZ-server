@@ -77,7 +77,23 @@ import offerController from './adapters/client.in/offer.ctrl'
     // await googleCalendar.setClient(FIREBASE_API_KEY)
     const nlpAdapter = new NlpAdapter()
     const emailAdapter = new EmailAdapter(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
-    // emailAdapter.test()
+    // const invitationHtml = emailAdapter.getInvitation({
+    //     recipientName: 'EN Chu',
+    //     recipientEmail: 'chuiantw1212@gmail.com',
+    //     organization: {
+    //         name: '學校學不到的事',
+    //         email: 'chuiantw1212@gmail.com'
+    //     },
+    // })
+    // console.log({
+    //     invitationHtml
+    // })
+    // emailAdapter.send({
+    //     subject: '邀請加入 VeKoZ 微課室',
+    //     recipientName: 'EN Chu',
+    //     recipientEmail: 'chuiantw1212@gmail.com',
+    //     html: invitationHtml,
+    // })
 
     /**
      * Models

@@ -1,4 +1,5 @@
 import { google, gmail_v1 } from "googleapis";
+import { IOrganization } from "../entities/organization";
 
 interface IServiceAccount {
     "type": string,
@@ -15,10 +16,11 @@ interface IServiceAccount {
 }
 
 interface IEmailMessage {
-    subject: string,
-    recipientName: string,
+    subject?: string,
+    recipientName?: string,
     recipientEmail: string,
-    html: string,
+    organization?: any,
+    html?: string,
 }
 
 export default class EmailAdapter {
@@ -66,7 +68,7 @@ export default class EmailAdapter {
 
     async send(emailMessage: IEmailMessage) {
         const {
-            subject,
+            subject = '空白的主旨',
             recipientEmail,
             recipientName = '未知的用戶',
             html,
@@ -103,5 +105,63 @@ export default class EmailAdapter {
                 raw: encodedMessage,
             },
         })
+    }
+
+    getInvitation(emailMessage: IEmailMessage) {
+        const {
+            subject,
+            recipientName,
+            recipientEmail,
+            organization,
+        } = emailMessage
+
+        const {
+            name: organizatoinName,
+            email: organizationEmail,
+        } = organization
+        return `
+            <!DOCTYPE html>
+            <html lang="zh-TW">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>邀請加入 VeKoZ 微課室</title>
+            </head>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f8f8f8; padding: 20px;">
+                <div style="max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+                    
+                    <!-- Logo -->
+                    <div style="text-align: center;">
+                        <img src="[您的Logo網址]" alt="VeKoZ 微課室" style="width: 120px; margin-bottom: 10px;">
+                    </div>
+
+                    <h2 style="color: #333; text-align: center;">邀請您加入 <span style="color: #EA4335;">VeKoZ 微課室</span>！</h2>
+                    <p>親愛的 <strong>${recipientName}</strong> 您好，</p>
+                    <p>我們正在 <strong>VeKoZ 微課室</strong> 平台上建立專屬組織 <strong>${organizatoinName}</strong>，希望邀請您加入，一起協作、規劃與執行精彩活動！</p>
+                    <p>VeKoZ 微課室是一個專為活動主辦方打造的線上平台，讓講師能夠順暢管理課程、分享資源，並提升活動運營效率。</p>
+                    
+                    <div style="text-align: center; margin: 20px 0;">
+                        <a href="[您的邀請連結]" style="background: #4285F4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-size: 16px; display: inline-block;">🚀 點擊此處加入 [組織名稱]</a>
+                    </div>
+
+                    <hr style="border: none; height: 1px; background: #EA4335; margin: 20px 0;">
+
+                    <p><strong>如何加入？</strong></p>
+                    <ul>
+                        <li><strong>如果您已經註冊 VeKoZ 微課室：</strong> 點擊後將直接開啟組織頁面。</li>
+                        <li><strong>如果您尚未註冊：</strong> 系統將引導您完成註冊，之後即可順利加入。</li>
+                    </ul>
+
+                    <p>期待您的加入，讓我們攜手打造更優質的學習與活動體驗！</p>
+                    
+                    <p>如有任何問題，請隨時與我們聯繫。</p>
+                    
+                    <p>祝順心，</p>
+                    <p><strong>${organizatoinName} 團隊</strong><br>
+                    <a href="mailto:chuiantw12121@gmail.com" style="color: #4285F4; text-decoration: none;">[您的聯絡方式或客服信箱]</a></p>
+                </div>
+            </body>
+            </html>
+            `
     }
 }

@@ -12,6 +12,7 @@ export interface IOrganization {
     logo?: string;
     banner?: string;
     googleCalendarId: string,
+    email: string,
 }
 
 export interface IOrganizationMember {
