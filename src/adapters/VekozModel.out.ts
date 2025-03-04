@@ -69,7 +69,7 @@ export default class VekozModel extends VenoniaCRUD {
         data.lastmod = lastmod
         await this.collection.doc(data.id).set({
             ...data,
-            uid 
+            uid
             // IMPORTANT 否則新資料會是null
         })
         // 轉換
@@ -277,7 +277,7 @@ export default class VekozModel extends VenoniaCRUD {
             if (options?.startAt) {
                 const snapshot = await query.limit(options.startAt).get()
                 const last = snapshot.docs[snapshot.docs.length - 1];
-                query = query.startAt(last)
+                query = query.startAfter(last)
             }
             query = query.limit(Number(options.limit))
         }

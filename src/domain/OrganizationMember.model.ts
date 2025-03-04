@@ -19,7 +19,7 @@ export default class OrganizationMemberModel extends VekozModel {
     async getMemberList(uid: string, organizationId: string, pagination: IPagination) {
         const options: ICrudOptions = {
             orderBy: ['lastmod', 'desc'],
-            startAt: pagination.pageSize * pagination.currentPage,
+            startAt: pagination.pageSize * (pagination.currentPage - 1),
             limit: pagination.pageSize,
         }
         const memberList = await super.getItemsByQuery([['organizationId', '==', organizationId]], options)
