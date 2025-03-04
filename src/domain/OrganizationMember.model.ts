@@ -9,6 +9,15 @@ export default class OrganizationMemberModel extends VekozModel {
         super(data)
     }
 
+    async checkMemberAuths(uid: string, organizationId: string, method: string) {
+        const options: ICrudOptions = {
+            count: {
+                absolute: 1
+            }
+        }
+        const memberList = await super.getItemsByQuery([['userUid', '==', uid], ['organizationId', '==', organizationId], ['auths', 'array-contains', method]], options)
+    }
+
     /**
      * 建立了 organizationId + lastmod index
      * @param uid 
@@ -22,7 +31,7 @@ export default class OrganizationMemberModel extends VekozModel {
             startAt: pagination.pageSize * (pagination.currentPage - 1),
             limit: pagination.pageSize,
         }
-        const memberList = await super.getItemsByQuery([['organizationId', '==', organizationId]], options)
+        const memberList = await super.getItemsByQuery([['uid', '==', uid], ['organizationId', '==', organizationId]], options)
         const query = await super.getQuery([['organizationId', '==', organizationId]])
         const count = await super.checkQueryCount(query, options?.count ?? {})
         return {

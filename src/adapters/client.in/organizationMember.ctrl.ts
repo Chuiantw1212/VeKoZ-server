@@ -21,4 +21,12 @@ router.use(bearer())
         const newMember = await OrganizationMemberService.inviteMember(user.uid, organizatoinMember)
         return newMember
     })
+    .delete('/organization/member/:id', async ({ bearer, params, query }) => {
+        const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
+        const { id } = params
+        const user = await AuthService.verifyIdToken(bearer)
+        const pagination = query as any
+        const result = await OrganizationMemberService.deleteMember(user.uid, id)
+        return result
+    })
 export default router

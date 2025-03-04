@@ -25,6 +25,10 @@ export default class OrganizationMemberService {
         this.userModel = dependency.userModel
     }
 
+    async checkMemberAuths(uid: string, organizationId: string, method: string) {
+        await this.organizationMemberModel.checkMemberAuths(uid, organizationId, method)
+    }
+
     /**
      * 取得成員列表
      * @param uid 使用者uid
