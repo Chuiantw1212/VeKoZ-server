@@ -6,10 +6,14 @@ import { IBlob } from '../../ports/out.model'
 const router = new Elysia()
 router.use(bearer())
     .post('/user', async ({ bearer, request }) => {
-        const { AuthService, UserService } = AccessGlobalService.locals
+        const { AuthService, UserService, OrganizationService } = AccessGlobalService.locals
         const userIdToken = await AuthService.verifyIdToken(bearer)
         const user = await request.json() as IUser
         const userCreated = await UserService.addUser(userIdToken.uid, user)
+        // 建立自己的預設組織
+        OrganizationService.newItem(String(user.uid), {
+            name: `${user.nam}的組織`
+        })
         return userCreated
     })
     .patch('/user', async ({ bearer, request }) => {

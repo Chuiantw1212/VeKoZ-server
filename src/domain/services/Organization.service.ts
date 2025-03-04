@@ -47,7 +47,7 @@ export default class OrganizationService {
         }, organization)
         let newOrganization: IOrganization = await this.organizationModel.createOrganization(uid, defaultOrganization)
         newOrganization.logo = logo
-        await this.updateOrganization(uid, organization)
+        await this.updateOrganization(uid, newOrganization)
         return newOrganization
     }
 

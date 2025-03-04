@@ -3,16 +3,16 @@
  */
 export interface IOrganization {
     [key: string]: any
-    uid: string;
-    id: string; // doc id
-    name: string;
-    seoName: string,
-    description: string,
-    sameAs: string[],
+    uid?: string;
+    id?: string; // doc id
+    name?: string;
+    seoName?: string,
+    description?: string,
+    sameAs?: string[],
     logo?: string;
     banner?: string;
-    googleCalendarId: string,
-    email: string,
+    googleCalendarId?: string,
+    email?: string,
 }
 
 export interface IOrganizationMember {

@@ -69,6 +69,7 @@ export default class VekozModel extends VenoniaCRUD {
         })
         // 轉換
         data.lastmod = new Date(data.lastmod.seconds * 1000)
+        delete data.uid // 重要
         return data
     }
 
