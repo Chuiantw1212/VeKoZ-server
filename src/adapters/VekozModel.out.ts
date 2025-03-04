@@ -138,26 +138,6 @@ export default class VekozModel extends VenoniaCRUD {
     }
 
     /**
-     * R: 利用條件查詢資料
-     * @param uid 
-     * @param options 
-     */
-    protected async getUidByQuery(wheres: any[][]): Promise<DocumentData[]> {
-        if (!this.collection) {
-            throw this.error.collectionIsNotReady
-        }
-        const query = await this.getQuery(wheres)
-        // 等於一
-        await this.checkQueryCount(query, {
-            absolute: 1
-        })
-        // 取得資料
-        const snapshot = await query.get()
-        const uid = snapshot.docs[0].data().uid
-        return uid
-    }
-
-    /**
      * U: 更新現有的Documents
      * @param uid user id
      * @param data 

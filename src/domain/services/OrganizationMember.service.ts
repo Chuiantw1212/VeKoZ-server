@@ -25,8 +25,13 @@ export default class OrganizationMemberService {
         this.userModel = dependency.userModel
     }
 
-    async checkMemberAuths(uid: string, organizationId: string, method: string) {
-        await this.organizationMemberModel.checkMemberAuths(uid, organizationId, method)
+    async deleteMember(uid: string, memberEmail: string,) {
+        const count = await this.organizationMemberModel.deleteMember(uid, memberEmail)
+        return count
+    }
+
+    async checkMemberAuths(email: string, organizationId: string, method: string) {
+        await this.organizationMemberModel.checkMemberAuths(email, organizationId, method)
     }
 
     /**
