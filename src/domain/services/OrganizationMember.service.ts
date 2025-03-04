@@ -55,9 +55,9 @@ export default class OrganizationMemberService {
         // 找既有客戶資料
         const existedMember = await this.userModel.getPublicInfo('email', member.email)
         member.name = existedMember.name ?? '新用戶'
+        member.auths = ['get']
 
         // 發出信件邀請
-        member.auths = ['get']
         const newMember = await this.organizationMemberModel.addMember(uid, member)
         this.organizaitonModel.getOrganizationById(member.organizationId).then((organization) => {
             organization = organization as IOrganization
