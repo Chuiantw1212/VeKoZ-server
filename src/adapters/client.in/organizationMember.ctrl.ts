@@ -12,10 +12,11 @@ router.use(bearer())
         const organizationMembers: IOrganizationMember[] = await OrganizationMemberService.getMemberList(user.uid, id)
         return organizationMembers
     })
-    .post('/organization/member', async ({ request, params }) => {
-        const { OrganizationMemberService, } = AccessGlobalService.locals
+    .post('/organization/member', async ({ bearer, request, }) => {
+        const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
         const organizatoinMember = await request.json() as IOrganizationMember
-        await OrganizationMemberService.inviteMember(organizatoinMember)
-        // return organization
+        const newMember = await OrganizationMemberService.inviteMember(user.uid, organizatoinMember)
+        return newMember
     })
 export default router

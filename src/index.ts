@@ -62,8 +62,7 @@ import offerController from './adapters/client.in/offer.ctrl'
         FIREBASE_SERVICE_ACCOUNT_KEY_JSON = await googleSecretManager.accessSecret('FIREBASE_SERVICE_ACCOUNT_KEY_JSON')
     } catch (error: any) {
         console.trace('FIREBASE_SERVICE_ACCOUNT_KEY_JSON:', error.message)
-        const keyPath = path.resolve(__dirname, '../FIREBASE_SERVICE_ACCOUNT_KEY_JSON.json')
-        FIREBASE_SERVICE_ACCOUNT_KEY_JSON = require(keyPath);
+        return
     }
     await firebase.initializeSync(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
 
@@ -167,7 +166,9 @@ import offerController from './adapters/client.in/offer.ctrl'
             eventTemplateDesignModel,
         }),
         OrganizationMemberService: new OrganizationMemberService({
+            emailAdapter,
             organizationMemberModel,
+            organizationModel,
         }),
         PlaceService: new PlaceService({
             placeModel,

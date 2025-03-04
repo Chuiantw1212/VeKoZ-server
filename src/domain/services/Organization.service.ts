@@ -47,7 +47,7 @@ export default class OrganizationService {
         }, organization)
         let newOrganization: IOrganization = await this.organizationModel.createOrganization(uid, defaultOrganization)
         newOrganization.logo = logo
-        await this.updateOrganization(uid, newOrganization)
+        await this.updateOrganization(uid, organization)
         return newOrganization
     }
 
@@ -63,20 +63,20 @@ export default class OrganizationService {
      * 更新組織
      */
     async updateOrganization(uid: string, organization: IOrganization) {
-        const tempLogo = organization.logo
+        const tempLogo = organization.image // 共用了套版的名稱
         const tempBanner = organization.banner
-        delete organization.logo
+        delete organization.image
         delete organization.banner
 
-        const count = await this.organizationModel.mergeOrganizationById(uid, organization.id, organization)
+        const count = await this.organizationModel.mergeOrganizationById(uid, String(organization.id), organization)
         if (count) {
             // 有count表示有權限，不然就是bug了
             if (tempLogo && typeof tempLogo !== 'string') {
-                const publicUrl: string = await this.organizationModel.storeLogo(organization.id, tempLogo)
+                const publicUrl: string = await this.organizationModel.storeLogo(String(organization.id), tempLogo)
                 organization.logo = publicUrl
                 // 更新Event Organizer Logo
                 const eventListL: IEvent[] = await this.eventModel.queryEventList({
-                    organizerId: organization.id,
+                    organizerId: String(organization.id),
                 })
                 eventListL.forEach((event: IEvent) => {
                     this.eventModel.mergeEventById(uid, String(event.id), {
@@ -85,23 +85,23 @@ export default class OrganizationService {
                 })
             }
             if (tempBanner && typeof tempBanner !== 'string') {
-                const publicUrl: string = await this.organizationModel.storeBanner(organization.id, tempBanner)
+                const publicUrl: string = await this.organizationModel.storeBanner(String(organization.id), tempBanner)
                 organization.banner = publicUrl
             }
         }
         // 另外儲存banner與logo連結
-        await this.organizationModel.mergeOrganizationById(uid, organization.id, organization)
+        await this.organizationModel.mergeOrganizationById(uid, String(organization.id), organization)
 
-        this.offerModel.updateOfferGroupByOffererId(uid, organization.id, {
+        this.offerModel.updateOfferGroupByOffererId(uid, String(organization.id), {
             offererName: organization.name,
         })
-        this.offerModel.updateOfferGroupBySellerId(uid, organization.id, {
+        this.offerModel.updateOfferGroupBySellerId(uid, String(organization.id), {
             sellerName: organization.name,
         })
-        this.eventTemplateDesignModel.setByOrganizationId(uid, organization.id, {
+        this.eventTemplateDesignModel.setByOrganizationId(uid, String(organization.id), {
             organizationName: organization.name,
         })
-        this.eventDesignModel.setByOrganizationId(uid, organization.id, {
+        this.eventDesignModel.setByOrganizationId(uid, String(organization.id), {
             organizationName: organization.name,
         })
         return count

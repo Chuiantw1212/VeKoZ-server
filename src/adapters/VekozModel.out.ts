@@ -53,8 +53,12 @@ export default class VekozModel extends VenoniaCRUD {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }
-        const query = await this.getQuery([['uid', '==', uid]], options)
         if (options?.count) {
+            const defaultQuery = [['uid', '==', uid]]
+            options.count.fields?.forEach(field => {
+                defaultQuery.push([field, '==', data[field]])
+            })
+            const query = await this.getQuery(defaultQuery, options)
             await this.checkQueryCount(query, options.count)
         }
         const docRef = this.collection.doc()

@@ -83,7 +83,6 @@ export interface ICrudOptions {
     uid?: string, // 資料權限控制
     count?: IDataCountOptions,
     slice?: [number, number] | number
-    fields?: string[],
     merge?: boolean,
     limit?: number,
     sort?: string,
@@ -95,4 +94,5 @@ export interface IDataCountOptions {
     max?: number,
     absolute?: number,
     range?: number[],
+    fields?: string[],
 }
