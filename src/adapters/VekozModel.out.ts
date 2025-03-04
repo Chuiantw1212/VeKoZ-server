@@ -69,7 +69,8 @@ export default class VekozModel extends VenoniaCRUD {
         data.lastmod = lastmod
         await this.collection.doc(data.id).set({
             ...data,
-            uid // IMPORTANT 否則新資料會是null
+            uid 
+            // IMPORTANT 否則新資料會是null
         })
         // 轉換
         data.lastmod = new Date(data.lastmod.seconds * 1000)
@@ -122,21 +123,9 @@ export default class VekozModel extends VenoniaCRUD {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }
-        // 檢查資料數量
         const query = await this.getQuery(wheres, options)
-        if (options?.count) {
-            await this.checkQueryCount(query, options.count)
-        }
         // 取得資料
         let docs = (await query.get()).docs
-        if (options?.slice) {
-            const slice = options.slice
-            if (slice instanceof Array) {
-                docs = docs.slice(...slice)
-            } else {
-                docs = docs.slice(slice)
-            }
-        }
         const docDatas = docs.map(doc => {
             const docData = doc.data()
             delete docData.uid // IMPORTANT
@@ -283,6 +272,14 @@ export default class VekozModel extends VenoniaCRUD {
             const fieldPath = options.orderBy[0]
             const orderByDirection = options.orderBy[1] as 'desc' | 'asc'
             query = query.orderBy(fieldPath, orderByDirection)
+        }
+        if (options?.limit) {
+            if (options?.startAt) {
+                const snapshot = await query.limit(options.startAt).get()
+                const last = snapshot.docs[snapshot.docs.length - 1];
+                query = query.startAt(last)
+            }
+            query = query.limit(Number(options.limit))
         }
         return query
     }

@@ -2,15 +2,17 @@ import AccessGlobalService from '../../entities/app'
 import type { IOrganization, IOrganizationMember } from '../../entities/organization'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
+import { IPagination } from '../../entities/meta'
 
 const router = new Elysia()
 router.use(bearer())
-    .get('/organization/:id/member/list', async ({ bearer, params }) => {
+    .get('/organization/:id/member/list', async ({ bearer, params, query }) => {
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
         const { id } = params
         const user = await AuthService.verifyIdToken(bearer)
-        const organizationMembers: IOrganizationMember[] = await OrganizationMemberService.getMemberList(user.uid, id)
-        return organizationMembers
+        const pagination = query as any
+        const result = await OrganizationMemberService.getMemberList(user.uid, id, pagination)
+        return result
     })
     .post('/organization/member', async ({ bearer, request, }) => {
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals

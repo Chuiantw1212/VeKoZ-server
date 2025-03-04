@@ -11,3 +11,8 @@ export interface ISelectDocData {
     key: string,
     options: IOptionsItem[]
 }
+
+export interface IPagination {
+    pageSize: number,
+    currentPage: number,
+}

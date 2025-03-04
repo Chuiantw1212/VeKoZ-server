@@ -1,4 +1,4 @@
-import type { ISelectMap, ISelectDocData } from '../../entities/select'
+import type { ISelectMap, ISelectDocData } from '../../entities/meta'
 import SelectModel from '../Select.model'
 interface Idependency {
     selectModel: SelectModel

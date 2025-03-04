@@ -17,8 +17,8 @@ export interface IOrganization {
 
 export interface IOrganizationMember {
     [key: string]: any
-    organizationUid: string,
-    userUid: string,
+    organizationId: string,
+    // uid: string,
 }
 
 /**
@@ -30,5 +30,5 @@ export interface IOrganizationMember {
  */
 export interface IOrganizationRole {
     [key: string]: any
-    organizationUid: string,
+    organizationId: string,
 }

@@ -82,7 +82,7 @@ export default abstract class VenoniaCRUD {
 export interface ICrudOptions {
     uid?: string, // 資料權限控制
     count?: IDataCountOptions,
-    slice?: [number, number] | number
+    startAt?: number,
     merge?: boolean,
     limit?: number,
     sort?: string,

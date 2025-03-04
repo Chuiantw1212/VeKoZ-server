@@ -3,6 +3,7 @@ import type { IOrganization, IOrganizationMember } from '../../entities/organiza
 import EmailAdapter from '../../adapters/email.out';
 import OrganizationModel from '../Organization.model';
 import UserModel from '../User.model';
+import { IPagination } from '../../entities/meta';
 
 interface Idependency {
     emailAdapter: EmailAdapter,
@@ -30,9 +31,9 @@ export default class OrganizationMemberService {
      * @param organizationId 企業文件Id
      * @returns 
      */
-    async getMemberList(uid: string, organizationId: string): Promise<IOrganizationMember[]> {
-        const list: IOrganizationMember[] = await this.organizationMemberModel.getMemberList(uid, organizationId) as IOrganizationMember[]
-        return list
+    async getMemberList(uid: string, organizationId: string, query: IPagination) {
+        const result = await this.organizationMemberModel.getMemberList(uid, organizationId, query)
+        return result
     }
 
     async inviteMember(uid: string, member: IOrganizationMember) {
