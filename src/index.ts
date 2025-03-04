@@ -77,6 +77,7 @@ import offerController from './adapters/client.in/offer.ctrl'
     // await googleCalendar.setClient(FIREBASE_API_KEY)
     const nlpAdapter = new NlpAdapter()
     const emailAdapter = new EmailAdapter(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
+    // emailAdapter.test()
 
     /**
      * Models
