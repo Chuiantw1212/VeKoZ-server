@@ -4,6 +4,7 @@ import EmailAdapter from '../../adapters/email.out';
 import OrganizationModel from '../Organization.model';
 import UserModel from '../User.model';
 import { IPagination } from '../../entities/meta';
+import { ICrudOptions } from '../../ports/out.crud';
 
 interface Idependency {
     emailAdapter: EmailAdapter,
@@ -25,8 +26,13 @@ export default class OrganizationMemberService {
         this.userModel = dependency.userModel
     }
 
-    async deleteMember(uid: string, memberEmail: string,) {
-        const count = await this.organizationMemberModel.deleteMember(uid, memberEmail)
+    async setMember(uid: string, member: IOrganizationMember,) {
+        const count = await this.organizationMemberModel.setMember(uid, member)
+        return count
+    }
+
+    async deleteMember(uid: string, id: string,) {
+        const count = await this.organizationMemberModel.deleteMember(uid, id)
         return count
     }
 

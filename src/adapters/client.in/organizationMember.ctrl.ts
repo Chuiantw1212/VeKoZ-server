@@ -1,8 +1,7 @@
 import AccessGlobalService from '../../entities/app'
-import type { IOrganization, IOrganizationMember } from '../../entities/organization'
+import type { IOrganizationMember } from '../../entities/organization'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
-import { IPagination } from '../../entities/meta'
 
 const router = new Elysia()
 router.use(bearer())
@@ -21,11 +20,18 @@ router.use(bearer())
         const newMember = await OrganizationMemberService.inviteMember(user.uid, organizatoinMember)
         return newMember
     })
-    .delete('/organization/member/:email', async ({ bearer, params, query }) => {
+    .patch('/organization/member', async ({ bearer, request, }) => {
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
-        const { email } = params
         const user = await AuthService.verifyIdToken(bearer)
-        const count = await OrganizationMemberService.deleteMember(user.uid, email)
+        const organizatoinMember = await request.json() as IOrganizationMember
+        const count = await OrganizationMemberService.setMember(user.uid, organizatoinMember)
+        return count
+    })
+    .delete('/organization/member/:id', async ({ bearer, params, query }) => {
+        const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
+        const { id } = params
+        const user = await AuthService.verifyIdToken(bearer)
+        const count = await OrganizationMemberService.deleteMember(user.uid, id)
         return count
     })
 export default router
