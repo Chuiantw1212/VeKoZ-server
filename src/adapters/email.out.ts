@@ -70,7 +70,7 @@ export default class EmailAdapter {
         const {
             subject = '空白的主旨',
             recipientEmail,
-            recipientName = '未知的用戶',
+            recipientName = '新用戶',
             html,
         } = emailMessage
         console.log(emailMessage)
@@ -80,9 +80,10 @@ export default class EmailAdapter {
          */
         const utf8Sender = `=?utf-8?B?${Buffer.from('VeKoZ 微課室').toString('base64')}?=`;
         const utf8Subject = `=?utf-8?B?${Buffer.from(subject).toString('base64')}?=`;
+        const utf8Recipient = `=?utf-8?B?${Buffer.from(recipientName).toString('base64')}?=`;
         const messageParts = [
             `From: ${utf8Sender} <en.chu@vekoz.org>`,
-            `To: ${recipientName} <${recipientEmail}>`,
+            `To: ${utf8Recipient} <${recipientEmail}>`,
             `Reply-To: chuiantw1212@gmail.com`,
             'Content-Type: text/html; charset=utf-8',
             'MIME-Version: 1.0',
