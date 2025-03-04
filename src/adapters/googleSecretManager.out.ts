@@ -17,8 +17,12 @@ export class GoogleCloudPlugin {
         this.sercertManagerServiceClient = client
     }
     public async accessSecret(name: string = '') {
+        /**
+         * name路徑來自
+         * https://console.cloud.google.com/security/secret-manager
+         */
         const [version] = await this.sercertManagerServiceClient.accessSecretVersion({
-            name: `projects/83032571165/secrets/${name}/versions/latest`,
+            name: `projects/216703103429/secrets/${name}/versions/latest`,
         })
         if (version.payload?.data) {
             const payload = version.payload.data.toString();

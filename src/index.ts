@@ -67,14 +67,14 @@ import offerController from './adapters/client.in/offer.ctrl'
     }
     await firebase.initializeSync(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
 
-    // Load GCP
-    let FIREBASE_API_KEY = null
-    try {
-        FIREBASE_API_KEY = await googleSecretManager.accessSecret('FIREBASE_API_KEY')
-    } catch (error: any) {
-        console.trace('FIREBASE_API_KEY:', error.message)
-    }
-    await googleCalendar.setClient(FIREBASE_API_KEY)
+    // // Load GCP
+    // let FIREBASE_API_KEY = null
+    // try {
+    //     FIREBASE_API_KEY = await googleSecretManager.accessSecret('FIREBASE_API_KEY')
+    // } catch (error: any) {
+    //     console.trace('FIREBASE_API_KEY:', error.message)
+    // }
+    // await googleCalendar.setClient(FIREBASE_API_KEY)
     const nlpAdapter = new NlpAdapter()
     const emailAdapter = new EmailAdapter(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
 

@@ -13,22 +13,22 @@ export default class EmailAdapter {
             credentials: keyFile,
             scopes: ['https://www.googleapis.com/auth/gmail.send'],
         });
-        console.log({
-            auth
-        })
+        // console.log({
+        //     auth
+        // })
         const gmail = new gmail_v1.Gmail({
             auth,
         })
-        console.log({
-            gmail
-        })
+        // console.log({
+        //     gmail
+        // })
         const payload: gmail_v1.Schema$MessagePart = {
             headers: [{ name: 'Test', value: 'chuiantw1212@gmail.com' }],
             // body: {
             //     data: Buffer.from('測試內容').toString('base64')
             // }
         }
-        // return
+        return
         // gmail.users.messages.list({
         //     userId: 'me'
         // })
