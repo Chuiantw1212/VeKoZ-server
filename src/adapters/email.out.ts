@@ -141,7 +141,7 @@ export default class EmailAdapter {
                     <p>VeKoZ 微課室是一個專為活動主辦方打造的線上平台，讓講師能夠順暢管理課程、分享資源，並提升活動運營效率。</p>
                     
                     <div style="text-align: center; margin: 20px 0;">
-                        <a href="[您的邀請連結]" style="background: #4285F4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-size: 16px; display: inline-block;">🚀 點擊此處加入 ${organizatoinName}</a>
+                        <a href="[您的邀請連結]" style="background: #4285F4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-size: 16px; display: inline-block; cursor: pointer">🚀 點擊此處加入 ${organizatoinName}</a>
                     </div>
 
                     <hr style="border: none; height: 1px; background: #EA4335; margin: 20px 0;">

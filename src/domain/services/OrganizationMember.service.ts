@@ -41,6 +41,7 @@ export default class OrganizationMemberService {
         member.name = existedMember.name ?? '新用戶'
 
         // 發出信件邀請
+        member.auths = ['get']
         const newMember = await this.organizationMemberModel.addMember(uid, member)
         this.organizaitonModel.getOrganizationById(member.organizationId).then((organization) => {
             organization = organization as IOrganization
