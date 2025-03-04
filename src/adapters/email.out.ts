@@ -73,7 +73,6 @@ export default class EmailAdapter {
             recipientName = '新用戶',
             html,
         } = emailMessage
-        console.log(emailMessage)
         /**
          * 中文編碼問題
          * =?charset?encoding?encoded-text?=
@@ -112,14 +111,13 @@ export default class EmailAdapter {
         const {
             subject,
             organization,
+            recipientName,
         } = emailMessage
 
         const {
-            name: organizatoinName,
-            logo: organizatoinLogo,
+            name: organizatoinName = '未命名的組織',
+            logo: organizatoinLogo = 'https://storage.googleapis.com/public.vekoz.org/logo/160_160.png',
         } = organization
-
-        const headerLogo = organizatoinLogo || 'https://storage.googleapis.com/public.vekoz.org/logo/160_160.png'
 
         return `
             <!DOCTYPE html>
@@ -134,11 +132,11 @@ export default class EmailAdapter {
                     
                     <!-- Logo -->
                     <div style="text-align: center;">
-                        <img src="${headerLogo}" alt="${organizatoinName}" style="width: 120px; margin-bottom: 10px;">
+                        <img src="${organizatoinLogo}" alt="${organizatoinName}" style="width: 120px; margin-bottom: 10px;">
                     </div>
 
                     <h2 style="color: #333; text-align: center;">邀請您加入 <span style="color: #EA4335;">${organizatoinName}</span>！</h2>
-                    <p>親愛的 用戶 您好，</p>
+                    <p>親愛的 ${recipientName} 您好，</p>
                     <p>我們正在 <strong>VeKoZ 微課室</strong> 平台上建立專屬組織 <strong>${organizatoinName}</strong>，希望邀請您加入，一起協作、規劃與執行精彩活動！</p>
                     <p>VeKoZ 微課室是一個專為活動主辦方打造的線上平台，讓講師能夠順暢管理課程、分享資源，並提升活動運營效率。</p>
                     

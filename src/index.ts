@@ -169,6 +169,7 @@ import offerController from './adapters/client.in/offer.ctrl'
             emailAdapter,
             organizationMemberModel,
             organizationModel,
+            userModel,
         }),
         PlaceService: new PlaceService({
             placeModel,
