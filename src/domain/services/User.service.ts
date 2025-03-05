@@ -3,6 +3,7 @@ import UserPreferenceModel from '../UserPreference.model';
 import UserDesignModel from '../UserDesign.model';
 import type { IUser, IUserDesign, IUserPreference } from '../../entities/user';
 import { IBlob } from '../../ports/out.model';
+import { DecodedIdToken } from 'firebase-admin/auth';
 
 interface Idependency {
     userModel: UserModel
@@ -91,8 +92,20 @@ export default class UserService {
      * 新增使用者
      * @param user 
      */
-    async addUser(uid: string, user: IUser) {
-        const createdUser: IUser = await this.userModel.createUser(uid, user)
+    async addUser(userIdToken: DecodedIdToken) {
+        /**
+         * https://schema.org/Person
+         */
+        const newUser: IUser = {
+            emailVerified: userIdToken.email_verified,
+            name: userIdToken.name ?? '',
+            email: userIdToken.email ?? '',
+            telephone: userIdToken.phoneNumber ?? '',
+            avatar: userIdToken.picture ?? '',
+            providerId: userIdToken.firebase.sign_in_provider,
+            uid: userIdToken.uid
+        }
+        const createdUser: IUser = await this.userModel.createUser(String(newUser.uid), newUser)
         if (createdUser.id) {
             const userPreference: IUserPreference = {
                 id: createdUser.id,
@@ -102,9 +115,9 @@ export default class UserService {
                     organizationIds: [],
                 }
             }
-            user.preference = userPreference
+            newUser.preference = userPreference
         }
-        return user
+        return newUser
     }
 
     /**

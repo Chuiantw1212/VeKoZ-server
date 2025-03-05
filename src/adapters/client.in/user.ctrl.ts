@@ -1,18 +1,28 @@
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
-import { IUser, IUserDesign } from '../../entities/user'
+import { IUser } from '../../entities/user'
 import { IBlob } from '../../ports/out.model'
+import { DecodedIdToken } from 'firebase-admin/auth'
+interface DecodedIdTokenWithName extends DecodedIdToken {
+    name?: string,
+}
 const router = new Elysia()
 router.use(bearer())
-    .post('/user', async ({ bearer, request }) => {
-        const { AuthService, UserService, OrganizationService } = AccessGlobalService.locals
-        const userIdToken = await AuthService.verifyIdToken(bearer)
-        const user = await request.json() as IUser
-        const userCreated = await UserService.addUser(userIdToken.uid, user)
+    .post('/user', async ({ request, bearer, }) => {
+        const { AuthService, UserService, OrganizationService, OrganizationMemberService } = AccessGlobalService.locals
+        const userIdToken: DecodedIdTokenWithName = await AuthService.verifyIdToken(bearer)
+        const userCreated = await UserService.addUser(userIdToken)
         // 建立自己的預設組織
-        OrganizationService.newItem(String(user.uid), {
-            name: `${user.nam}的組織`
+        const newOrganization = await OrganizationService.newItem(userIdToken.uid, {
+            name: `${userCreated.name}的組織`
+        })
+        // 只能從這邊跳過增加成員的權限認定
+        OrganizationMemberService.setMember(userIdToken.uid, {
+            name: userIdToken.name ?? '',
+            email: userIdToken.email ?? '',
+            organizationId: String(newOrganization.id),
+            allowMethods: ['GET', 'PATCH', 'POST', 'DELETE'],
         })
         return userCreated
     })

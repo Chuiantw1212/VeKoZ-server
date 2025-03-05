@@ -10,13 +10,15 @@ export default class SelectModel extends VekozModel {
         super(data)
     }
 
-    async getOptionsByKey(key: string): Promise<IOptionsItem[]> {
+    async getOptionsByKey(key: string): Promise<IOptionsItem[] | undefined> {
         const optoins: ICrudOptions = {
             count: {
                 absolute: 1
             }
         }
         const selectDocData = await super.getItemsByQuery([['key', '==', key]], optoins) as ISelectDocData[]
-        return selectDocData[0].options
+        if (selectDocData[0]) {
+            return selectDocData[0].options
+        }
     }
 }

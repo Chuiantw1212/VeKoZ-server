@@ -37,7 +37,7 @@ export default class OrganizationMemberService {
     }
 
     async checkMemberAuths(email: string, organizationId: string, method: string) {
-        await this.organizationMemberModel.checkMemberAuths(email, organizationId, method)
+        return await this.organizationMemberModel.checkMemberAuths(email, organizationId, method)
     }
 
     /**
@@ -55,7 +55,7 @@ export default class OrganizationMemberService {
         // 找既有客戶資料
         const existedMember = await this.userModel.getPublicInfo('email', member.email)
         member.name = existedMember.name ?? '新用戶'
-        member.auths = ['get']
+        member.allowMethods = ['GET']
 
         // 發出信件邀請
         const newMember = await this.organizationMemberModel.addMember(uid, member)

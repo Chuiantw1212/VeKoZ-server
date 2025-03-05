@@ -14,10 +14,14 @@ router.use(bearer())
         return result
     })
     .post('/organization/member', async ({ bearer, request, }) => {
+        /**
+         * 要補上權限認定
+         */
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const organizatoinMember = await request.json() as IOrganizationMember
-        const newMember = await OrganizationMemberService.inviteMember(user.uid, organizatoinMember)
+        const authUid = await OrganizationMemberService.checkMemberAuths(String(user.email), organizatoinMember.organizationId, request.method)
+        const newMember = await OrganizationMemberService.inviteMember(authUid, organizatoinMember)
         return newMember
     })
     .patch('/organization/member', async ({ bearer, request, }) => {

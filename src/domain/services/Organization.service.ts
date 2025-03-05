@@ -7,6 +7,7 @@ import EventDesignModel from '../EventDesign.model';
 
 import { IEvent } from '../../entities/event';
 import type { IOrganization, IOrganizationMember } from '../../entities/organization';
+import { DecodedIdToken } from 'firebase-admin/auth';
 
 interface Idependency {
     organizationModel: OrganizationModel;
@@ -47,7 +48,7 @@ export default class OrganizationService {
         }, organization)
         let newOrganization: IOrganization = await this.organizationModel.createOrganization(uid, defaultOrganization)
         newOrganization.logo = logo
-        await this.updateOrganization(uid, organization)
+        this.updateOrganization(uid, organization)
         return newOrganization
     }
 

@@ -2,7 +2,6 @@
  * https://schema.org/Organization
  */
 export interface IOrganization {
-    [key: string]: any
     uid?: string;
     id?: string; // doc id
     name?: string;
@@ -10,15 +9,18 @@ export interface IOrganization {
     description?: string,
     sameAs?: string[],
     logo?: string;
+    image?: string,
     banner?: string;
     googleCalendarId?: string,
     email?: string,
 }
 
 export interface IOrganizationMember {
-    [key: string]: any
+    id?: string,
+    name: string,
     organizationId: string,
-    // uid: string,
+    allowMethods: string[],
+    email: string,
 }
 
 /**

@@ -10,7 +10,7 @@ export default class OrganizationMemberModel extends VekozModel {
     }
 
     async checkMemberAuths(email: string, organizationId: string, method: string) {
-        const query = await super.getQuery([['email', '==', email], ['organizationId', '==', organizationId], ['auths', 'array-contains', method]])
+        const query = await super.getQuery([['email', '==', email], ['organizationId', '==', organizationId], ['allowMethods', 'array-contains', method]])
         await super.checkQueryCount(query, {
             absolute: 1
         })
@@ -26,7 +26,7 @@ export default class OrganizationMemberModel extends VekozModel {
                 absolute: 1
             }
         }
-        const count = await super.setItemById(uid, member.id, member, optoins)
+        const count = await super.setItemById(uid, String(member.id), member, optoins)
         return count
     }
 
