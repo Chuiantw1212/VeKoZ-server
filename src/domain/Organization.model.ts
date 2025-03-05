@@ -12,8 +12,17 @@ export default class OrganizationModel extends VekozModel {
     constructor(data: IModelPorts) {
         super(data)
     }
-
+    /**
+     * 組織名稱不可重複
+     * @param uid 
+     * @param organization 
+     * @returns 
+     */
     async createOrganization(uid: string, organization: IOrganization): Promise<IOrganization> {
+        const query = await super.getQuery([['uid', '==', uid], ['name', '==', organization.name]])
+        super.checkQueryCount(query, {
+            absolute: 0,
+        })
         const newOrganization = await super.createItem(uid, organization)
         return newOrganization as IOrganization
     }
