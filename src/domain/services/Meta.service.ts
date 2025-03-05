@@ -6,17 +6,18 @@ interface Idependency {
 export default class MetaService {
     protected selectModel: SelectModel = null as any
     protected optionsMap: ISelectMap = {}
-    protected optionKeys: string[] = ['floorSizes', 'buildingAges', 'buildingTypes', 'genders', 'retirementQuartile', 'insuranceTypes']
+    protected optionKeys: string[] = []
     constructor(dependency: Idependency) {
         const { selectModel } = dependency
         this.selectModel = selectModel
     }
+
     async getOptionsMap() {
         // 如有現成就用現成
         const promises = this.optionKeys.map(async (key: string) => {
             let options = this.optionsMap[key]
             if (!options?.length) {
-                options = await this.selectModel.getOptionsByKey(key)
+                options = await this.selectModel.getOptionsByKey(key) ?? []
                 this.optionsMap[key] = options
             }
             const selectDocData: ISelectDocData = {
@@ -36,7 +37,7 @@ export default class MetaService {
     async getOptionsByKey(key: string) {
         let options = this.optionsMap[key]
         if (!options?.length) {
-            options = await this.selectModel.getOptionsByKey(key)
+            options = await this.selectModel.getOptionsByKey(key) ?? []
             this.optionsMap[key] = options
         }
         return this.optionsMap[key]
