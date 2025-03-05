@@ -19,6 +19,7 @@ export interface IOrganizationMember {
     id?: string,
     name: string,
     organizationId?: string,
+    organizationName?: string,
     allowMethods?: string[],
     email: string,
 }

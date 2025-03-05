@@ -72,21 +72,20 @@ export default class OrganizationMemberService {
         member.allowMethods = ['GET']
 
         // 發出信件邀請
+        const organization = await this.organizaitonModel.getOrganizationById(String(member.organizationId)) as IOrganization
+        member.organizationName = organization.name
         const newMember = await this.organizationMemberModel.addMember(uid, member)
-        this.organizaitonModel.getOrganizationById(String(member.organizationId)).then((organization) => {
-            organization = organization as IOrganization
-            const subject = `邀請加入${organization.name}`
-            const html = this.emailAdapter.getInvitation({
-                subject,
-                recipientName: existedMember.name ?? '用戶',
-                organization,
-            })
-            this.emailAdapter.send({
-                subject,
-                recipientEmail: newMember.email,
-                recipientName: existedMember.name ?? '新用戶',
-                html
-            })
+        const subject = `邀請加入${organization.name}`
+        const html = this.emailAdapter.getInvitation({
+            subject,
+            recipientName: existedMember.name ?? '用戶',
+            organization,
+        })
+        this.emailAdapter.send({
+            subject,
+            recipientEmail: newMember.email,
+            recipientName: existedMember.name ?? '新用戶',
+            html
         })
         return newMember
     }

@@ -22,6 +22,7 @@ router.use(bearer())
                 name: userIdToken.name ?? '',
                 email: userIdToken.email ?? '',
                 organizationId: String(newOrganization.id),
+                organizationName: newOrganization.name,
                 allowMethods: ['GET', 'PATCH', 'POST', 'DELETE'],
             })
         })
