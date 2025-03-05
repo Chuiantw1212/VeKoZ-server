@@ -163,9 +163,6 @@ export default class EventService {
             }
         }
         // 更新event
-        console.log({
-            eventPatch
-        })
         if (eventPatch) {
             await this.eventModel.mergeEventById(uid, eventDesign.eventId, eventPatch)
             // 已存的事件更新關鍵字列表

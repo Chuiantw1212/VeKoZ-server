@@ -68,7 +68,6 @@ export default class OrganizationModel extends VekozModel {
                 absolute: 1
             }
         }
-
         const count = super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], organization, options)
         return count
     }

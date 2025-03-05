@@ -60,7 +60,7 @@ export default class OrganizationMemberModel extends VekozModel {
     async addMember(uid: string, member: IOrganizationMember) {
         const options: ICrudOptions = {
             count: {
-                fields: ['email'],
+                fields: ['email', 'organizationId'],
                 absolute: 0,
             }
         }

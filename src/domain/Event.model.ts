@@ -81,9 +81,6 @@ export default class EventModel extends VekozModel {
         if (query.locationAddressRegion) {
             wheres.push(['locationAddressRegion', '==', query.locationAddressRegion])
         }
-        // console.log({
-        //     wheres
-        // })
         const firstEventList = await super.getItemsByQuery(wheres, options)
         firstEventList.forEach(docData => {
             if (docData.startDate) {

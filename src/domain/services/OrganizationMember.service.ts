@@ -26,6 +26,11 @@ export default class OrganizationMemberService {
         this.userModel = dependency.userModel
     }
 
+    async directAddHost(uid: string, member: IOrganizationMember,) {
+        const count = await this.organizationMemberModel.addMember(uid, member)
+        return count
+    }
+
     async setMember(uid: string, member: IOrganizationMember,) {
         const count = await this.organizationMemberModel.setMember(uid, member)
         return count

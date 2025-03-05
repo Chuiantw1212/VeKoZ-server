@@ -46,9 +46,9 @@ export default class OrganizationService {
         const defaultOrganization: IOrganization = Object.assign({
             sameAs: [], // 必要
         }, organization)
-        let newOrganization: IOrganization = await this.organizationModel.createOrganization(uid, defaultOrganization)
+        const newOrganization: IOrganization = await this.organizationModel.createOrganization(uid, defaultOrganization)
         newOrganization.logo = logo
-        this.updateOrganization(uid, organization)
+        this.updateOrganization(uid, newOrganization)
         return newOrganization
     }
 

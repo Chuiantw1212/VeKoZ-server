@@ -18,7 +18,7 @@ router.use(bearer())
             name: `${userCreated.name}的組織`
         })
         // 只能從這邊跳過增加成員的權限認定
-        OrganizationMemberService.setMember(userIdToken.uid, {
+        OrganizationMemberService.directAddHost(userIdToken.uid, {
             name: userIdToken.name ?? '',
             email: userIdToken.email ?? '',
             organizationId: String(newOrganization.id),
