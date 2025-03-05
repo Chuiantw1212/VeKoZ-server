@@ -18,13 +18,17 @@ export default class OrganizationModel extends VekozModel {
      * @param organization 
      * @returns 
      */
-    async createOrganization(uid: string, organization: IOrganization): Promise<IOrganization> {
+    async createOrganization(uid: string, organization: IOrganization): Promise<IOrganization | number> {
         const query = await super.getQuery([['uid', '==', uid], ['name', '==', organization.name]])
-        super.checkQueryCount(query, {
+        const count = await super.checkQueryCount(query, {
             absolute: 0,
         })
-        const newOrganization = await super.createItem(uid, organization)
-        return newOrganization as IOrganization
+        if (count === 0) {
+            const newOrganization = await super.createItem(uid, organization)
+            return newOrganization as IOrganization
+        } else {
+            return count
+        }
     }
 
     /**

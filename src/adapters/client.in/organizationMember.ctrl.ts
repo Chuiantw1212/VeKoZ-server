@@ -13,7 +13,7 @@ router.use(bearer())
         const result = await OrganizationMemberService.getMemberList(user.uid, id, pagination)
         return result
     })
-    .get('/organization/member', async ({ bearer, params, query }) => {
+    .get('/member/organization/list', async ({ bearer, params, query }) => {
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const pagination = query as any

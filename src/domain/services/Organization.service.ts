@@ -44,7 +44,7 @@ export default class OrganizationService {
         const defaultOrganization: IOrganization = Object.assign({
             sameAs: [], // 必要
         }, organization)
-        const newOrganization: IOrganization = await this.organizationModel.createOrganization(uid, defaultOrganization)
+        const newOrganization = await this.organizationModel.createOrganization(uid, defaultOrganization) as IOrganization
         newOrganization.logo = logo
         this.updateOrganization(uid, newOrganization)
         return newOrganization
@@ -68,7 +68,7 @@ export default class OrganizationService {
         delete organization.banner
 
         const count = await this.organizationModel.mergeOrganizationById(uid, String(organization.id), organization)
-        if (count) {
+        if (typeof count === 'number') {
             // 有count表示有權限，不然就是bug了
             if (tempLogo && typeof tempLogo !== 'string') {
                 const publicUrl: string = await this.organizationModel.storeLogo(String(organization.id), tempLogo)
