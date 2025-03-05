@@ -110,15 +110,8 @@ export default class OrganizationService {
      * 取得列表
      * @returns 
      */
-    async getOrganizationList(email: string,) {
-        const relatedMembers = await this.organizationMemberModel.getRelatedMemberships(email, {
-            pageSize: 1,
-            currentPage: 1,
-        })
-        const promises = relatedMembers.map((item: IOrganizationMember) => {
-            return this.organizationModel.getOrganizationById(String(item.id)) as IOrganization
-        })
-        const list = await Promise.all(promises)
+    async getOrganizationList(uid: string,) {
+        const list: IOrganization[] = await this.organizationModel.getOrganizationList(uid)
         return list
     }
 
