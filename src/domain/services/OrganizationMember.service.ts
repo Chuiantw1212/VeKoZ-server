@@ -26,6 +26,11 @@ export default class OrganizationMemberService {
         this.userModel = dependency.userModel
     }
 
+    async getRelatedMembership(email: string, pagination: IPagination) {
+        const members = await this.organizationMemberModel.getRelatedMemberships(email, pagination)
+        return members
+    }
+
     joinRelatedOrganization(member: IOrganizationMember) {
         this.organizationMemberModel.acceptInvitation(member)
     }

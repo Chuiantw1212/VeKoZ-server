@@ -160,6 +160,7 @@ import offerController from './adapters/client.in/offer.ctrl'
         }),
         OrganizationService: new OrganizationService({
             organizationModel,
+            organizationMemberModel,
             eventModel,
             offerModel,
             eventDesignModel,

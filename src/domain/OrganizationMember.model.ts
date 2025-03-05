@@ -9,6 +9,19 @@ export default class OrganizationMemberModel extends VekozModel {
         super(data)
     }
 
+    async getRelatedMemberships(email: string, pagination: IPagination) {
+        const options: ICrudOptions = {
+            orderBy: ['lastmod', 'desc'],
+            startAt: pagination.pageSize * (pagination.currentPage - 1),
+            limit: pagination.pageSize,
+        }
+        const members: IOrganizationMember[] = await super.getItemsByQuery(
+            [['email', '==', email], ['allowMethods', 'array-contains', 'GET']],
+            options
+        ) as IOrganizationMember[]
+        return members
+    }
+
     async acceptInvitation(member: IOrganizationMember) {
         const options: ICrudOptions = {
             merge: true,

@@ -1,17 +1,15 @@
 import OrganizationModel from '../Organization.model'
-// import OrganizationMemberModel from '../OrganizationMember.model';
+import OrganizationMemberModel from '../OrganizationMember.model';
 import EventModel from '../Event.model';
 import OfferModel from '../OfferModel';
 import EventTemplateDesignModel from '../EventTemplateDesign.model';
 import EventDesignModel from '../EventDesign.model';
-
 import { IEvent } from '../../entities/event';
 import type { IOrganization, IOrganizationMember } from '../../entities/organization';
-import { DecodedIdToken } from 'firebase-admin/auth';
 
 interface Idependency {
     organizationModel: OrganizationModel;
-    // organizationMemberModel: OrganizationMemberModel
+    organizationMemberModel: OrganizationMemberModel
     eventModel: EventModel,
     offerModel: OfferModel,
     eventTemplateDesignModel: EventTemplateDesignModel,
@@ -20,15 +18,15 @@ interface Idependency {
 
 export default class OrganizationService {
     protected organizationModel: OrganizationModel
-    // protected organizationMemberModel: OrganizationMemberModel
-    protected eventModel: EventModel
-    protected offerModel: OfferModel
-    protected eventTemplateDesignModel: EventTemplateDesignModel
-    protected eventDesignModel: EventDesignModel
+    protected organizationMemberModel: OrganizationMemberModel
+    private eventModel: EventModel
+    private offerModel: OfferModel
+    private eventTemplateDesignModel: EventTemplateDesignModel
+    private eventDesignModel: EventDesignModel
 
     constructor(dependency: Idependency) {
         this.organizationModel = dependency.organizationModel
-        // this.organizationMemberModel = dependency.organizationMemberModel
+        this.organizationMemberModel = dependency.organizationMemberModel
         this.eventModel = dependency.eventModel
         this.offerModel = dependency.offerModel
         this.eventTemplateDesignModel = dependency.eventTemplateDesignModel
@@ -112,8 +110,15 @@ export default class OrganizationService {
      * 取得列表
      * @returns 
      */
-    async getOrganizationList(uid: string,) {
-        const list: IOrganization[] = await this.organizationModel.getOrganizationList(uid)
+    async getOrganizationList(email: string,) {
+        const relatedMembers = await this.organizationMemberModel.getRelatedMemberships(email, {
+            pageSize: 1,
+            currentPage: 1,
+        })
+        const promises = relatedMembers.map((item: IOrganizationMember) => {
+            return this.organizationModel.getOrganizationById(String(item.id)) as IOrganization
+        })
+        const list = await Promise.all(promises)
         return list
     }
 
