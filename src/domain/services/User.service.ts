@@ -28,11 +28,14 @@ export default class UserService {
 
     async uploadUserAvatar(uid: string, avatar: IBlob): Promise<string> {
         const user = await this.getUserByUid(uid)
-        const publicUrl = await this.userModel.uploadAvatar(String(user.id), avatar)
-        // await this.userModel.setUser(uid, {
-        //     avatar: publicUrl,
-        // })
-        return publicUrl
+        if (user) {
+            const publicUrl = await this.userModel.uploadAvatar(String(user.id), avatar)
+            // await this.userModel.setUser(uid, {
+            //     avatar: publicUrl,
+            // })
+            return publicUrl
+        }
+        return ''
     }
 
     /**

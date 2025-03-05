@@ -296,13 +296,13 @@ export default class VekozModel extends VenoniaCRUD {
         const countData = await query.count().get()
         const count: number = countData.data().count
         let message = ''
-        if (options.max && count >= options.max) {
+        if (options.hasOwnProperty('max') && count >= Number(options.max)) {
             message = `資料數量已達上限: ${count} > ${options.max}`
         }
-        if (options.min && count < options.min) {
+        if (options.hasOwnProperty('min') && count < Number(options.min)) {
             message = `資料數量低於下限: ${count} < ${options.min}`
         }
-        if (options.absolute && count !== options.absolute) {
+        if (options.hasOwnProperty('absolute') && count !== options.absolute) {
             message = `資料數量數值不合: ${count} !== ${options.absolute}`
         }
         if (options.range && !options.range.includes(count)) {
