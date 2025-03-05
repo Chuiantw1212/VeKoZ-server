@@ -18,8 +18,8 @@ export interface IOrganization {
 export interface IOrganizationMember {
     id?: string,
     name: string,
-    organizationId: string,
-    allowMethods: string[],
+    organizationId?: string,
+    allowMethods?: string[],
     email: string,
 }
 

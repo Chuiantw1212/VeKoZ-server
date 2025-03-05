@@ -4,7 +4,7 @@ import EmailAdapter from '../../adapters/email.out';
 import OrganizationModel from '../Organization.model';
 import UserModel from '../User.model';
 import { IPagination } from '../../entities/meta';
-import { ICrudOptions } from '../../ports/out.crud';
+import { IUser } from '../../entities/user';
 
 interface Idependency {
     emailAdapter: EmailAdapter,
@@ -26,13 +26,17 @@ export default class OrganizationMemberService {
         this.userModel = dependency.userModel
     }
 
+    joinRelatedOrganization(member: IOrganizationMember) {
+        this.organizationMemberModel.acceptInvitation(member)
+    }
+
     async directAddHost(uid: string, member: IOrganizationMember,) {
         const count = await this.organizationMemberModel.addMember(uid, member)
         return count
     }
 
-    async setMember(uid: string, member: IOrganizationMember,) {
-        const count = await this.organizationMemberModel.setMember(uid, member)
+    async setMemberById(uid: string, member: IOrganizationMember,) {
+        const count = await this.organizationMemberModel.setMemberById(uid, member)
         return count
     }
 
@@ -64,7 +68,7 @@ export default class OrganizationMemberService {
 
         // 發出信件邀請
         const newMember = await this.organizationMemberModel.addMember(uid, member)
-        this.organizaitonModel.getOrganizationById(member.organizationId).then((organization) => {
+        this.organizaitonModel.getOrganizationById(String(member.organizationId)).then((organization) => {
             organization = organization as IOrganization
             const subject = `邀請加入${organization.name}`
             const html = this.emailAdapter.getInvitation({

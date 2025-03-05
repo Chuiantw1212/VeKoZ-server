@@ -9,21 +9,29 @@ interface DecodedIdTokenWithName extends DecodedIdToken {
 }
 const router = new Elysia()
 router.use(bearer())
-    .post('/user', async ({ request, bearer, }) => {
+    .post('/user', async ({ bearer, }) => {
         const { AuthService, UserService, OrganizationService, OrganizationMemberService } = AccessGlobalService.locals
         const userIdToken: DecodedIdTokenWithName = await AuthService.verifyIdToken(bearer)
         const userCreated = await UserService.addUser(userIdToken)
         // 建立自己的預設組織
-        const newOrganization = await OrganizationService.newItem(userIdToken.uid, {
+        OrganizationService.newItem(userIdToken.uid, {
             name: `${userCreated.name}的組織`
+        }).then(async (newOrganization) => {
+            // 只能從這邊跳過增加成員的權限認定
+            OrganizationMemberService.directAddHost(userIdToken.uid, {
+                name: userIdToken.name ?? '',
+                email: userIdToken.email ?? '',
+                organizationId: String(newOrganization.id),
+                allowMethods: ['GET', 'PATCH', 'POST', 'DELETE'],
+            })
         })
-        // 只能從這邊跳過增加成員的權限認定
-        OrganizationMemberService.directAddHost(userIdToken.uid, {
-            name: userIdToken.name ?? '',
-            email: userIdToken.email ?? '',
-            organizationId: String(newOrganization.id),
-            allowMethods: ['GET', 'PATCH', 'POST', 'DELETE'],
-        })
+        // 更新受邀請組織的資料
+        if (userCreated.name && userCreated.email) {
+            OrganizationMemberService.joinRelatedOrganization({
+                name: userCreated.name,
+                email: userCreated.email,
+            })
+        }
         return userCreated
     })
     .patch('/user', async ({ bearer, request }) => {

@@ -9,6 +9,13 @@ export default class OrganizationMemberModel extends VekozModel {
         super(data)
     }
 
+    async acceptInvitation(member: IOrganizationMember) {
+        const options: ICrudOptions = {
+            merge: true,
+        }
+        super.setItemsByQuery([['email', '==', member.email]], member, options)
+    }
+
     async checkMemberAuths(email: string, organizationId: string, method: string) {
         const query = await super.getQuery([['email', '==', email], ['organizationId', '==', organizationId], ['allowMethods', 'array-contains', method]])
         await super.checkQueryCount(query, {
@@ -19,7 +26,7 @@ export default class OrganizationMemberModel extends VekozModel {
         return impersonatedUid
     }
 
-    async setMember(uid: string, member: IOrganizationMember,) {
+    async setMemberById(uid: string, member: IOrganizationMember,) {
         const optoins: ICrudOptions = {
             merge: true,
             count: {

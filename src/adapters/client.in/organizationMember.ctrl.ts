@@ -28,7 +28,7 @@ router.use(bearer())
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const organizatoinMember = await request.json() as IOrganizationMember
-        const count = await OrganizationMemberService.setMember(user.uid, organizatoinMember)
+        const count = await OrganizationMemberService.setMemberById(user.uid, organizatoinMember)
         return count
     })
     .delete('/organization/member/:id', async ({ bearer, params, query }) => {
