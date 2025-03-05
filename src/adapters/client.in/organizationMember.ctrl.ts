@@ -20,7 +20,7 @@ router.use(bearer())
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const organizatoinMember = await request.json() as IOrganizationMember
-        const authUid = await OrganizationMemberService.checkMemberAuths(String(user.email), organizatoinMember.organizationId, request.method)
+        const authUid = await OrganizationMemberService.checkMemberAuths(String(user.email), String(organizatoinMember.organizationId), request.method)
         const newMember = await OrganizationMemberService.inviteMember(authUid, organizatoinMember)
         return newMember
     })

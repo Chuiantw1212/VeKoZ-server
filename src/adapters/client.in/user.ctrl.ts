@@ -30,6 +30,7 @@ router.use(bearer())
             OrganizationMemberService.joinRelatedOrganization({
                 name: userCreated.name,
                 email: userCreated.email,
+                allowMethods: ['GET'],
             })
         }
         return userCreated
