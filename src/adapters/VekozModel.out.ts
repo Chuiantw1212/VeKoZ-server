@@ -124,18 +124,6 @@ export default class VekozModel extends VenoniaCRUD {
             throw this.error.collectionIsNotReady
         }
         const query = await this.getQuery(wheres, options)
-        const docDatas = this.getItemsByQuery(query)
-        return docDatas
-    }
-
-    /**
-     * R: 利用條件查詢資料
-     * @param uid
-     */
-    protected async getItemsByQuery(query: Query): Promise<DocumentData[]> {
-        if (!this.collection) {
-            throw this.error.collectionIsNotReady
-        }
         // 取得資料
         let docs = (await query.get()).docs
         const docDatas = docs.map(doc => {
