@@ -13,6 +13,6 @@ export interface ISelectDocData {
 }
 
 export interface IPagination {
-    pageSize: number,
-    currentPage: number,
+    pageSize?: number,
+    currentPage?: number,
 }

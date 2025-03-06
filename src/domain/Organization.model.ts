@@ -86,7 +86,7 @@ export default class OrganizationModel extends VekozModel {
     }
 
     async getOrganizationList(uid: string,) {
-        const organizationList = await super.getItemsByQuery([['uid', '==', uid]]) as IOrganization[]
+        const organizationList = await super.getItemsByWheres([['uid', '==', uid]]) as IOrganization[]
         return organizationList
     }
 }

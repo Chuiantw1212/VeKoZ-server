@@ -60,9 +60,6 @@ import offerController from './adapters/client.in/offer.ctrl'
         console.trace('ENV:', error.message)
         return
     }
-    console.log({
-        ENV,
-    })
     /**
      * Adapters
      */

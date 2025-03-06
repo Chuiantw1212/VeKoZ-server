@@ -12,10 +12,10 @@ export default class OrganizationMemberModel extends VekozModel {
     async getRelatedMemberships(email: string, pagination: IPagination) {
         const options: ICrudOptions = {
             orderBy: ['lastmod', 'desc'],
-            startAt: Number(pagination.pageSize) * Number(pagination.currentPage - 1),
+            startAt: Number(pagination.pageSize) * (Number(pagination.currentPage) - 1),
             limit: Number(pagination.pageSize),
         }
-        const members: IOrganizationMember[] = await super.getItemsByQuery(
+        const members: IOrganizationMember[] = await super.getItemsByWheres(
             [['email', '==', email], ['allowMethods', 'array-contains', 'GET']],
             options
         ) as IOrganizationMember[]
@@ -84,12 +84,13 @@ export default class OrganizationMemberModel extends VekozModel {
     async getMemberList(uid: string, organizationId: string, pagination: IPagination) {
         const options: ICrudOptions = {
             orderBy: ['lastmod', 'desc'],
-            startAt: pagination.pageSize * (pagination.currentPage - 1),
-            limit: pagination.pageSize,
+            startAt: Number(pagination.pageSize) * (Number(pagination.currentPage) - 1),
+            limit: Number(pagination.pageSize),
         }
-        const memberList = await super.getItemsByQuery([['uid', '==', uid], ['organizationId', '==', organizationId]], options)
-        const query = await super.getQuery([['organizationId', '==', organizationId]])
+        const wheres = [['uid', '==', uid], ['organizationId', '==', organizationId]]
+        const query = await super.getQuery(wheres)
         const count = await super.checkQueryCount(query, options?.count ?? {})
+        const memberList = await super.getItemsByWheres(wheres, options)
         return {
             total: count,
             items: memberList

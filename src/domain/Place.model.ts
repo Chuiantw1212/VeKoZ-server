@@ -10,7 +10,7 @@ export default class PlaceModel extends VekozModel {
         return super.createItem(uid, place)
     }
     async getPlaceById(uid: string, id: string): Promise<IPlace> {
-        const items = await super.getItemsByQuery([['uid', '==', uid], ['id', '==', id]], {
+        const items = await super.getItemsByWheres([['uid', '==', uid], ['id', '==', id]], {
             count: {
                 absolute: 1
             }
@@ -27,7 +27,7 @@ export default class PlaceModel extends VekozModel {
         return count
     }
     async getPlaceList() {
-        const placeList = await super.getItemsByQuery([]) as IPlace[]
+        const placeList = await super.getItemsByWheres([]) as IPlace[]
         return placeList
     }
     async deletePlaceById(uid: string, id: string) {

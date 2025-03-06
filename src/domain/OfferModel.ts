@@ -92,7 +92,7 @@ export default class OfferModel extends VekozModel {
     }
 
     async deleteOffers(uid: string, eventId: string): Promise<number> {
-        const offers = await super.getItemsByQuery([['uid', '==', uid], ['eventId', '==', eventId]])
+        const offers = await super.getItemsByWheres([['uid', '==', uid], ['eventId', '==', eventId]])
         const isNotSaled = offers.every((offer) => {
             return offer.inventoryValue === offer.inventoryValue
         })
@@ -116,7 +116,7 @@ export default class OfferModel extends VekozModel {
         if (query.eventId) {
             wheres.push(['eventId', '==', query.eventId])
         }
-        const offers: IOffer[] = await super.getItemsByQuery(wheres, options) as IOffer[]
+        const offers: IOffer[] = await super.getItemsByWheres(wheres, options) as IOffer[]
         offers.forEach(offer => {
             offer.validFrom = super.formatDate(offer.validFrom)
             offer.validThrough = super.formatDate(offer.validThrough)

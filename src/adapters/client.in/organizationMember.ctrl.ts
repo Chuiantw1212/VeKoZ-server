@@ -2,22 +2,21 @@ import AccessGlobalService from '../../entities/app'
 import type { IOrganizationMember } from '../../entities/organization'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
+import { IPagination } from '../../entities/meta'
 
 const router = new Elysia()
 router.use(bearer())
-    .get('/organization/:id/member/list', async ({ bearer, params, query }) => {
+    .get('/organization/member/list/:organizationId', async ({ bearer, params, query, request }) => {
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
-        const { id } = params
+        const { organizationId } = params
         const user = await AuthService.verifyIdToken(bearer)
-        const pagination = query as any
-        const result = await OrganizationMemberService.getMemberList(user.uid, id, pagination)
-        return result
-    })
-    .get('/member/organization/list', async ({ bearer, params, query }) => {
-        const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
-        const user = await AuthService.verifyIdToken(bearer)
-        const pagination = query as any
-        const result = await OrganizationMemberService.getRelatedMembership(String(user.email), pagination)
+        const authUid = await OrganizationMemberService.checkMemberAuths(
+            String(user.email),
+            String(organizationId),
+            request.method
+        )
+        const pagination = query as IPagination
+        const result = await OrganizationMemberService.getMemberList(authUid, organizationId, pagination)
         return result
     })
     .post('/organization/member', async ({ bearer, request, }) => {
@@ -78,5 +77,12 @@ router.use(bearer())
             })
             return count
         }
+    })
+    .get('/member/organization/list', async ({ bearer, params, query }) => {
+        const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const pagination = query as any
+        const result = await OrganizationMemberService.getRelatedMembership(String(user.email), pagination)
+        return result
     })
 export default router

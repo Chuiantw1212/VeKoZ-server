@@ -15,7 +15,7 @@ export default abstract class VenoniaCRUD {
      * @param options 通常包含uid權限管控用，但現在放在wheres比較簡單
      * @returns 
      */
-    protected async getItemsByQuery(wheres: any[][], options?: ICrudOptions): Promise<any[]> {
+    protected async getItemsByWheres(wheres: any[][], options?: ICrudOptions): Promise<any[]> {
         return new Promise(() => { })
     }
     /**

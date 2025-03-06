@@ -23,7 +23,7 @@ export default class UserPreferenceModel extends Firestore {
      * @returns 
      */
     async getPreference(id: string): Promise<IUserPreference> {
-        const users: IUserPreference[] = await super.getItemsByQuery([['id', '==', id]], {
+        const users: IUserPreference[] = await super.getItemsByWheres([['id', '==', id]], {
             count: {
                 range: [0, 1]
             }

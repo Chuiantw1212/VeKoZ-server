@@ -121,7 +121,10 @@ export default class EmailAdapter {
         } = organization
 
         const logo = organizatoinLogo || 'https://storage.googleapis.com/public.vekoz.org/logo/160_160.png'
-        const hostOrganizationLink = `${AccessGlobalService.env}/host/organization`
+        const hostOrganizationLink = `${AccessGlobalService.env?.webOrigin}/host/organization`
+        console.log({
+            hostOrganizationLink
+        })
 
         return `
             <!DOCTYPE html>

@@ -21,7 +21,7 @@ export default class SelectModel extends VekozModel {
                 absolute: 1
             }
         }
-        const selectDocData = await super.getItemsByQuery([['key', '==', key]], optoins) as ISelectDocData[]
+        const selectDocData = await super.getItemsByWheres([['key', '==', key]], optoins) as ISelectDocData[]
         if (selectDocData[0]) {
             return selectDocData[0].options
         }

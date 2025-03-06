@@ -19,7 +19,7 @@ export default class EventTemplateModel extends VekozModel {
     }
 
     async getTemplateList(uid: string,) {
-        const templateList = await super.getItemsByQuery([['uid', '==', uid]], {
+        const templateList = await super.getItemsByWheres([['uid', '==', uid]], {
             orderBy: ['lastmod', 'desc'],
         })
         return templateList
@@ -31,7 +31,7 @@ export default class EventTemplateModel extends VekozModel {
      * @returns 
      */
     async readTemplateById(uid: string, id: string): Promise<IEventTemplate | 0> {
-        const eventTemplates = await this.getItemsByQuery([['uid', '==', uid], ['id', '==', id]], {
+        const eventTemplates = await this.getItemsByWheres([['uid', '==', uid], ['id', '==', id]], {
             count: {
                 range: [0, 1]
             },
