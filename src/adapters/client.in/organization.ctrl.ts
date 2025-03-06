@@ -25,10 +25,15 @@ router.use(bearer())
         return newOrganization
     })
     .patch('/organization', async ({ request, bearer }) => {
-        const { OrganizationService, AuthService } = AccessGlobalService.locals
+        const { OrganizationService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        let newOrganization: IOrganization = await request.json() as any
-        await OrganizationService.updateOrganization(user.uid, newOrganization)
+        const organization: IOrganization = await request.json() as any
+        const authUid = await OrganizationMemberService.checkMemberAuths(
+            String(user.email),
+            String(organization.id),
+            request.method
+        )
+        await OrganizationService.updateOrganization(authUid, organization)
     })
     .delete('/organization/:id', async ({ bearer, params }) => {
         // TODO: 新增的管理者也可以刪除組織嗎？
