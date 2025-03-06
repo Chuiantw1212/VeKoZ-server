@@ -21,6 +21,7 @@ export interface IOrganizationMember {
     name?: string,
     organizationId?: string,
     organizationName?: string,
+    organizationLogo?: string,
     allowMethods?: string[],
     email?: string,
     isFounder?: boolean, // 創辦者資料的刪除修改方式不同
