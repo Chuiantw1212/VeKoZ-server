@@ -21,7 +21,13 @@ router.use(bearer())
         const { OrganizationService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const organization: IOrganization = await request.json() as any
-        const newOrganization = await OrganizationService.newItem(user.uid, organization)
+        const newOrganization = await OrganizationService.newItem(user.uid, {
+            name: user.name ?? '',
+            email: user.email,
+            organizationName: organization.name,
+            isFounder: true,
+            allowMethods: ['GET', 'PATCH', 'POST', 'DELETE'],
+        })
         return newOrganization
     })
     .patch('/organization', async ({ request, bearer }) => {

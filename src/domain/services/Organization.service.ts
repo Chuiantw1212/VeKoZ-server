@@ -35,18 +35,19 @@ export default class OrganizationService {
 
     /**
      * 新增組織
-     * @param uid UserUid
-     * @param organization 
+     * @param uid 
+     * @param founder 
+     * @returns 
      */
-    async newItem(uid: string, organization: IOrganization) {
-        const logo = organization.logo // 暫存logo
-        organization.logo = ''
-        const defaultOrganization: IOrganization = Object.assign({
+    async newItem(uid: string, founder: IOrganizationMember) {
+        const defaultOrganization: IOrganization = {
             sameAs: [], // 必要
-        }, organization)
+            name: founder.organizationName,
+            email: founder.email,
+        }
         const newOrganization = await this.organizationModel.createOrganization(uid, defaultOrganization) as IOrganization
-        newOrganization.logo = logo
-        this.updateOrganization(uid, newOrganization)
+        founder.organizationId = newOrganization.id
+        await this.organizationMemberModel.addMember(uid, founder)
         return newOrganization
     }
 

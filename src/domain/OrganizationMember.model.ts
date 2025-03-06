@@ -9,17 +9,48 @@ export default class OrganizationMemberModel extends VekozModel {
         super(data)
     }
 
+    /**
+     * 管理成員列表
+     * @param email 
+     * @param pagination 
+     * @returns 
+     */
     async getRelatedMemberships(email: string, pagination: IPagination) {
         const options: ICrudOptions = {
             orderBy: ['lastmod', 'desc'],
             startAfter: Number(pagination.pageSize) * (Number(pagination.currentPage) - 1),
             limit: Number(pagination.pageSize),
         }
-        const members: IOrganizationMember[] = await super.getItemsByWheres(
-            [['email', '==', email], ['allowMethods', 'array-contains', 'GET']],
-            options
-        ) as IOrganizationMember[]
-        return members
+        const wheres = [['email', '==', email], ['allowMethods', 'array-contains', 'GET']]
+        const query = await super.getQuery(wheres)
+        const count = await super.checkQueryCount(query, options?.count ?? {})
+        const memberList: IOrganizationMember[] = await super.getItemsByWheres(wheres, options)
+        return {
+            total: count,
+            items: memberList,
+        }
+    }
+
+    /**
+     * 打開組織列表
+     * @param member 
+     * @param pagination 
+     * @returns 
+     */
+    async getMemberList(member: IOrganizationMember, pagination: IPagination) {
+        const options: ICrudOptions = {
+            orderBy: ['lastmod', 'desc'],
+            startAfter: Number(pagination.pageSize) * (Number(pagination.currentPage) - 1),
+            limit: Number(pagination.pageSize),
+        }
+        const wheres = [['uid', '==', member.uid], ['organizationId', '==', member.organizationId]]
+        const query = await super.getQuery(wheres)
+        const count = await super.checkQueryCount(query, options?.count ?? {})
+        const memberList = await super.getItemsByWheres(wheres, options)
+        return {
+            total: count,
+            items: memberList
+        }
     }
 
     async acceptInvitation(member: IOrganizationMember) {
@@ -72,28 +103,6 @@ export default class OrganizationMemberModel extends VekozModel {
             ['uid', '==', member.uid], ['email', '==', member.email], ['organizationId', '==', member.organizationId]
         ], options)
         return count
-    }
-
-    /**
-     * @param uid 
-     * @param organizationId 
-     * @param pagination 
-     * @returns 
-     */
-    async getMemberList(member: IOrganizationMember, pagination: IPagination) {
-        const options: ICrudOptions = {
-            orderBy: ['lastmod', 'desc'],
-            startAfter: Number(pagination.pageSize) * (Number(pagination.currentPage) - 1),
-            limit: Number(pagination.pageSize),
-        }
-        const wheres = [['uid', '==', member.uid], ['organizationId', '==', member.organizationId]]
-        const query = await super.getQuery(wheres)
-        const count = await super.checkQueryCount(query, options?.count ?? {})
-        const memberList = await super.getItemsByWheres(wheres, options)
-        return {
-            total: count,
-            items: memberList
-        }
     }
 
     async addMember(uid: string, member: IOrganizationMember) {

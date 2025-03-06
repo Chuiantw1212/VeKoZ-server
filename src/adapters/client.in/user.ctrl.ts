@@ -15,18 +15,11 @@ router.use(bearer())
         const userCreated = await UserService.addUser(userIdToken)
         // 建立自己的預設組織
         OrganizationService.newItem(userIdToken.uid, {
-            name: `${userCreated.name}的第一個組織`,
+            name: userIdToken.name ?? '',
             email: userIdToken.email,
-        }).then(async (newOrganization) => {
-            // 只能從這邊跳過增加成員的權限認定
-            OrganizationMemberService.directAddHost(userIdToken.uid, {
-                name: userIdToken.name ?? '',
-                email: userIdToken.email ?? '',
-                organizationId: String(newOrganization.id),
-                organizationName: newOrganization.name,
-                isFounder: true,
-                allowMethods: ['GET', 'PATCH', 'POST', 'DELETE'],
-            })
+            organizationName: `${userCreated.name}的第一個組織`,
+            isFounder: true,
+            allowMethods: ['GET', 'PATCH', 'POST', 'DELETE'],
         })
         // 更新受邀請組織的資料
         if (userCreated.name && userCreated.email) {

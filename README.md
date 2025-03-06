@@ -9,6 +9,7 @@ gcloud auth application-default login
 ```
 
 ### env.json
+
 實際的環境變數放在secret裡面，env.json只是參考格式用。
 
 ## 🚀 Elysia.js
