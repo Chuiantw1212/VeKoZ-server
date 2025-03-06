@@ -61,7 +61,7 @@ router.use(bearer())
                 String(organizatoinMember.organizationId),
                 'GET',
             )
-            const count = await OrganizationMemberService.deleteMemberByEmail({
+            const count = await OrganizationMemberService.deleteSelfByEmail({
                 uid: authUid,
                 email: user.email,
                 organizationId: organizatoinMember.organizationId,

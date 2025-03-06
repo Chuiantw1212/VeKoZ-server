@@ -63,45 +63,47 @@ export default class OrganizationService {
      * 更新組織
      */
     async updateOrganization(uid: string, organization: IOrganization) {
-        const tempLogo = organization.image // 共用了套版的名稱
-        const tempBanner = organization.banner
-        delete organization.image
-        delete organization.banner
-
-        const count = await this.organizationModel.mergeOrganizationById(uid, String(organization.id), organization)
-        if (typeof count === 'number') {
-            // 有count表示有權限，不然就是bug了
-            if (tempLogo && typeof tempLogo !== 'string') {
-                const publicUrl: string = await this.organizationModel.storeLogo(String(organization.id), tempLogo)
-                organization.logo = publicUrl
-                // 更新Event Organizer Logo
-                const eventListL: IEvent[] = await this.eventModel.queryEventList({
-                    organizerId: String(organization.id),
-                })
-                eventListL.forEach((event: IEvent) => {
-                    this.eventModel.mergeEventById(uid, String(event.id), {
-                        organizerLogo: publicUrl,
-                    })
-                })
-            }
-            if (tempBanner && typeof tempBanner !== 'string') {
-                const publicUrl: string = await this.organizationModel.storeBanner(String(organization.id), tempBanner)
-                organization.banner = publicUrl
-            }
+        if (!organization.id) {
+            throw '更新組織資料毀損,找不到組織識別碼'
         }
-        // 另外儲存banner與logo連結
-        await this.organizationModel.mergeOrganizationById(uid, String(organization.id), organization)
-
-        this.offerModel.updateOfferGroupByOffererId(uid, String(organization.id), {
+        const tempLogo = organization.image ?? organization.logo // 重要！共用了套版的名稱
+        delete organization.image // 重要！共用了套版的名稱
+        const tempBanner = organization.banner
+        if (tempLogo && typeof tempLogo !== 'string') {
+            const publicUrl: string = await this.organizationModel.storeLogo(organization.id, tempLogo)
+            organization.logo = publicUrl
+            // 更新Event Organizer Logo
+            const eventListL: IEvent[] = await this.eventModel.queryEventList({
+                organizerId: organization.id,
+            })
+            eventListL.forEach((event: IEvent) => {
+                this.eventModel.mergeEventById(uid, String(event.id), {
+                    organizerLogo: publicUrl,
+                })
+            })
+        }
+        if (tempBanner && typeof tempBanner !== 'string') {
+            const publicUrl: string = await this.organizationModel.storeBanner(organization.id, tempBanner)
+            organization.banner = publicUrl
+        }
+        const count = await this.organizationModel.mergeOrganizationById(uid, organization.id, organization)
+        // MemberModel
+        this.organizationMemberModel.setMemberByOrgnaizationId(uid, {
+            organizationName: organization.name,
+            organizationId: organization.id,
+        })
+        // Offer Model
+        this.offerModel.updateOfferGroupByOffererId(uid, organization.id, {
             offererName: organization.name,
         })
-        this.offerModel.updateOfferGroupBySellerId(uid, String(organization.id), {
+        this.offerModel.updateOfferGroupBySellerId(uid, organization.id, {
             sellerName: organization.name,
         })
-        this.eventTemplateDesignModel.setByOrganizationId(uid, String(organization.id), {
+        // DesignModel
+        this.eventTemplateDesignModel.setByOrganizationId(uid, organization.id, {
             organizationName: organization.name,
         })
-        this.eventDesignModel.setByOrganizationId(uid, String(organization.id), {
+        this.eventDesignModel.setByOrganizationId(uid, organization.id, {
             organizationName: organization.name,
         })
         return count
@@ -116,23 +118,14 @@ export default class OrganizationService {
         return list
     }
 
-    // /**
-    //  * 取得成員列表
-    //  * @param uid 使用者uid
-    //  * @param organizationId 企業文件Id
-    //  * @returns 
-    //  */
-    // async getMemberList(uid: string, organizationId: string): Promise<IOrganizationMember[]> {
-    //     const list: IOrganizationMember[] = await this.organizationMemberModel.getMemberList(uid, organizationId) as IOrganizationMember[]
-    //     return list
-    // }
-
     /**
      * 刪除組織
      * @param id 
      * @returns 
      */
     async deleteItem(uid: string, id: string) {
-        return await this.organizationModel.deleteItem(uid, id)
+        await this.organizationModel.deleteItem(uid, id)
+        const count = await this.organizationMemberModel.deleteByOrganizationId(uid, id)
+        return count
     }
 }

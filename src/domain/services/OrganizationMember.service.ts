@@ -50,8 +50,8 @@ export default class OrganizationMemberService {
         return count
     }
 
-    async deleteMemberByEmail(member: IOrganizationMember) {
-        const count = await this.organizationMemberModel.deleteMemberByEmail(member)
+    async deleteSelfByEmail(member: IOrganizationMember) {
+        const count = await this.organizationMemberModel.deleteSelfByEmail(member)
         return count
     }
 

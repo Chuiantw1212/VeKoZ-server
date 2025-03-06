@@ -42,11 +42,11 @@ router.use(bearer())
         await OrganizationService.updateOrganization(authUid, organization)
     })
     .delete('/organization/:id', async ({ bearer, params }) => {
-        // TODO: 新增的管理者也可以刪除組織嗎？
+        // 新增的管理者不可以刪除組織，用戶只可以刪除自己建立的組織
         const { OrganizationService, AuthService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const { id } = params
-        const isSuccess = await OrganizationService.deleteItem(user.uid, id)
-        return isSuccess
+        const count = await OrganizationService.deleteItem(user.uid, id)
+        return count
     })
 export default router
