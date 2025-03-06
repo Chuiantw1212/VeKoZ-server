@@ -274,8 +274,8 @@ export default class VekozModel extends VenoniaCRUD {
             query = query.orderBy(fieldPath, orderByDirection)
         }
         if (options?.limit) {
-            if (options?.startAt) {
-                const snapshot = await query.limit(options.startAt).get()
+            if (options?.startAfter) {
+                const snapshot = await query.limit(options.startAfter).get()
                 const last = snapshot.docs[snapshot.docs.length - 1];
                 query = query.startAfter(last)
             }

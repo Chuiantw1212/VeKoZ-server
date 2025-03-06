@@ -17,7 +17,6 @@ router.use(bearer())
         OrganizationService.newItem(userIdToken.uid, {
             name: `${userCreated.name}的第一個組織`,
             email: userIdToken.email,
-            founderId: userCreated.id,
         }).then(async (newOrganization) => {
             // 只能從這邊跳過增加成員的權限認定
             OrganizationMemberService.directAddHost(userIdToken.uid, {
@@ -25,7 +24,7 @@ router.use(bearer())
                 email: userIdToken.email ?? '',
                 organizationId: String(newOrganization.id),
                 organizationName: newOrganization.name,
-                organizationFounderId: newOrganization.founderId,
+                isFounder: true,
                 allowMethods: ['GET', 'PATCH', 'POST', 'DELETE'],
             })
         })

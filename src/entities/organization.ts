@@ -4,17 +4,15 @@
 export interface IOrganization {
     uid?: string;
     id?: string; // doc id
+    banner?: string;
+    logo?: string;
     name?: string;
     seoName?: string,
     description?: string,
     sameAs?: string[],
-    logo?: string;
-    image?: string,
-    banner?: string;
-    googleCalendarId?: string,
     email?: string, // 聯絡用email
-    founderId?: string, // 部分取代uid判定UI使用
-    // founderEmail?: string, // 部分取代uid判定權限使用，不可變更
+    image?: string,
+    googleCalendarId?: string,
 }
 
 export interface IOrganizationMember {
@@ -23,10 +21,9 @@ export interface IOrganizationMember {
     name?: string,
     organizationId?: string,
     organizationName?: string,
-    organizationFounderId?: string,
-    // organizationFounderEmail?: string,
     allowMethods?: string[],
     email?: string,
+    isFounder?: boolean, // 創辦者資料的刪除修改方式不同
 }
 
 /**

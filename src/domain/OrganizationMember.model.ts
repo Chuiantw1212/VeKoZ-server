@@ -12,7 +12,7 @@ export default class OrganizationMemberModel extends VekozModel {
     async getRelatedMemberships(email: string, pagination: IPagination) {
         const options: ICrudOptions = {
             orderBy: ['lastmod', 'desc'],
-            startAt: Number(pagination.pageSize) * (Number(pagination.currentPage) - 1),
+            startAfter: Number(pagination.pageSize) * (Number(pagination.currentPage) - 1),
             limit: Number(pagination.pageSize),
         }
         const members: IOrganizationMember[] = await super.getItemsByWheres(
@@ -75,19 +75,18 @@ export default class OrganizationMemberModel extends VekozModel {
     }
 
     /**
-     * 建立了 organizationId + lastmod index
      * @param uid 
      * @param organizationId 
      * @param pagination 
      * @returns 
      */
-    async getMemberList(uid: string, organizationId: string, pagination: IPagination) {
+    async getMemberList(member: IOrganizationMember, pagination: IPagination) {
         const options: ICrudOptions = {
             orderBy: ['lastmod', 'desc'],
-            startAt: Number(pagination.pageSize) * (Number(pagination.currentPage) - 1),
+            startAfter: Number(pagination.pageSize) * (Number(pagination.currentPage) - 1),
             limit: Number(pagination.pageSize),
         }
-        const wheres = [['uid', '==', uid], ['organizationId', '==', organizationId]]
+        const wheres = [['uid', '==', member.uid], ['organizationId', '==', member.organizationId]]
         const query = await super.getQuery(wheres)
         const count = await super.checkQueryCount(query, options?.count ?? {})
         const memberList = await super.getItemsByWheres(wheres, options)
