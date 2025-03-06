@@ -47,7 +47,7 @@ export default class UserService {
     async getUserPublicInfo(field: string, value: string) {
         const user: IUser = await this.userModel.getPublicInfo(field, value)
         if (!user.id) {
-            return '用戶不存在或是非公開'
+            return 0
         }
         if (user.designIds) {
             const promises = user.designIds.map(id => {

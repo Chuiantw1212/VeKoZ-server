@@ -52,9 +52,6 @@ router.use(bearer())
         const user = await UserService.getUserByUid(userIdToken.uid)
         return user
     })
-    /**
-     * 因主辦事件關聯產生的公開資料抓取，不可隱藏
-     */
     .get('/user/:userId', async ({ params }) => {
         const { UserService } = AccessGlobalService.locals
         const { userId } = params
@@ -68,7 +65,12 @@ router.use(bearer())
         const { UserService } = AccessGlobalService.locals
         const { seoName } = params
         const user = await UserService.getUserPublicInfo('seoName', seoName)
-        return user
+        if (user) {
+            return user
+        } else {
+            const user = await UserService.getUserPublicInfo('id', seoName)
+            return user
+        }
     })
     .patch('/user/seo', async ({ bearer, request }) => {
         const { AuthService, UserService } = AccessGlobalService.locals
