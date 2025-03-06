@@ -18,14 +18,15 @@ export interface IOrganization {
 }
 
 export interface IOrganizationMember {
+    uid?: string, // 權限uid
     id?: string,
-    name: string,
+    name?: string,
     organizationId?: string,
     organizationName?: string,
     organizationFounderId?: string,
     // organizationFounderEmail?: string,
     allowMethods?: string[],
-    email: string,
+    email?: string,
 }
 
 /**

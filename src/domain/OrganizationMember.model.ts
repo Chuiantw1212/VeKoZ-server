@@ -50,8 +50,23 @@ export default class OrganizationMemberModel extends VekozModel {
         return count
     }
 
-    async deleteMember(uid: string, id: string,) {
-        const count = await super.deleteItemsByQuery([['uid', '==', uid], ['id', '==', id]])
+    async deleteMemberById(uid: string, id: string,) {
+        const options: ICrudOptions = {
+            count: {
+                absolute: 1
+            }
+        }
+        const count = await super.deleteItemsByQuery([['uid', '==', uid], ['id', '==', id]], options)
+        return count
+    }
+
+    async deleteMemberByEmail(uid: string, email: string,) {
+        const options: ICrudOptions = {
+            count: {
+                absolute: 1
+            }
+        }
+        const count = await super.deleteItemsByQuery([['uid', '==', uid], ['email', '==', email]], options)
         return count
     }
 

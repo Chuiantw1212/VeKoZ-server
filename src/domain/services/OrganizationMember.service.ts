@@ -45,8 +45,13 @@ export default class OrganizationMemberService {
         return count
     }
 
-    async deleteMember(uid: string, id: string,) {
-        const count = await this.organizationMemberModel.deleteMember(uid, id)
+    async deleteMemberById(member: IOrganizationMember) {
+        const count = await this.organizationMemberModel.deleteMemberById(member)
+        return count
+    }
+
+    async deleteMemberByEmail(member: IOrganizationMember) {
+        const count = await this.organizationMemberModel.deleteMemberByEmail(member)
         return count
     }
 
@@ -66,13 +71,16 @@ export default class OrganizationMemberService {
     }
 
     async inviteMember(uid: string, member: IOrganizationMember) {
+        if (!member.email || !member.organizationId) {
+            throw '邀約資料有誤'
+        }
         // 找既有客戶資料
         const existedMember = await this.userModel.getPublicInfo('email', member.email)
         member.name = existedMember.name ?? '新用戶'
         member.allowMethods = ['GET']
 
         // 發出信件邀請
-        const organization = await this.organizaitonModel.getOrganizationById(String(member.organizationId)) as IOrganization
+        const organization = await this.organizaitonModel.getOrganizationById(member.organizationId) as IOrganization
         member.organizationName = organization.name
         const newMember = await this.organizationMemberModel.addMember(uid, member)
         const subject = `邀請加入${organization.name}`

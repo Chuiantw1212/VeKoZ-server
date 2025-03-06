@@ -47,11 +47,36 @@ router.use(bearer())
         const count = await OrganizationMemberService.setMemberById(user.uid, organizatoinMember)
         return count
     })
-    .delete('/organization/member/:id', async ({ bearer, params, query }) => {
+    .delete('/organization/member', async ({ bearer, request, }) => {
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
-        const { id } = params
         const user = await AuthService.verifyIdToken(bearer)
-        const count = await OrganizationMemberService.deleteMember(user.uid, id)
-        return count
+        const organizatoinMember = await request.json() as IOrganizationMember
+        if (user.email === organizatoinMember.email) {
+            // 刪除的是自己的資料
+            const authUid = await OrganizationMemberService.checkMemberAuths(
+                String(user.email),
+                String(organizatoinMember.organizationId),
+                'GET',
+            )
+            const count = await OrganizationMemberService.deleteMemberByEmail({
+                uid: authUid,
+                email: user.email,
+                organizationId: organizatoinMember.organizationId,
+            })
+            return count
+        } else {
+            // 刪除別人的資料
+            const authUid = await OrganizationMemberService.checkMemberAuths(
+                String(user.email),
+                String(organizatoinMember.organizationId),
+                request.method
+            )
+            const count = await OrganizationMemberService.deleteMemberById({
+                uid: authUid,
+                id: organizatoinMember.id,
+                organizationId: organizatoinMember.organizationId,
+            })
+            return count
+        }
     })
 export default router
