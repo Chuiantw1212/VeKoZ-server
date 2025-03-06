@@ -13,7 +13,8 @@ export interface IOrganization {
     banner?: string;
     googleCalendarId?: string,
     email?: string, // 聯絡用email
-    founderEmail?: string, // 部分取代uid判定權限使用，不可變更
+    founderId?: string, // 部分取代uid判定UI使用
+    // founderEmail?: string, // 部分取代uid判定權限使用，不可變更
 }
 
 export interface IOrganizationMember {
@@ -21,7 +22,8 @@ export interface IOrganizationMember {
     name: string,
     organizationId?: string,
     organizationName?: string,
-    organizationFounderEmail?: string,
+    organizationFounderId?: string,
+    // organizationFounderEmail?: string,
     allowMethods?: string[],
     email: string,
 }
