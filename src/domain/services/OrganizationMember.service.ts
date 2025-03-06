@@ -65,8 +65,8 @@ export default class OrganizationMemberService {
      * @param organizationId 企業文件Id
      * @returns 
      */
-    async getMemberList(uid: string, organizationId: string, query: IPagination) {
-        const result = await this.organizationMemberModel.getMemberList(uid, organizationId, query)
+    async getMemberList(member: IOrganizationMember, query: IPagination) {
+        const result = await this.organizationMemberModel.getMemberList(member, query)
         return result
     }
 

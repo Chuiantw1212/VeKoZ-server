@@ -16,7 +16,11 @@ router.use(bearer())
             request.method
         )
         const pagination = query as IPagination
-        const result = await OrganizationMemberService.getMemberList(authUid, organizationId, pagination)
+        const result = await OrganizationMemberService.getMemberList({
+            uid: authUid,
+            organizationId,
+            email: user.email,
+        }, pagination)
         return result
     })
     .post('/organization/member', async ({ bearer, request, }) => {
