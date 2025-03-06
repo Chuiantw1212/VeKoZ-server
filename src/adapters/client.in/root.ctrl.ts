@@ -24,7 +24,7 @@ router.get('/', async () => {
     }
     return {
         memoryUsage: memoryUsageInMB,
-        startupTime: AccessGlobalService.get('startupTime'),
+        startupTime: AccessGlobalService.startupTime,
     }
 })
 export default router

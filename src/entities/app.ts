@@ -15,7 +15,6 @@ import OfferService from "../domain/services/Offer.service"
 
 export interface ILocals {
     [key: string]: any
-    startupTime?: number,
     MetaService: MetaService,
     EventService: EventService,
     OrganizationService: OrganizationService,
@@ -29,17 +28,14 @@ export interface ILocals {
     OfferService: OfferService
 }
 
-export interface IApp {
-    locals: ILocals
+export interface IEnv {
+    webOrigin: string,
+    apOrigin: string,
 }
 
 class AccessGlobalService {
-    locals: ILocals = {} as any
-    set(name: string, value: any) {
-        this.locals[name] = value
-    }
-    get(name: string) {
-        return this.locals[name]
-    }
+    public locals: ILocals = {} as any
+    startupTime?: number
+    env?: IEnv
 }
 export default new AccessGlobalService()

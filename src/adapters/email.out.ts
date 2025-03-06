@@ -1,4 +1,5 @@
 import { google, gmail_v1 } from "googleapis";
+import AccessGlobalService from '../entities/app'
 import { IOrganization } from "../entities/organization";
 
 interface IServiceAccount {
@@ -116,8 +117,11 @@ export default class EmailAdapter {
 
         const {
             name: organizatoinName = '未命名的組織',
-            logo: organizatoinLogo = 'https://storage.googleapis.com/public.vekoz.org/logo/160_160.png',
+            logo: organizatoinLogo
         } = organization
+
+        const logo = organizatoinLogo || 'https://storage.googleapis.com/public.vekoz.org/logo/160_160.png'
+        const hostOrganizationLink = `${AccessGlobalService.env}/host/organization`
 
         return `
             <!DOCTYPE html>
@@ -132,7 +136,7 @@ export default class EmailAdapter {
                     
                     <!-- Logo -->
                     <div style="text-align: center;">
-                        <img src="${organizatoinLogo}" alt="${organizatoinName}" style="width: 120px; margin-bottom: 10px;">
+                        <img src="${logo}" alt="${organizatoinName}" style="width: 120px; margin-bottom: 10px;">
                     </div>
 
                     <h2 style="color: #333; text-align: center;">邀請您加入 <span style="color: #EA4335;">${organizatoinName}</span>！</h2>
@@ -141,7 +145,7 @@ export default class EmailAdapter {
                     <p>VeKoZ 微課室是一個專為活動主辦方打造的線上平台，讓講師能夠順暢管理課程、分享資源，並提升活動運營效率。</p>
                     
                     <div style="text-align: center; margin: 20px 0;">
-                        <a href="[您的邀請連結]" style="background: #4285F4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-size: 16px; display: inline-block; cursor: pointer">🚀 點擊此處加入 ${organizatoinName}</a>
+                        <a href="${hostOrganizationLink}" style="background: #4285F4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-size: 16px; display: inline-block; cursor: pointer">🚀 點擊此處加入 ${organizatoinName}</a>
                     </div>
 
                     <hr style="border: none; height: 1px; background: #EA4335; margin: 20px 0;">

@@ -53,10 +53,19 @@ import offerController from './adapters/client.in/offer.ctrl'
 
 (async () => {
     const app = new Elysia({ adapter: node() })
+    let ENV = null
+    try {
+        ENV = await googleSecretManager.accessSecret('ENV')
+    } catch (error: any) {
+        console.trace('ENV:', error.message)
+        return
+    }
+    console.log({
+        ENV,
+    })
     /**
      * Adapters
      */
-    // Load firebase
     let FIREBASE_SERVICE_ACCOUNT_KEY_JSON = null
     try {
         FIREBASE_SERVICE_ACCOUNT_KEY_JSON = await googleSecretManager.accessSecret('FIREBASE_SERVICE_ACCOUNT_KEY_JSON')
@@ -65,35 +74,8 @@ import offerController from './adapters/client.in/offer.ctrl'
         return
     }
     await firebase.initializeSync(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
-
-    // // Load GCP
-    // let FIREBASE_API_KEY = null
-    // try {
-    //     FIREBASE_API_KEY = await googleSecretManager.accessSecret('FIREBASE_API_KEY')
-    // } catch (error: any) {
-    //     console.trace('FIREBASE_API_KEY:', error.message)
-    // }
-    // await googleCalendar.setClient(FIREBASE_API_KEY)
     const nlpAdapter = new NlpAdapter()
     const emailAdapter = new EmailAdapter(FIREBASE_SERVICE_ACCOUNT_KEY_JSON)
-    // const invitationHtml = emailAdapter.getInvitation({
-    //     recipientName: 'EN Chu',
-    //     recipientEmail: 'chuiantw1212@gmail.com',
-    //     organization: {
-    //         name: '學校學不到的事',
-    //         email: 'chuiantw1212@gmail.com'
-    //     },
-    // })
-    // console.log({
-    //     invitationHtml
-    // })
-    // emailAdapter.send({
-    //     subject: '邀請加入 VeKoZ 微課室',
-    //     recipientName: 'EN Chu',
-    //     recipientEmail: 'chuiantw1212@gmail.com',
-    //     html: invitationHtml,
-    // })
-
     /**
      * Models
      */
@@ -225,7 +207,8 @@ import offerController from './adapters/client.in/offer.ctrl'
     app.listen(8080, ({ hostname, port }) => {
         const timeEnd = new Date().getTime()
         const timeDiff = (timeEnd - time) / 1000
-        AccessGlobalService.locals.startupTime = timeDiff
+        AccessGlobalService.startupTime = timeDiff
+        AccessGlobalService.env = ENV
         console.log(
             `🦊 Elysia took ${timeDiff}s to run at ${hostname}:${port}`
         )
