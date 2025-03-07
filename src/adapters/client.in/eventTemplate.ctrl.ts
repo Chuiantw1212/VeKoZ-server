@@ -2,6 +2,7 @@ import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
 import type { IPostTemplateDesignReq, IPatchTemplateDesignReq, IEventTemplate } from '../../entities/eventTemplate'
+import { IOrganizationMember } from '../../entities/organization'
 const router = new Elysia()
 router.use(bearer())
     .get('/event/template/:id', async function ({ bearer, params }) {
@@ -15,16 +16,20 @@ router.use(bearer())
         const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const { organizerId } = query
-        let impersonatedUid = user.uid
+        const impersonatedMember: IOrganizationMember = {
+            uid: user.uid,
+            allowMethods: [request.method]
+        }
         if (organizerId) {
-            const impersonatedMember = await OrganizationMemberService.checkMemberAuths(
+            const userMembership = await OrganizationMemberService.checkMemberAuths(
                 String(user.email),
                 String(organizerId),
                 request.method,
             )
-            impersonatedUid = String(impersonatedMember.uid)
+            impersonatedMember.uid = userMembership.uid
+            impersonatedMember.allowMethods = userMembership.allowMethods
         }
-        const templates = await EventTemplateService.getEventTemplateList(impersonatedUid, {
+        const templates = await EventTemplateService.getTemplateMasterList(impersonatedMember, {
             organizerId,
         })
         return templates

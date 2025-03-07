@@ -1,4 +1,5 @@
 import type { IEventTemplate, ITemplateDesign, IPostTemplateDesignReq, IPatchTemplateDesignReq, IEventTemplateQuery } from '../../entities/eventTemplate';
+import { IOrganizationMember } from '../../entities/organization';
 import EventTemplateModel from '../EventTemplate.model'
 import EventTemplateDesignModel from '../EventTemplateDesign.model';
 import OrganizationMemberModel from '../OrganizationMember.model';
@@ -30,8 +31,12 @@ export default class EventTemplateService {
      * @param uid 
      * @returns ｀
      */
-    async getEventTemplateList(uid: string, query: IEventTemplateQuery) {
-        const eventTemplateMasterList: IEventTemplate[] = await this.eventTemplateModel.getTemplateList(uid, query)
+    async getTemplateMasterList(member: IOrganizationMember, query: IEventTemplateQuery) {
+        const eventTemplateMasterList: IEventTemplate[] = await this.eventTemplateModel.getTemplateList(String(member.uid), query)
+        eventTemplateMasterList.forEach(template => {
+            delete template.designIds
+            template.allowMethods = member.allowMethods
+        })
         return eventTemplateMasterList
     }
 
