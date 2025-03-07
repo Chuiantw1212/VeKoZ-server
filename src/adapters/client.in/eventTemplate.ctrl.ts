@@ -14,17 +14,17 @@ router.use(bearer())
     .get('/event/template/list', async function ({ bearer, request, query }) {
         const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const { organizationId } = query
+        const { organizerId } = query
         let impersonatedUid = user.uid
-        if (organizationId) {
+        if (organizerId) {
             impersonatedUid = await OrganizationMemberService.checkMemberAuths(
                 String(user.email),
-                String(organizationId),
+                String(organizerId),
                 request.method,
             )
         }
         const templates = await EventTemplateService.getEventTemplateList(impersonatedUid, {
-            organizationId,
+            organizerId,
         })
         return templates
     })

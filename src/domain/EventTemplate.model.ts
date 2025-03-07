@@ -20,8 +20,8 @@ export default class EventTemplateModel extends VekozModel {
 
     async getTemplateList(uid: string, query?: IEventTemplateQuery) {
         const wheres = [['uid', '==', uid]]
-        if (query?.organizationId) {
-            wheres.push(['organizationId', '==', query.organizationId])
+        if (query?.organizerId) {
+            wheres.push(['organizerId', '==', query.organizerId])
         }
         const templateList = await super.getItemsByWheres(wheres, {
             orderBy: ['lastmod', 'desc'],

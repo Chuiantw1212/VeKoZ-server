@@ -39,4 +39,7 @@ export interface IUserPreference {
         calendarViewType: 'dayGridMonth' | 'dayGridWeek' | 'listWeek'
         organizationIds: string[]
     },
+    eventTemplate?: {
+        organizer: string,
+    }
 } 

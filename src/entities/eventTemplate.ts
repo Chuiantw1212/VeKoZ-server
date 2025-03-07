@@ -13,7 +13,7 @@ export interface IEventTemplate extends IEventTemplateQuery {
 }
 
 export interface IEventTemplateQuery {
-    organizationId?: string,
+    organizerId?: string,
 }
 
 export interface ITemplateDesign extends ITemplateDesignMutable {
