@@ -15,11 +15,14 @@ router.use(bearer())
         const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const { organizationId } = query
-        const impersonatedUid = await OrganizationMemberService.checkMemberAuths(
-            String(user.email),
-            String(organizationId),
-            request.method,
-        )
+        let impersonatedUid = user.uid
+        if (organizationId) {
+            impersonatedUid = await OrganizationMemberService.checkMemberAuths(
+                String(user.email),
+                String(organizationId),
+                request.method,
+            )
+        }
         const templates = await EventTemplateService.getEventTemplateList(impersonatedUid)
         return templates
     })
@@ -42,18 +45,16 @@ router.use(bearer())
         const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const { id: templateId, organizationId } = query
+        let impersonatedUid = user.uid
         if (organizationId) {
-            const authUid = await OrganizationMemberService.checkMemberAuths(
+            impersonatedUid = await OrganizationMemberService.checkMemberAuths(
                 String(user.email),
                 String(organizationId),
                 request.method
             )
-            const count = await EventTemplateService.deleteTemplate(authUid, templateId)
-            return count
-        } else {
-            const count = await EventTemplateService.deleteTemplate(user.uid, templateId)
-            return count
         }
+        const count = await EventTemplateService.deleteTemplate(impersonatedUid, templateId)
+        return count
     })
     .post('/event/template/design', async function ({ request, bearer }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
