@@ -11,25 +11,17 @@ router.use(bearer())
         const result = await EventTemplateService.getTemplate(user.uid, id)
         return result
     })
-    .get('/event/template/list', async function ({ bearer, request }) {
+    .get('/event/template/list', async function ({ bearer, request, query }) {
         const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const membership = await OrganizationMemberService.getRelatedMembership(String(user.email), {
-            allowMethods: ['GET'],
-        })
-        const promises = membership.items.map(async member => {
-            const impersonatedUid = await OrganizationMemberService.checkMemberAuths(
-                String(user.email),
-                String(member.organizationId),
-                request.method,
-            )
-            return EventTemplateService.getEventTemplateList(impersonatedUid)
-        })
-        const templateFromOrgs = await Promise.all(promises)
-        const allTemplates = templateFromOrgs.reduce((a, b) => {
-            return [...a, ...b]
-        }, [])
-        return allTemplates
+        const { organizationId } = query
+        const impersonatedUid = await OrganizationMemberService.checkMemberAuths(
+            String(user.email),
+            String(organizationId),
+            request.method,
+        )
+        const templates = await EventTemplateService.getEventTemplateList(impersonatedUid)
+        return templates
     })
     .post('/event/template', async function ({ request, bearer }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
@@ -50,13 +42,18 @@ router.use(bearer())
         const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const { id: templateId, organizationId } = query
-        const authUid = await OrganizationMemberService.checkMemberAuths(
-            String(user.email),
-            String(organizationId),
-            request.method
-        )
-        const count = await EventTemplateService.deleteTemplate(authUid, templateId)
-        return count
+        if (organizationId) {
+            const authUid = await OrganizationMemberService.checkMemberAuths(
+                String(user.email),
+                String(organizationId),
+                request.method
+            )
+            const count = await EventTemplateService.deleteTemplate(authUid, templateId)
+            return count
+        } else {
+            const count = await EventTemplateService.deleteTemplate(user.uid, templateId)
+            return count
+        }
     })
     .post('/event/template/design', async function ({ request, bearer }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals
