@@ -88,6 +88,11 @@ export default class UserService {
 
     async patchUserPreference(uid: string, preference: IUserPreference): Promise<number> {
         const count = await this.userPreferenceModel.setPreference(uid, preference)
+        if (!count) {
+            const user = await this.userModel.getUserByUid(uid)
+            const defualtPreference = this.getDefaultPreference(user)
+            this.userPreferenceModel.createPreference(uid, defualtPreference)
+        }
         return count
     }
 
@@ -110,17 +115,22 @@ export default class UserService {
         }
         const createdUser: IUser = await this.userModel.createUser(String(newUser.uid), newUser)
         if (createdUser.id) {
-            const userPreference: IUserPreference = {
-                id: createdUser.id,
-                userType: 'attendee',
-                event: {
-                    calendarViewType: 'dayGridMonth',
-                    organizationIds: [],
-                }
-            }
+            const userPreference: IUserPreference = this.getDefaultPreference(createdUser)
+            this.userPreferenceModel.createPreference(userIdToken.uid, userPreference)
             newUser.preference = userPreference
         }
         return newUser
+    }
+
+    private getDefaultPreference(user: IUser): IUserPreference {
+        return {
+            id: user.id,
+            menuType: 'attendee',
+            event: {
+                calendarViewType: 'dayGridMonth',
+                organizationIds: [],
+            }
+        }
     }
 
     /**
