@@ -55,7 +55,7 @@ export default class OrganizationMemberService {
         return count
     }
 
-    async checkMemberAuths(email: string, organizationId: string, method: string) {
+    async checkMemberAuths(email: string, organizationId: string, method: string): Promise<IOrganizationMember> {
         try {
             return await this.organizationMemberModel.checkMemberAuths(email, organizationId, method)
         } catch (error) {

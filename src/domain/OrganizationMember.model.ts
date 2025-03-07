@@ -88,14 +88,14 @@ export default class OrganizationMemberModel extends VekozModel {
      * @param method 
      * @returns 
      */
-    async checkMemberAuths(email: string, organizationId: string, method: string) {
+    async checkMemberAuths(email: string, organizationId: string, method: string): Promise<IOrganizationMember> {
         const query = await super.getQuery([['email', '==', email], ['organizationId', '==', organizationId], ['allowMethods', 'array-contains', method]])
         await super.checkQueryCount(query, {
             absolute: 1
         })
         const snapshot = await query.get()
-        const impersonatedUid = snapshot.docs[0].data().uid
-        return impersonatedUid
+        const impersonatedMember = snapshot.docs[0].data() as IOrganizationMember
+        return impersonatedMember
     }
 
     /**

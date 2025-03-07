@@ -17,11 +17,12 @@ router.use(bearer())
         const { organizerId } = query
         let impersonatedUid = user.uid
         if (organizerId) {
-            impersonatedUid = await OrganizationMemberService.checkMemberAuths(
+            const impersonatedMember = await OrganizationMemberService.checkMemberAuths(
                 String(user.email),
                 String(organizerId),
                 request.method,
             )
+            impersonatedUid = String(impersonatedMember.uid)
         }
         const templates = await EventTemplateService.getEventTemplateList(impersonatedUid, {
             organizerId,
@@ -49,11 +50,12 @@ router.use(bearer())
         const { id: templateId, organizationId } = query
         let impersonatedUid = user.uid
         if (organizationId) {
-            impersonatedUid = await OrganizationMemberService.checkMemberAuths(
+            const impersonatedMember = await OrganizationMemberService.checkMemberAuths(
                 String(user.email),
                 String(organizationId),
                 request.method
             )
+            impersonatedUid = String(impersonatedMember.uid)
         }
         const count = await EventTemplateService.deleteTemplate(impersonatedUid, templateId)
         return count
