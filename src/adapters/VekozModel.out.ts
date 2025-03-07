@@ -125,8 +125,8 @@ export default class VekozModel extends VenoniaCRUD {
         }
         const query = await this.getQuery(wheres, options)
         // 取得資料
-        let docs = (await query.get()).docs
-        const docDatas = docs.map(doc => {
+        const querySnapShot = await query.get()
+        const docDatas = querySnapShot.docs.map(doc => {
             const docData = doc.data()
             delete docData.uid // IMPORTANT
             if (docData.lastmod) {
