@@ -1,23 +1,28 @@
-import type { IEventTemplate, ITemplateDesign, IPostTemplateDesignReq, IDeleteTemplateDesignReq, IPatchTemplateDesignReq } from '../../entities/eventTemplate';
+import type { IEventTemplate, ITemplateDesign, IPostTemplateDesignReq, IPatchTemplateDesignReq } from '../../entities/eventTemplate';
 import EventTemplateModel from '../EventTemplate.model'
 import EventTemplateDesignModel from '../EventTemplateDesign.model';
+import OrganizationMemberModel from '../OrganizationMember.model';
 
 interface Idependency {
     eventTemplateModel: EventTemplateModel;
     eventTemplateDesignModel: EventTemplateDesignModel
+    organizationMemberModel: OrganizationMemberModel
 }
 
 export default class EventTemplateService {
-    protected eventTemplateModel: EventTemplateModel = null as any
-    protected eventTemplateDesignModel: EventTemplateDesignModel = null as any
+    protected eventTemplateModel: EventTemplateModel
+    protected eventTemplateDesignModel: EventTemplateDesignModel
+    protected organizationMemberModel: OrganizationMemberModel
 
     constructor(dependency: Idependency) {
         const {
             eventTemplateModel,
             eventTemplateDesignModel,
+            organizationMemberModel,
         } = dependency
         this.eventTemplateModel = eventTemplateModel
         this.eventTemplateDesignModel = eventTemplateDesignModel
+        this.organizationMemberModel = organizationMemberModel
     }
 
     /**
@@ -40,7 +45,7 @@ export default class EventTemplateService {
         if (!eventTemplate.designs) {
             throw 'designs不存在'
         }
-        // 深拷貝designs
+        // 暫存designs
         const designsTemp = eventTemplate.designs
         delete eventTemplate.designs
         // 給預設未命名

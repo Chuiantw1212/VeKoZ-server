@@ -136,6 +136,7 @@ import offerController from './adapters/client.in/offer.ctrl'
         EventTemplateService: new EventTemplateService({
             eventTemplateModel,
             eventTemplateDesignModel,
+            organizationMemberModel,
         }),
         OrganizationService: new OrganizationService({
             organizationModel,
