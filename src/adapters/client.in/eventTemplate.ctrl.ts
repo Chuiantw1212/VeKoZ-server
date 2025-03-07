@@ -5,17 +5,31 @@ import type { IPostTemplateDesignReq, IPatchTemplateDesignReq, IEventTemplate } 
 const router = new Elysia()
 router.use(bearer())
     .get('/event/template/:id', async function ({ bearer, params }) {
-        const { EventTemplateService, AuthService } = AccessGlobalService.locals
+        const { EventTemplateService, AuthService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const { id } = params
         const result = await EventTemplateService.getTemplate(user.uid, id)
         return result
     })
-    .get('/event/template/list', async function ({ bearer }) {
-        const { EventTemplateService, AuthService } = AccessGlobalService.locals
+    .get('/event/template/list', async function ({ bearer, request }) {
+        const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const result = await EventTemplateService.getEventTemplateList(user.uid)
-        return result
+        const membership = await OrganizationMemberService.getRelatedMembership(String(user.email), {
+            allowMethods: ['GET'],
+        })
+        const promises = membership.items.map(async member => {
+            const impersonatedUid = await OrganizationMemberService.checkMemberAuths(
+                String(user.email),
+                String(member.organizationId),
+                request.method,
+            )
+            return EventTemplateService.getEventTemplateList(impersonatedUid)
+        })
+        const templateFromOrgs = await Promise.all(promises)
+        const allTemplates = templateFromOrgs.reduce((a, b) => {
+            return [...a, ...b]
+        }, [])
+        return allTemplates
     })
     .post('/event/template', async function ({ request, bearer }) {
         const { EventTemplateService, AuthService } = AccessGlobalService.locals

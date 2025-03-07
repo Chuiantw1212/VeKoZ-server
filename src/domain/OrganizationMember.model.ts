@@ -37,7 +37,13 @@ export default class OrganizationMemberModel extends VekozModel {
             startAfter: Number(memberQuery.pageSize) * (Number(memberQuery.currentPage) - 1),
             limit: Number(memberQuery.pageSize),
         }
-        const allowMethod = memberQuery.allowMethods ?? 'GET'
+
+        let allowMethod = 'GET'
+        if (Array.isArray(memberQuery.allowMethods)) {
+            allowMethod = memberQuery.allowMethods[0]
+        } else {
+            allowMethod = memberQuery.allowMethods ?? 'GET'
+        }
         const wheres = [['email', '==', email], ['allowMethods', 'array-contains', allowMethod]]
         const query = await super.getQuery(wheres)
         const count = await super.checkQueryCount(query, options?.count ?? {})
