@@ -73,13 +73,16 @@ export default class OrganizationService {
             const publicUrl: string = await this.organizationModel.storeLogo(organization.id, tempLogo)
             organization.logo = publicUrl
             // 更新Event Organizer Logo
-            const eventListL: IEvent[] = await this.eventModel.queryEventList({
+            const eventList: IEvent[] = await this.eventModel.queryEventList({
                 organizerId: organization.id,
             })
-            eventListL.forEach((event: IEvent) => {
+            eventList.forEach((event: IEvent) => {
                 this.eventModel.mergeEventById(uid, String(event.id), {
                     organizerLogo: publicUrl,
                 })
+            })
+            this.organizationMemberModel.setMembersByOrgnaizationId(uid, {
+                organizationLogo: publicUrl,
             })
         }
         if (tempBanner && typeof tempBanner !== 'string') {
@@ -88,7 +91,7 @@ export default class OrganizationService {
         }
         const count = await this.organizationModel.mergeOrganizationById(uid, organization.id, organization)
         // MemberModel
-        this.organizationMemberModel.setMemberByOrgnaizationId(uid, {
+        this.organizationMemberModel.setMembersByOrgnaizationId(uid, {
             organizationName: organization.name,
             organizationId: organization.id,
         })
