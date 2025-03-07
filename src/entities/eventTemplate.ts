@@ -3,13 +3,17 @@ import type { IOffer } from "./offer";
  * https://schema.org/Organization
  */
 
-export interface IEventTemplate {
+export interface IEventTemplate extends IEventTemplateQuery {
     [key: string]: any
     uid?: string;
     id?: string; // doc id
     designs?: ITemplateDesign[]
     designIds?: string[],
     type?: string,
+}
+
+export interface IEventTemplateQuery {
+    organizationId?: string,
 }
 
 export interface ITemplateDesign extends ITemplateDesignMutable {

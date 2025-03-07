@@ -1,4 +1,4 @@
-import type { IEventTemplate, ITemplateDesign, IPostTemplateDesignReq, IPatchTemplateDesignReq } from '../../entities/eventTemplate';
+import type { IEventTemplate, ITemplateDesign, IPostTemplateDesignReq, IPatchTemplateDesignReq, IEventTemplateQuery } from '../../entities/eventTemplate';
 import EventTemplateModel from '../EventTemplate.model'
 import EventTemplateDesignModel from '../EventTemplateDesign.model';
 import OrganizationMemberModel from '../OrganizationMember.model';
@@ -30,8 +30,8 @@ export default class EventTemplateService {
      * @param uid 
      * @returns ｀
      */
-    async getEventTemplateList(uid: string) {
-        const eventTemplateMasterList: IEventTemplate[] = await this.eventTemplateModel.getTemplateList(uid)
+    async getEventTemplateList(uid: string, query: IEventTemplateQuery) {
+        const eventTemplateMasterList: IEventTemplate[] = await this.eventTemplateModel.getTemplateList(uid, query)
         return eventTemplateMasterList
     }
 

@@ -1,6 +1,6 @@
 import VekozModel from '../adapters/VekozModel.out'
 import type { IModelPorts } from '../ports/out.model'
-import { IEventTemplate } from '../entities/eventTemplate'
+import { IEventTemplate, IEventTemplateQuery } from '../entities/eventTemplate'
 
 export default class EventTemplateModel extends VekozModel {
     constructor(data: IModelPorts) {
@@ -18,8 +18,12 @@ export default class EventTemplateModel extends VekozModel {
         return newTemplateDoc
     }
 
-    async getTemplateList(uid: string,) {
-        const templateList = await super.getItemsByWheres([['uid', '==', uid]], {
+    async getTemplateList(uid: string, query?: IEventTemplateQuery) {
+        const wheres = [['uid', '==', uid]]
+        if (query?.organizationId) {
+            wheres.push(['organizationId', '==', query.organizationId])
+        }
+        const templateList = await super.getItemsByWheres(wheres, {
             orderBy: ['lastmod', 'desc'],
         })
         return templateList

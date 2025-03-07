@@ -23,7 +23,9 @@ router.use(bearer())
                 request.method,
             )
         }
-        const templates = await EventTemplateService.getEventTemplateList(impersonatedUid)
+        const templates = await EventTemplateService.getEventTemplateList(impersonatedUid, {
+            organizationId,
+        })
         return templates
     })
     .post('/event/template', async function ({ request, bearer }) {
