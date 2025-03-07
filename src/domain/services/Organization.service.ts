@@ -82,6 +82,7 @@ export default class OrganizationService {
                 })
             })
             this.organizationMemberModel.setMembersByOrgnaizationId(uid, {
+                organizationId: organization.id,
                 organizationLogo: publicUrl,
             })
         }

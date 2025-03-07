@@ -126,6 +126,9 @@ export default class OrganizationMemberModel extends VekozModel {
      * @returns 
      */
     async setMembersByOrgnaizationId(uid: string, member: IOrganizationMember,) {
+        if (!member.organizationId) {
+            throw `未提供organizationId`
+        }
         const options: ICrudOptions = {
             merge: true,
         }

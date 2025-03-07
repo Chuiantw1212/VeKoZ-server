@@ -39,7 +39,11 @@ router.use(bearer())
             String(organization.id),
             request.method
         )
-        await OrganizationService.updateOrganization(authUid, organization)
+        try {
+            OrganizationService.updateOrganization(authUid, organization)
+        } catch (error) {
+            console.trace(error)
+        }
     })
     .delete('/organization/:id', async ({ bearer, params }) => {
         // 新增的管理者不可以刪除組織，用戶只可以刪除自己建立的組織
