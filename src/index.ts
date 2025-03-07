@@ -2,7 +2,6 @@ const time = new Date().getTime()
 import { Elysia } from 'elysia'
 import { node } from '@elysiajs/node'
 import { cors } from '@elysiajs/cors'
-import path from 'path'
 // entities
 import AccessGlobalService from './entities/app'
 // adapters
@@ -37,7 +36,7 @@ import UserService from './domain/services/User.service'
 import UserTemplaceService from './domain/services/UserDesign.service'
 import GoogleService from './domain/services/Google.service'
 import OfferService from './domain/services/Offer.service'
-import { ILocals } from './entities/app';
+import { ILocals } from './entities/app'
 // controllers
 import rootController from './adapters/client.in/root.ctrl'
 import eventController from './adapters/client.in/event.ctrl'

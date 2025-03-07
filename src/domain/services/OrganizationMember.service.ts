@@ -56,7 +56,11 @@ export default class OrganizationMemberService {
     }
 
     async checkMemberAuths(email: string, organizationId: string, method: string) {
-        return await this.organizationMemberModel.checkMemberAuths(email, organizationId, method)
+        try {
+            return await this.organizationMemberModel.checkMemberAuths(email, organizationId, method)
+        } catch (error) {
+            throw '權限不符合'
+        }
     }
 
     /**

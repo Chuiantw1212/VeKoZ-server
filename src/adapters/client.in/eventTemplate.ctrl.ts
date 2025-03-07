@@ -32,11 +32,16 @@ router.use(bearer())
         const result = await EventTemplateService.patchTemplate(user.uid, id, eventTemplatePart)
         return result
     })
-    .delete('/event/template/:id', async function ({ bearer, params }) {
-        const { EventTemplateService, AuthService } = AccessGlobalService.locals
+    .delete('/event/template', async function ({ bearer, query, request }) {
+        const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const { id } = params
-        const count = await EventTemplateService.deleteTemplate(user.uid, id)
+        const { id: templateId, organizationId } = query
+        const authUid = await OrganizationMemberService.checkMemberAuths(
+            String(user.email),
+            String(organizationId),
+            request.method
+        )
+        const count = await EventTemplateService.deleteTemplate(authUid, templateId)
         return count
     })
     .post('/event/template/design', async function ({ request, bearer }) {
