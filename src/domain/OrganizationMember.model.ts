@@ -1,6 +1,6 @@
 import VekozModel from '../adapters/VekozModel.out'
 import { IPagination } from '../entities/meta'
-import { IOrganizationMember } from '../entities/organization'
+import { IOrganizationMember, IOrganizationMemberQuery } from '../entities/organization'
 import { ICrudOptions } from '../ports/out.crud'
 import type { IModelPorts } from '../ports/out.model'
 
@@ -28,16 +28,17 @@ export default class OrganizationMemberModel extends VekozModel {
     /**
      * R 管理成員列表
      * @param email 
-     * @param pagination 
+     * @param memberQuery 
      * @returns 
      */
-    async getRelatedMemberships(email: string, pagination: IPagination) {
+    async getRelatedMemberships(email: string, memberQuery: IOrganizationMemberQuery) {
         const options: ICrudOptions = {
             orderBy: ['lastmod', 'desc'],
-            startAfter: Number(pagination.pageSize) * (Number(pagination.currentPage) - 1),
-            limit: Number(pagination.pageSize),
+            startAfter: Number(memberQuery.pageSize) * (Number(memberQuery.currentPage) - 1),
+            limit: Number(memberQuery.pageSize),
         }
-        const wheres = [['email', '==', email], ['allowMethods', 'array-contains', 'GET']]
+        const allowMethod = memberQuery.allowMethods ?? 'GET'
+        const wheres = [['email', '==', email], ['allowMethods', 'array-contains', allowMethod]]
         const query = await super.getQuery(wheres)
         const count = await super.checkQueryCount(query, options?.count ?? {})
         const memberList: IOrganizationMember[] = await super.getItemsByWheres(wheres, options)

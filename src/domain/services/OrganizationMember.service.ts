@@ -1,5 +1,5 @@
 import OrganizationMemberModel from '../OrganizationMember.model';
-import type { IOrganization, IOrganizationMember } from '../../entities/organization';
+import type { IOrganization, IOrganizationMember, IOrganizationMemberQuery } from '../../entities/organization';
 import EmailAdapter from '../../adapters/email.out';
 import OrganizationModel from '../Organization.model';
 import UserModel from '../User.model';
@@ -26,8 +26,8 @@ export default class OrganizationMemberService {
         this.userModel = dependency.userModel
     }
 
-    async getRelatedMembership(email: string, pagination: IPagination) {
-        const members = await this.organizationMemberModel.getRelatedMemberships(email, pagination)
+    async getRelatedMembership(email: string, memberQuery: IOrganizationMemberQuery) {
+        const members = await this.organizationMemberModel.getRelatedMemberships(email, memberQuery)
         return members
     }
 

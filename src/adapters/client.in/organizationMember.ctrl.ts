@@ -1,5 +1,5 @@
 import AccessGlobalService from '../../entities/app'
-import type { IOrganizationMember } from '../../entities/organization'
+import type { IOrganizationMember, IOrganizationMemberQuery } from '../../entities/organization'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
 import { IPagination } from '../../entities/meta'
@@ -82,11 +82,11 @@ router.use(bearer())
             return count
         }
     })
-    .get('/member/organization/list', async ({ bearer, params, query }) => {
+    .get('/member/organization/list', async ({ bearer, query }) => {
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const pagination = query as any
-        const result = await OrganizationMemberService.getRelatedMembership(String(user.email), pagination)
+        const memberQuery = query as IOrganizationMemberQuery
+        const result = await OrganizationMemberService.getRelatedMembership(String(user.email), memberQuery)
         return result
     })
 export default router
