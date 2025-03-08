@@ -47,8 +47,8 @@ export default class EventTemplateService {
      * @returns 
      */
     async addEventTemplate(uid: string, eventTemplate: IEventTemplate): Promise<IEventTemplate> {
-        if (!eventTemplate.designs) {
-            throw 'designs不存在'
+        if (!eventTemplate.designs || !eventTemplate.organizerId) {
+            throw '新增模板資料有誤'
         }
         // 暫存designs
         const designsTemp = eventTemplate.designs

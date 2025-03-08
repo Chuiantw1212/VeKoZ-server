@@ -10,7 +10,9 @@ export interface IEventTemplate extends IEventTemplateQuery {
     designs?: ITemplateDesign[]
     designIds?: string[],
     type?: string,
-    allowMethods?: string[]
+    allowMethods?: string[],
+    organizerLogo?: string,
+    organizerName?: string,
 }
 
 export interface IEventTemplateQuery {

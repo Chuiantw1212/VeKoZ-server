@@ -42,11 +42,17 @@ router.use(bearer())
         return result
     })
     .patch('/event/template/:id', async function ({ request, bearer, params }) {
-        const { EventTemplateService, AuthService } = AccessGlobalService.locals
+        const { EventTemplateService, AuthService, OrganizationService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const { id } = params
-        const eventTemplatePart: IEventTemplate = await request.json()
-        const result = await EventTemplateService.patchTemplate(user.uid, id, eventTemplatePart)
+        const eventTemplate: IEventTemplate = await request.json()
+        const { organizerId, organizerLogo, organizerName } = eventTemplate
+        if (organizerId && (!organizerLogo || !organizerName)) {
+            const organization = await OrganizationService.getItem(organizerId)
+            eventTemplate.organizerLogo = organization.logo
+            eventTemplate.organizerName = organization.name
+        }
+        const result = await EventTemplateService.patchTemplate(user.uid, id, eventTemplate)
         return result
     })
     .delete('/event/template', async function ({ bearer, query, request }) {
