@@ -33,7 +33,7 @@ router.use(bearer())
         const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
             email: String(user.email),
             organizationId: String(organizatoinMember.organizationId),
-            canEditMember: true,
+            allowEntities: ['organizationMember'],
         })
         const newMember = await OrganizationMemberService.inviteMember(String(impersonatedMember.uid), organizatoinMember)
         return newMember
@@ -45,7 +45,7 @@ router.use(bearer())
         const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
             email: String(user.email),
             organizationId: String(organizatoinMember.organizationId),
-            canEditMember: true,
+            allowEntities: ['organizationMember'],
         })
         const count = await OrganizationMemberService.setMemberById(String(impersonatedMember.uid), organizatoinMember)
         return count
@@ -72,7 +72,7 @@ router.use(bearer())
             const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
                 email: String(user.email),
                 organizationId: String(organizatoinMember.organizationId),
-                canEditMember: true,
+                allowEntities: ['organizationMember'],
             })
             const count = await OrganizationMemberService.deleteMemberById({
                 uid: impersonatedMember.uid,
