@@ -46,7 +46,10 @@ router.use(bearer())
         return count
     })
     // 不帶參數，只使用ID Token抓自己的資料
-    .get('/user', async ({ bearer }) => {
+    .get('/user', async ({ request, bearer }) => {
+        console.log({
+            request
+        })
         const { AuthService, UserService } = AccessGlobalService.locals
         const userIdToken = await AuthService.verifyIdToken(bearer)
         const user = await UserService.getUserByUid(userIdToken.uid)

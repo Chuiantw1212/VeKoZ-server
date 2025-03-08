@@ -10,11 +10,11 @@ router.use(bearer())
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
         const { organizationId } = params
         const user = await AuthService.verifyIdToken(bearer)
-        const impersonatedMember = await OrganizationMemberService.checkMemberAuths(
-            String(user.email),
-            String(organizationId),
-            request.method
-        )
+        const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+            email: String(user.email),
+            organizationId: String(organizationId),
+            allowMethods: [request.method]
+        })
         const pagination = query as IPagination
         const result = await OrganizationMemberService.getMemberList({
             uid: impersonatedMember.uid,
@@ -30,11 +30,11 @@ router.use(bearer())
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const organizatoinMember = await request.json() as IOrganizationMember
-        const impersonatedMember = await OrganizationMemberService.checkMemberAuths(
-            String(user.email),
-            String(organizatoinMember.organizationId),
-            request.method
-        )
+        const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+            email: String(user.email),
+            organizationId: String(organizatoinMember.organizationId),
+            allowMethods: [request.method]
+        })
         const newMember = await OrganizationMemberService.inviteMember(String(impersonatedMember.uid), organizatoinMember)
         return newMember
     })
@@ -56,11 +56,11 @@ router.use(bearer())
         const organizatoinMember = await request.json() as IOrganizationMember
         if (user.email === organizatoinMember.email) {
             // 刪除的是自己的資料
-            const impersonatedMember = await OrganizationMemberService.checkMemberAuths(
-                String(user.email),
-                String(organizatoinMember.organizationId),
-                'GET',
-            )
+            const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+                email: String(user.email),
+                organizationId: String(organizatoinMember.organizationId),
+                allowMethods: ['GET'],
+            })
             const count = await OrganizationMemberService.deleteSelfByEmail({
                 uid: impersonatedMember.uid,
                 email: user.email,
@@ -69,11 +69,11 @@ router.use(bearer())
             return count
         } else {
             // 刪除別人的資料
-            const impersonatedMember = await OrganizationMemberService.checkMemberAuths(
-                String(user.email),
-                String(organizatoinMember.organizationId),
-                request.method
-            )
+            const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+                email: String(user.email),
+                organizationId: String(organizatoinMember.organizationId),
+                allowMethods: [request.method]
+            })
             const count = await OrganizationMemberService.deleteMemberById({
                 uid: impersonatedMember.uid,
                 id: organizatoinMember.id,

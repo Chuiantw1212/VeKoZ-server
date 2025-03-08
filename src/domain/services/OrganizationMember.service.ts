@@ -55,9 +55,9 @@ export default class OrganizationMemberService {
         return count
     }
 
-    async checkMemberAuths(email: string, organizationId: string, method: string): Promise<IOrganizationMember> {
+    async checkMemberAuths(member: IOrganizationMemberQuery): Promise<IOrganizationMember> {
         try {
-            return await this.organizationMemberModel.checkMemberAuths(email, organizationId, method)
+            return await this.organizationMemberModel.checkMemberAuths(member)
         } catch (error) {
             throw '權限不符合'
         }

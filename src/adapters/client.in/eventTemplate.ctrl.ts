@@ -21,11 +21,11 @@ router.use(bearer())
             allowMethods: [request.method]
         }
         if (organizerId) {
-            const userMembership = await OrganizationMemberService.checkMemberAuths(
-                String(user.email),
-                String(organizerId),
-                request.method,
-            )
+            const userMembership = await OrganizationMemberService.checkMemberAuths({
+                email: String(user.email),
+                organizationId: String(organizerId),
+                allowMethods: [request.method],
+            })
             impersonatedMember.uid = userMembership.uid
             impersonatedMember.allowMethods = userMembership.allowMethods
         }
@@ -61,11 +61,11 @@ router.use(bearer())
         const { id: templateId, organizationId } = query
         let impersonatedUid = user.uid
         if (organizationId) {
-            const impersonatedMember = await OrganizationMemberService.checkMemberAuths(
-                String(user.email),
-                String(organizationId),
-                request.method
-            )
+            const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+                email: String(user.email),
+                organizationId: String(organizationId),
+                allowMethods: [request.method]
+            })
             impersonatedUid = String(impersonatedMember.uid)
         }
         const count = await EventTemplateService.deleteTemplate(impersonatedUid, templateId)

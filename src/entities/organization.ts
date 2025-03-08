@@ -21,13 +21,14 @@ export interface IOrganizationMember extends IOrganizationMemberQuery {
     uid?: string, // 權限uid
     id?: string,
     name?: string,
-    organizationId?: string,
     organizationName?: string,
     organizationLogo?: string,
-    email?: string,
     isFounder?: boolean, // 創辦者資料的刪除修改方式不同
 }
 
 export interface IOrganizationMemberQuery extends IPagination {
+    organizationId?: string,
+    email?: string,
     allowMethods?: string[],
+    allowPaths?: string[],
 }

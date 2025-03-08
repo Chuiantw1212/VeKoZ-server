@@ -34,11 +34,11 @@ router.use(bearer())
         const { OrganizationService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const organization: IOrganization = await request.json() as any
-        const impersonatedMember = await OrganizationMemberService.checkMemberAuths(
-            String(user.email),
-            String(organization.id),
-            request.method
-        )
+        const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+            email: String(user.email),
+            organizationId: String(organization.id),
+            allowMethods: [request.method]
+        })
         try {
             OrganizationService.updateOrganization(String(impersonatedMember.uid), organization)
         } catch (error) {
