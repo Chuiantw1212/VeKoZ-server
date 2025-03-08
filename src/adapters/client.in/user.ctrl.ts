@@ -19,7 +19,7 @@ router.use(bearer())
             email: userIdToken.email,
             organizationName: `${userCreated.name}的第一個組織`,
             isFounder: true, // 最高權限
-            canEditMember: true, // 次高權限
+            allowEntities: ['organizationMember'], // 次高權限
             allowMethods: ['GET', 'PATCH', 'POST', 'DELETE'],
         })
         // 更新受邀請組織的資料

@@ -82,7 +82,7 @@ export default class OrganizationMemberService {
         const existedMember = await this.userModel.getPublicInfo('email', member.email)
         member.name = existedMember.name ?? '新用戶'
         member.allowMethods = ['GET']
-        member.canEditMember = false
+        member.allowEntities = ['organizationMember']
 
         // 發出信件邀請
         const organization = await this.organizaitonModel.getOrganizationById(member.organizationId) as IOrganization
