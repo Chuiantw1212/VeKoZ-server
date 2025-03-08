@@ -33,7 +33,7 @@ router.use(bearer())
         const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
             email: String(user.email),
             organizationId: String(organizatoinMember.organizationId),
-            allowMethods: [request.method]
+            canEditMember: true,
         })
         const newMember = await OrganizationMemberService.inviteMember(String(impersonatedMember.uid), organizatoinMember)
         return newMember
@@ -42,12 +42,12 @@ router.use(bearer())
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const organizatoinMember = await request.json() as IOrganizationMember
-        // const authUid = await OrganizationMemberService.checkMemberAuths(
-        //     String(user.email),
-        //     String(organizatoinMember.organizationId),
-        //     request.method
-        // )
-        const count = await OrganizationMemberService.setMemberById(user.uid, organizatoinMember)
+        const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+            email: String(user.email),
+            organizationId: String(organizatoinMember.organizationId),
+            canEditMember: true,
+        })
+        const count = await OrganizationMemberService.setMemberById(String(impersonatedMember.uid), organizatoinMember)
         return count
     })
     .delete('/organization/member', async ({ bearer, request, }) => {
@@ -72,7 +72,7 @@ router.use(bearer())
             const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
                 email: String(user.email),
                 organizationId: String(organizatoinMember.organizationId),
-                allowMethods: [request.method]
+                canEditMember: true,
             })
             const count = await OrganizationMemberService.deleteMemberById({
                 uid: impersonatedMember.uid,

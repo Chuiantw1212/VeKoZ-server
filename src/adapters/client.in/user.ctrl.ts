@@ -18,7 +18,8 @@ router.use(bearer())
             name: userIdToken.name ?? '',
             email: userIdToken.email,
             organizationName: `${userCreated.name}的第一個組織`,
-            isFounder: true,
+            isFounder: true, // 最高權限
+            canEditMember: true, // 次高權限
             allowMethods: ['GET', 'PATCH', 'POST', 'DELETE'],
         })
         // 更新受邀請組織的資料
@@ -27,6 +28,7 @@ router.use(bearer())
                 name: userCreated.name,
                 email: userCreated.email,
                 allowMethods: ['GET'],
+                // 其他權限不異動
             })
         }
         return userCreated
@@ -47,9 +49,6 @@ router.use(bearer())
     })
     // 不帶參數，只使用ID Token抓自己的資料
     .get('/user', async ({ request, bearer }) => {
-        console.log({
-            request
-        })
         const { AuthService, UserService } = AccessGlobalService.locals
         const userIdToken = await AuthService.verifyIdToken(bearer)
         const user = await UserService.getUserByUid(userIdToken.uid)

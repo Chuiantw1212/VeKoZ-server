@@ -89,8 +89,14 @@ export default class OrganizationMemberModel extends VekozModel {
      * @returns 
      */
     async checkMemberAuths(member: IOrganizationMemberQuery): Promise<IOrganizationMember> {
-        const { email, organizationId, allowMethods } = member
-        const wheres = [['email', '==', email], ['organizationId', '==', organizationId], ['allowMethods', 'array-contains-any', allowMethods]]
+        const { email, organizationId, allowMethods, canEditMember = false } = member
+        const wheres: [string, string, any][] = [['email', '==', email], ['organizationId', '==', organizationId],]
+        if (allowMethods) {
+            wheres.push(['allowMethods', 'array-contains-any', allowMethods])
+        }
+        if (String(canEditMember) === 'true') {
+            wheres.push(['canEditMember', '==', canEditMember])
+        }
         const query = await super.getQuery(wheres)
         await super.checkQueryCount(query, {
             absolute: 1

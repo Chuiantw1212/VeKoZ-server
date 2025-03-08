@@ -30,5 +30,5 @@ export interface IOrganizationMemberQuery extends IPagination {
     organizationId?: string,
     email?: string,
     allowMethods?: string[],
-    allowPaths?: string[],
+    canEditMember?: boolean,
 }

@@ -78,10 +78,11 @@ export default class OrganizationMemberService {
         if (!member.email || !member.organizationId) {
             throw '邀約資料有誤'
         }
-        // 找既有客戶資料
+        // 找既有客戶資料，賦予預設值
         const existedMember = await this.userModel.getPublicInfo('email', member.email)
         member.name = existedMember.name ?? '新用戶'
         member.allowMethods = ['GET']
+        member.canEditMember = false
 
         // 發出信件邀請
         const organization = await this.organizaitonModel.getOrganizationById(member.organizationId) as IOrganization

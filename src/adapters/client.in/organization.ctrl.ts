@@ -40,7 +40,8 @@ router.use(bearer())
             allowMethods: [request.method]
         })
         try {
-            OrganizationService.updateOrganization(String(impersonatedMember.uid), organization)
+            const count = OrganizationService.updateOrganization(String(impersonatedMember.uid), organization)
+            return count
         } catch (error) {
             console.trace(error)
         }
