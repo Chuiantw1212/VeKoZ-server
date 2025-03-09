@@ -75,7 +75,7 @@ export default class EventTemplateService {
             designIds
         })
         // 取得新的Template
-        const newTemplateDoc = await this.getTemplate(uid, String(insertedEventTemplate.id))
+        const newTemplateDoc = await this.getTemplateById(String(insertedEventTemplate.id), uid)
         if (newTemplateDoc) {
             return newTemplateDoc
         }
@@ -88,7 +88,7 @@ export default class EventTemplateService {
      * @param id 
      * @returns 
      */
-    async getTemplate(id: string, uid?: string,): Promise<IEventTemplate | 0> {
+    async getTemplateById(id: string, uid?: string,): Promise<IEventTemplate | 0> {
         const eventTemplate: IEventTemplate | 0 = await this.eventTemplateModel.readTemplateById(id)
         if (eventTemplate) {
             const designIds = eventTemplate.designIds || []

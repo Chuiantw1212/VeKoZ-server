@@ -24,6 +24,7 @@ router.use(bearer())
         }).then(async newOrg => {
             // 建立第一個事件模板
             const newTemplate = await EventTemplateService.addEventTemplate(userIdToken.uid, {
+                name: `${userCreated.name}的第一個模板`,
                 organizerId: newOrg.id
             })
             // 更新偏好

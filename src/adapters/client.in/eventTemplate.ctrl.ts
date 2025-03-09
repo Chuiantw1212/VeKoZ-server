@@ -8,7 +8,7 @@ router.use(bearer())
     .get('/event/template/:id', async function ({ bearer, params }) {
         const { EventTemplateService, } = AccessGlobalService.locals
         const { id } = params
-        const result = await EventTemplateService.getTemplate(id)
+        const result = await EventTemplateService.getTemplateById(id)
         return result
     })
     .get('/event/template/default', async function ({ bearer, params }) {
@@ -42,10 +42,16 @@ router.use(bearer())
         return templates
     })
     .post('/event/template', async function ({ request, bearer }) {
-        const { EventTemplateService, AuthService } = AccessGlobalService.locals
+        const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const eventTemplate = await request.json()
-        const result = await EventTemplateService.addEventTemplate(user.uid, eventTemplate)
+        const userMembership = await OrganizationMemberService.checkMemberAuths({
+            email: String(user.email),
+            organizationId: String(eventTemplate.organizerId),
+            allowMethods: [request.method],
+        })
+        const impersonatedUid = String(userMembership.uid)
+        const result = await EventTemplateService.addEventTemplate(impersonatedUid, eventTemplate)
         return result
     })
     .patch('/event/template/:id', async function ({ request, bearer, params }) {
