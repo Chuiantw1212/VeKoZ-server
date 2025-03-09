@@ -6,10 +6,9 @@ import { IOrganizationMember } from '../../entities/organization'
 const router = new Elysia()
 router.use(bearer())
     .get('/event/template/:id', async function ({ bearer, params }) {
-        const { EventTemplateService, AuthService, } = AccessGlobalService.locals
-        const user = await AuthService.verifyIdToken(bearer)
+        const { EventTemplateService, } = AccessGlobalService.locals
         const { id } = params
-        const result = await EventTemplateService.getTemplate(user.uid, id)
+        const result = await EventTemplateService.getTemplate(id)
         return result
     })
     .get('/event/template/list', async function ({ bearer, request, query }) {

@@ -83,7 +83,7 @@ export default class VekozModel extends VenoniaCRUD {
      * @param id 
      * @returns 
      */
-    protected async getItemById(id: string): Promise<DocumentData | number> {
+    protected async getItemById(id: string): Promise<DocumentData | 0> {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }

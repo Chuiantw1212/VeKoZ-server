@@ -85,14 +85,14 @@ export default class EventTemplateService {
      * @param id 
      * @returns 
      */
-    async getTemplate(uid: string, id: string): Promise<IEventTemplate | 0> {
-        const eventTemplate: IEventTemplate | 0 = await this.eventTemplateModel.readTemplateById(uid, id)
+    async getTemplate(id: string, uid?: string,): Promise<IEventTemplate | 0> {
+        const eventTemplate: IEventTemplate | 0 = await this.eventTemplateModel.readTemplateById(id)
         if (eventTemplate) {
             const designIds = eventTemplate.designIds || []
             const validDesignIds = designIds.filter(id => {
                 return id && id !== 'undefined'
             })
-            if (designIds.length !== validDesignIds.length) {
+            if (uid && designIds.length !== validDesignIds.length) {
                 // 自動(?)修正錯誤的templateDesigns
                 this.eventTemplateModel.mergeTemplate(uid, id, {
                     designIds: validDesignIds,
@@ -105,9 +105,6 @@ export default class EventTemplateService {
             const eventTemplateDesigns = await Promise.all(designPromises) as any[]
             eventTemplate.designs = eventTemplateDesigns
             delete eventTemplate.designIds
-            this.eventTemplateModel.mergeTemplate(uid, id, {
-                lastmod: true,
-            }) // 更新lastmod
             return eventTemplate
         }
         return 0
@@ -122,7 +119,7 @@ export default class EventTemplateService {
     }
 
     async deleteTemplate(uid: string, id: string): Promise<number> {
-        const oldTemplate = await this.eventTemplateModel.readTemplateById(uid, id)
+        const oldTemplate = await this.eventTemplateModel.readTemplateById(id)
         if (oldTemplate) {
             const designIds = oldTemplate.designIds ?? []
             const promises = designIds.map(designId => {

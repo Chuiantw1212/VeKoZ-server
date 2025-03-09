@@ -34,13 +34,9 @@ export default class EventTemplateModel extends VekozModel {
      * @param uid 
      * @returns 
      */
-    async readTemplateById(uid: string, id: string): Promise<IEventTemplate | 0> {
-        const eventTemplates = await this.getItemsByWheres([['uid', '==', uid], ['id', '==', id]], {
-            count: {
-                range: [0, 1]
-            },
-        })
-        return eventTemplates[0]
+    async readTemplateById(id: string): Promise<IEventTemplate | 0> {
+        const eventTemplate = await super.getItemById(id)
+        return eventTemplate
     }
 
     /**
