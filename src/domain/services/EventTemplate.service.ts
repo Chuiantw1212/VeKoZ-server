@@ -1,4 +1,4 @@
-import type { IEventTemplate, ITemplateDesign, IPostTemplateDesignReq, IPatchTemplateDesignReq, IEventTemplateQuery } from '../../entities/eventTemplate';
+import type { IEventTemplate, ITemplateDesign, ITemplateDesignQuery, IEventTemplateQuery } from '../../entities/eventTemplate';
 import { IOrganizationMember } from '../../entities/organization';
 import EventTemplateModel from '../EventTemplate.model'
 import EventTemplateDesignModel from '../EventTemplateDesign.model';
@@ -113,7 +113,7 @@ export default class EventTemplateService {
         return 0
     }
 
-    async postDesign(uid: string, data: IPostTemplateDesignReq): Promise<string> {
+    async postDesign(uid: string, data: ITemplateDesignQuery): Promise<string> {
         const templateDesign: ITemplateDesign = Object.assign({
             label: '',
         }, data)
@@ -144,8 +144,8 @@ export default class EventTemplateService {
         // })
         return count
     }
-    async patchTemplateDesign(uid: string, payload: IPatchTemplateDesignReq) {
-        const count = await this.eventTemplateDesignModel.patchDesignById(uid, payload.id, payload)
+    async patchTemplateDesign(uid: string, payload: ITemplateDesign) {
+        const count = await this.eventTemplateDesignModel.patchDesignById(uid, String(payload.id), payload)
         return count
     }
 

@@ -23,16 +23,13 @@ export interface IEventTemplateQuery {
 export interface ITemplateDesign extends ITemplateDesignMutable {
     id?: string,
     eventId?: string,
-    type?: string,
-    templateId?: string,
     formField?: string, // 讓連動更新欄位
-    required?: boolean,
 }
 
 /**
  * 與前端共用Interface，盡可能區分定義，避免都使用value便於未來維護
  */
-export interface ITemplateDesignMutable {
+export interface ITemplateDesignMutable extends ITemplateDesignQuery {
     label?: string,
     // 未定義欄位使用
     value?: any,
@@ -59,25 +56,9 @@ export interface ITemplateDesignMutable {
     offers?: IOffer[]
 }
 
-export interface IPostTemplateDesignReq {
-    type: string,
-    destination: string,
-    templateId: string,
-    required: boolean,
-    // templateDesignIds: string[]
-}
-
-export interface IDeleteTemplateDesignReq {
-    id: string,
-    templateId: string,
-    templateDesignIds: string[]
-}
-
-export interface IPatchTemplateDesignReq {
-    id: string,
-    type: string,
-    // 需要連動的Id
-    placeId?: string,
-    organizatoinId?: string,
-    value: any,
+export interface ITemplateDesignQuery {
+    type?: string,
+    templateId?: string,
+    required?: boolean,
+    organizerId?: string,
 }

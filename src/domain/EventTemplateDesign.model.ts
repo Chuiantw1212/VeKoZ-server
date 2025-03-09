@@ -1,7 +1,7 @@
 import VekozModel from '../adapters/VekozModel.out'
 import type { IBlob, IModelPorts, } from '../ports/out.model'
 import type { ICrudOptions } from '../ports/out.crud'
-import { ITemplateDesign, IPatchTemplateDesignReq } from '../entities/eventTemplate'
+import { ITemplateDesign } from '../entities/eventTemplate'
 
 export default class EventTemplateDesignModel extends VekozModel {
     constructor(data: IModelPorts) {
@@ -31,7 +31,7 @@ export default class EventTemplateDesignModel extends VekozModel {
      * @param id 
      * @returns 
      */
-    async patchDesignById(uid: string, id: string, data: IPatchTemplateDesignReq): Promise<number> {
+    async patchDesignById(uid: string, id: string, data: ITemplateDesign): Promise<number> {
         const options: ICrudOptions = {
             count: {
                 absolute: 1

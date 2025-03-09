@@ -1,7 +1,7 @@
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
-import type { IPostTemplateDesignReq, IPatchTemplateDesignReq, IEventTemplate, IEventTemplateQuery } from '../../entities/eventTemplate'
+import type { ITemplateDesignQuery, IEventTemplate, IEventTemplateQuery, ITemplateDesign } from '../../entities/eventTemplate'
 import { IOrganizationMember } from '../../entities/organization'
 const router = new Elysia()
 router.use(bearer())
@@ -91,24 +91,42 @@ router.use(bearer())
         return count
     })
     .post('/event/template/design', async function ({ request, bearer }) {
-        const { EventTemplateService, AuthService } = AccessGlobalService.locals
+        const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const eventTemplateDesign: IPostTemplateDesignReq = await request.json() as any
-        const desginId = await EventTemplateService.postDesign(user.uid, eventTemplateDesign)
+        const eventTemplateDesign = await request.json() as ITemplateDesignQuery
+        const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+            email: String(user.email),
+            organizationId: String(eventTemplateDesign.organizerId),
+            allowMethods: [request.method]
+        })
+        const impersonatedUid = String(impersonatedMember.uid)
+        const desginId = await EventTemplateService.postDesign(impersonatedUid, eventTemplateDesign)
         return desginId
     })
     .delete('/event/template/design/:id', async function ({ bearer, params }) {
-        const { EventTemplateService, AuthService } = AccessGlobalService.locals
+        const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const { id } = params
-        const lastmod = await EventTemplateService.deleteDesignById(user.uid, id)
-        return lastmod
+        // const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+        //     email: String(user.email),
+        //     organizationId: String(eventTemplateDesign.organizerId),
+        //     allowMethods: [request.method]
+        // })
+        // const impersonatedUid = String(impersonatedMember.uid)
+        const count = await EventTemplateService.deleteDesignById(user.uid, id)
+        return count
     })
     .patch('/event/template/design', async function ({ request, bearer }) {
-        const { EventTemplateService, AuthService } = AccessGlobalService.locals
+        const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const patchRequest: IPatchTemplateDesignReq = await request.json()
-        const lastmod = await EventTemplateService.patchTemplateDesign(user.uid, patchRequest)
-        return lastmod
+        const templateDesign = await request.json() as ITemplateDesign
+        const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+            email: String(user.email),
+            organizationId: String(templateDesign.organizerId),
+            allowMethods: [request.method]
+        })
+        const impersonatedUid = String(impersonatedMember.uid)
+        const count = await EventTemplateService.patchTemplateDesign(impersonatedUid, templateDesign)
+        return count
     })
 export default router
