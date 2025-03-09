@@ -1,7 +1,7 @@
 import AccessGlobalService from '../../entities/app'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
-import type { IPostTemplateDesignReq, IPatchTemplateDesignReq, IEventTemplate } from '../../entities/eventTemplate'
+import type { IPostTemplateDesignReq, IPatchTemplateDesignReq, IEventTemplate, IEventTemplateQuery } from '../../entities/eventTemplate'
 import { IOrganizationMember } from '../../entities/organization'
 const router = new Elysia()
 router.use(bearer())
@@ -22,7 +22,7 @@ router.use(bearer())
     .get('/event/template/list', async function ({ bearer, request, query }) {
         const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const { organizerId } = query
+        const { organizerId } = query as IEventTemplateQuery
         const impersonatedMember: IOrganizationMember = {
             uid: user.uid,
             allowMethods: [request.method]
@@ -77,17 +77,17 @@ router.use(bearer())
     .delete('/event/template', async function ({ bearer, query, request }) {
         const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const { id: templateId, organizationId } = query
+        const { id: templateId, organizerId } = query as IEventTemplateQuery
         let impersonatedUid = user.uid
-        if (organizationId) {
+        if (organizerId) {
             const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
                 email: String(user.email),
-                organizationId: String(organizationId),
+                organizationId: String(organizerId),
                 allowMethods: [request.method]
             })
             impersonatedUid = String(impersonatedMember.uid)
         }
-        const count = await EventTemplateService.deleteTemplate(impersonatedUid, templateId)
+        const count = await EventTemplateService.deleteTemplate(impersonatedUid, String(templateId))
         return count
     })
     .post('/event/template/design', async function ({ request, bearer }) {

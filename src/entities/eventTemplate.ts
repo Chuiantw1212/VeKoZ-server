@@ -7,7 +7,6 @@ export interface IEventTemplate extends IEventTemplateQuery {
     // [key: string]: any // 加了會喪失typescript功能
     name?: string,
     uid?: string;
-    id?: string; // doc id
     designs?: ITemplateDesign[]
     designIds?: string[],
     type?: string,
@@ -17,6 +16,7 @@ export interface IEventTemplate extends IEventTemplateQuery {
 }
 
 export interface IEventTemplateQuery {
+    id?: string; // doc id
     organizerId?: string,
 }
 
