@@ -141,6 +141,7 @@ import offerController from './adapters/client.in/offer.ctrl'
             organizationModel,
             organizationMemberModel,
             eventModel,
+            eventTemplateModel,
             offerModel,
             eventDesignModel,
             eventTemplateDesignModel,

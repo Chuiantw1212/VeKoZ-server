@@ -10,7 +10,7 @@ interface DecodedIdTokenWithName extends DecodedIdToken {
 const router = new Elysia()
 router.use(bearer())
     .post('/user', async ({ bearer, }) => {
-        const { AuthService, UserService, OrganizationService, OrganizationMemberService } = AccessGlobalService.locals
+        const { AuthService, UserService, OrganizationService, OrganizationMemberService, EventTemplateService } = AccessGlobalService.locals
         const userIdToken: DecodedIdTokenWithName = await AuthService.verifyIdToken(bearer)
         const userCreated = await UserService.addUser(userIdToken)
         // 建立自己的預設組織
@@ -21,7 +21,20 @@ router.use(bearer())
             isFounder: true, // 最高權限
             allowEntities: ['organizationMember'], // 次高權限
             allowMethods: ['GET', 'PATCH', 'POST', 'DELETE'],
+        }).then(async newOrg => {
+            // 建立第一個事件模板
+            const newTemplate = await EventTemplateService.addEventTemplate(userIdToken.uid, {
+                organizerId: newOrg.id
+            })
+            // 更新偏好
+            UserService.patchUserPreference(userIdToken.uid, {
+                eventTemplate: {
+                    organizerId: String(newOrg.id),
+                    templateId: String(newTemplate.id)
+                }
+            })
         })
+
         // 更新受邀請組織的資料
         if (userCreated.name && userCreated.email) {
             OrganizationMemberService.joinRelatedOrganization({

@@ -40,6 +40,7 @@ export interface IUserPreference {
         organizationIds: string[]
     },
     eventTemplate?: {
-        organizer: string,
+        organizerId: string,
+        templateId: string,
     }
 } 

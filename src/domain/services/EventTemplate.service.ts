@@ -47,8 +47,11 @@ export default class EventTemplateService {
      * @returns 
      */
     async addEventTemplate(uid: string, eventTemplate: IEventTemplate): Promise<IEventTemplate> {
-        if (!eventTemplate.designs || !eventTemplate.organizerId) {
+        if (!eventTemplate.organizerId) {
             throw '新增模板資料有誤'
+        }
+        if (!eventTemplate.designs?.length) {
+            eventTemplate.designs = this.getDefaultTemplateDesigns()
         }
         // 暫存designs
         const designsTemp = eventTemplate.designs
@@ -148,5 +151,52 @@ export default class EventTemplateService {
 
     async deleteDesignById(uid: string, id: string): Promise<number> {
         return this.eventTemplateDesignModel.deleteDesignById(uid, id)
+    }
+
+    getDefaultTemplateDesigns() {
+        /**
+         * 預設值統一從後端管控
+         */
+        return [
+            {
+                "type": "banner",
+                "label": "",
+                "formField": "banner"
+            },
+            {
+                "type": "header1",
+                "label": "活動名稱",
+                "required": true,
+                "formField": "name"
+            },
+            {
+                "type": "textarea",
+                "label": "活動摘要",
+                "required": true,
+                "formField": "description"
+            },
+            {
+                "type": "dateTimeRange",
+                "label": "活動時間",
+                "required": true,
+                "formField": "dates"
+            },
+            {
+                "type": "organizationMember",
+                "label": "講者/主持",
+                "required": true,
+                "formField": "performers"
+            },
+            {
+                "type": "offers",
+                "label": "預設票券群組",
+                "required": true,
+                "formField": "offers"
+            },
+            {
+                "type": "editor",
+                "required": true
+            }
+        ]
     }
 }
