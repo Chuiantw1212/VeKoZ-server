@@ -68,7 +68,7 @@ export default class EventTemplateService {
         const designDocs: ITemplateDesign[] = await Promise.all(designDocPromises) as ITemplateDesign[]
         const designIds = designDocs.map(doc => doc.id ?? '')
         // 更新template
-        await this.eventTemplateModel.mergeTemplate(uid, String(insertedEventTemplate.id), {
+        await this.eventTemplateModel.mergeTemplateById(uid, String(insertedEventTemplate.id), {
             designIds
         })
         // 取得新的Template
@@ -94,7 +94,7 @@ export default class EventTemplateService {
             })
             if (uid && designIds.length !== validDesignIds.length) {
                 // 自動(?)修正錯誤的templateDesigns
-                this.eventTemplateModel.mergeTemplate(uid, id, {
+                this.eventTemplateModel.mergeTemplateById(uid, id, {
                     designIds: validDesignIds,
                 })
             }
@@ -133,7 +133,12 @@ export default class EventTemplateService {
     }
 
     async patchTemplate(uid: string, id: string, template: IEventTemplate): Promise<number> {
-        const count = await this.eventTemplateModel.mergeTemplate(uid, id, template)
+        const count = await this.eventTemplateModel.mergeTemplateById(uid, id, template)
+        // // 連帶更新會員資料
+        // this.organizationMemberModel.setMembersByOrgnaizationId(uid, {
+        //     organizationLogo: template.organizerLogo,
+        //     organizationName: template.organizerName,
+        // })
         return count
     }
     async patchTemplateDesign(uid: string, payload: IPatchTemplateDesignReq) {

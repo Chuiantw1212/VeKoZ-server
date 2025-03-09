@@ -86,6 +86,8 @@ export default class OrganizationMemberService {
         // 發出信件邀請
         const organization = await this.organizaitonModel.getOrganizationById(member.organizationId) as IOrganization
         member.organizationName = organization.name
+        member.organizationLogo = organization.logo
+
         const newMember = await this.organizationMemberModel.addMember(uid, member)
         const subject = `邀請加入${organization.name}`
         const html = this.emailAdapter.getInvitation({

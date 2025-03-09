@@ -2,6 +2,7 @@ import OrganizationModel from '../Organization.model'
 import OrganizationMemberModel from '../OrganizationMember.model';
 import EventModel from '../Event.model';
 import OfferModel from '../OfferModel';
+import EventTemplateModel from '../EventTemplate.model';
 import EventTemplateDesignModel from '../EventTemplateDesign.model';
 import EventDesignModel from '../EventDesign.model';
 import { IEvent } from '../../entities/event';
@@ -12,6 +13,7 @@ interface Idependency {
     organizationMemberModel: OrganizationMemberModel
     eventModel: EventModel,
     offerModel: OfferModel,
+    eventTemplateModel: EventTemplateModel;
     eventTemplateDesignModel: EventTemplateDesignModel,
     eventDesignModel: EventDesignModel,
 }
@@ -22,6 +24,7 @@ export default class OrganizationService {
     private eventModel: EventModel
     private offerModel: OfferModel
     private eventTemplateDesignModel: EventTemplateDesignModel
+    private eventTemplateModel: EventTemplateModel
     private eventDesignModel: EventDesignModel
 
     constructor(dependency: Idependency) {
@@ -29,6 +32,7 @@ export default class OrganizationService {
         this.organizationMemberModel = dependency.organizationMemberModel
         this.eventModel = dependency.eventModel
         this.offerModel = dependency.offerModel
+        this.eventTemplateModel = dependency.eventTemplateModel
         this.eventTemplateDesignModel = dependency.eventTemplateDesignModel
         this.eventDesignModel = dependency.eventDesignModel
     }
@@ -66,9 +70,13 @@ export default class OrganizationService {
         if (!organization.id) {
             throw '更新組織資料毀損,找不到組織識別碼'
         }
+
+        // 更新Blobs
         const tempLogo = organization.image ?? organization.logo // 重要！共用了套版的名稱
-        delete organization.image // 重要！共用了套版的名稱
         const tempBanner = organization.banner
+        delete organization.logo
+        delete organization.banner
+        delete organization.image // 重要！共用了套版的名稱
         if (tempLogo && typeof tempLogo !== 'string') {
             const publicUrl: string = await this.organizationModel.storeLogo(organization.id, tempLogo)
             organization.logo = publicUrl
@@ -81,20 +89,22 @@ export default class OrganizationService {
                     organizerLogo: publicUrl,
                 })
             })
-            this.organizationMemberModel.setMembersByOrgnaizationId(uid, {
-                organizationId: organization.id,
-                organizationLogo: publicUrl,
-            })
         }
         if (tempBanner && typeof tempBanner !== 'string') {
             const publicUrl: string = await this.organizationModel.storeBanner(organization.id, tempBanner)
             organization.banner = publicUrl
         }
         const count = await this.organizationModel.mergeOrganizationById(uid, organization.id, organization)
-        // MemberModel
+
+        // 更新連動Model
         this.organizationMemberModel.setMembersByOrgnaizationId(uid, {
             organizationName: organization.name,
+            organizationLogo: organization.logo, // 前面已更新過
             organizationId: organization.id,
+        })
+        this.eventTemplateModel.mergeTemplateByOrganizerId(uid, organization.id, {
+            organizerName: organization.name,
+            organizerLogo: organization.logo, // 前面已更新過
         })
         // Offer Model
         this.offerModel.updateOfferGroupByOffererId(uid, organization.id, {

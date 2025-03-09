@@ -4,7 +4,8 @@ import type { IOffer } from "./offer";
  */
 
 export interface IEventTemplate extends IEventTemplateQuery {
-    [key: string]: any
+    // [key: string]: any // 加了會喪失typescript功能
+    name?: string,
     uid?: string;
     id?: string; // doc id
     designs?: ITemplateDesign[]

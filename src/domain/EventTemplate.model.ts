@@ -45,7 +45,7 @@ export default class EventTemplateModel extends VekozModel {
      * @param eventTemplate 
      * @returns 
      */
-    async mergeTemplate(uid: string, id: string, templatePart: IEventTemplate): Promise<number> {
+    async mergeTemplateById(uid: string, id: string, templatePart: IEventTemplate): Promise<number> {
         const dataAccessOptions = {
             count: {
                 absolute: 1 // 如果不是1，就是符合條件統一改寫
@@ -53,6 +53,18 @@ export default class EventTemplateModel extends VekozModel {
             merge: true,
         }
         const count = await super.setItemById(uid, id, templatePart, dataAccessOptions)
+        return count
+    }
+
+    async mergeTemplateByOrganizerId(uid: string, organizerId: string, templatePart: IEventTemplate): Promise<number> {
+        const dataAccessOptions = {
+            count: {
+                min: 0,
+            },
+            merge: true,
+        }
+        const wheres = [['uid', '==', uid], ['organizerId', '==', organizerId]]
+        const count = await super.setItemsByQuery(wheres, templatePart, dataAccessOptions)
         return count
     }
 
