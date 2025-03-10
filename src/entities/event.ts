@@ -8,7 +8,6 @@ import type { ITemplateDesign } from "./eventTemplate";
 export interface IEvent extends IEventSEO {
     [key: string]: any
     uid?: string;
-    id?: string; // doc id
     // DetailIds
     designs?: ITemplateDesign[]
     designIds?: string[],
@@ -27,6 +26,7 @@ interface IEventSEO extends IEventQuery {
     organizerLogo?: string,
 }
 export interface IEventQuery {
+    id?: string; // doc id
     organizerId?: string,
     startDate?: string | Date | Timestamp,
     startHour?: string,

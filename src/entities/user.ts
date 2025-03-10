@@ -37,7 +37,8 @@ export interface IUserPreference {
     menuType?: 'host' | 'attendee',
     event?: {
         calendarViewType: 'dayGridMonth' | 'dayGridWeek' | 'listWeek'
-        organizationIds: string[]
+        organizerIds: string[],
+        organizerId: string,
     },
     eventTemplate?: {
         organizerId: string,

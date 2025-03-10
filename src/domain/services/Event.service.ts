@@ -54,6 +54,9 @@ export default class EventService {
         })
         const event: IEvent = {
             isPublic: false, // 預設非公開
+            organizerId: eventTemplate.organizerId,
+            organizerLogo: eventTemplate.organizerLogo,
+            organizerName: eventTemplate.organizerName,
         }
         // 更新EventMaster
         const eventPatchePromises = designsWithFormField.map((design: ITemplateDesign) => {
@@ -244,16 +247,16 @@ export default class EventService {
                 }
                 break;
             }
-            case 'organizer': {
-                // 配合即時搜尋，不另外關聯資料
-                if (eventDesign.organizationId) {
-                    const organizerLogo = await this.organizationModel.getLogoUrl(eventDesign.organizationId)
-                    eventPatch.organizerId = eventDesign.organizationId
-                    eventPatch.organizerName = eventDesign.organizationName
-                    eventPatch.organizerLogo = organizerLogo
-                }
-                break;
-            }
+            // case 'organizer': {
+            //     // 配合即時搜尋，不另外關聯資料
+            //     if (eventDesign.organizationId) {
+            //         const organizerLogo = await this.organizationModel.getLogoUrl(eventDesign.organizationId)
+            //         eventPatch.organizerId = eventDesign.organizationId
+            //         eventPatch.organizerName = eventDesign.organizationName
+            //         eventPatch.organizerLogo = organizerLogo
+            //     }
+            //     break;
+            // }
             default: {
                 return {}
             }

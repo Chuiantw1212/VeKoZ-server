@@ -6,30 +6,45 @@ import type { IEventTemplate, ITemplateDesign, } from '../../entities/eventTempl
 const router = new Elysia()
 router.use(bearer())
     .post('/event', async function ({ request, bearer }) {
-        const { AuthService, EventService, } = AccessGlobalService.locals
+        const { AuthService, EventService, OrganizationMemberService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const event = await request.json() as IEventTemplate
-        const result = await EventService.createNewEvent(user.uid, event)
+        const userMembership = await OrganizationMemberService.getMemberByQuery({
+            email: String(user.email),
+            organizationId: String(event.organizerId),
+            allowMethods: [request.method],
+        })
+        const result = await EventService.createNewEvent(String(userMembership.uid), event)
         return result
     })
     /**
      * 拖曳月曆的事件時使用
      */
     .patch('/event/calendar', async function ({ request, bearer }) {
-        const { AuthService, EventService } = AccessGlobalService.locals
+        const { AuthService, EventService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const event = await request.json() as IEvent
-        const result = await EventService.patchEventCalendar(user.uid, event)
+        const userMembership = await OrganizationMemberService.getMemberByQuery({
+            email: String(user.email),
+            organizationId: String(event.organizerId),
+            allowMethods: [request.method],
+        })
+        const result = await EventService.patchEventCalendar(String(userMembership.uid), event)
         return result
     })
     /**
      * 變更事件表單中的值使用
      */
     .patch('/event/form', async function ({ request, bearer }) {
-        const { AuthService, EventService } = AccessGlobalService.locals
+        const { AuthService, EventService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const templateDesign = await request.json() as ITemplateDesign
-        const result = await EventService.patchEventForm(user.uid, templateDesign)
+        const userMembership = await OrganizationMemberService.getMemberByQuery({
+            email: String(user.email),
+            organizationId: String(templateDesign.organizerId),
+            allowMethods: [request.method],
+        })
+        const result = await EventService.patchEventForm(String(userMembership.uid), templateDesign)
         return result
     })
     .get('/event/:id', async function ({ params, bearer }) {
@@ -39,11 +54,16 @@ router.use(bearer())
         const event = await EventService.getEvent(id, user.uid)
         return event
     })
-    .delete('/event/:id', async function ({ params, bearer }) {
-        const { EventService, AuthService } = AccessGlobalService.locals
-        const { id } = params
+    .delete('/event', async function ({ request, bearer, query }) {
+        const { EventService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const event = await EventService.deleteEvent(user.uid, id)
+        const eventQuery = query as IEventQuery
+        const userMembership = await OrganizationMemberService.getMemberByQuery({
+            email: String(user.email),
+            organizationId: String(eventQuery.organizerId),
+            allowMethods: [request.method],
+        })
+        const event = await EventService.deleteEvent(String(userMembership.uid), String(eventQuery.id))
         return event
     })
     .get('/event/list', async function ({ query }) {
