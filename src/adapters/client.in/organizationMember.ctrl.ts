@@ -10,7 +10,24 @@ router.use(bearer())
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
         const { organizationId } = params
         const user = await AuthService.verifyIdToken(bearer)
-        const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+        const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
+            email: String(user.email),
+            organizationId: String(organizationId),
+            allowMethods: [request.method]
+        })
+        const pagination = query as IPagination
+        const result = await OrganizationMemberService.getMemberList({
+            uid: impersonatedMember.uid,
+            organizationId,
+            email: user.email,
+        }, pagination)
+        return result
+    })
+    .get('/organization/member/:organizationId', async ({ bearer, params, query, request }) => {
+        const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
+        const { organizationId } = params
+        const user = await AuthService.verifyIdToken(bearer)
+        const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
             email: String(user.email),
             organizationId: String(organizationId),
             allowMethods: [request.method]
@@ -30,7 +47,7 @@ router.use(bearer())
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const organizatoinMember = await request.json() as IOrganizationMember
-        const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+        const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
             email: String(user.email),
             organizationId: String(organizatoinMember.organizationId),
             allowEntities: ['organizationMember'],
@@ -42,7 +59,7 @@ router.use(bearer())
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const organizatoinMember = await request.json() as IOrganizationMember
-        const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+        const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
             email: String(user.email),
             organizationId: String(organizatoinMember.organizationId),
             allowEntities: ['organizationMember'],
@@ -56,7 +73,7 @@ router.use(bearer())
         const organizatoinMember = await request.json() as IOrganizationMember
         if (user.email === organizatoinMember.email) {
             // 刪除的是自己的資料
-            const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+            const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
                 email: String(user.email),
                 organizationId: String(organizatoinMember.organizationId),
                 allowMethods: ['GET'],
@@ -69,7 +86,7 @@ router.use(bearer())
             return count
         } else {
             // 刪除別人的資料
-            const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+            const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
                 email: String(user.email),
                 organizationId: String(organizatoinMember.organizationId),
                 allowEntities: ['organizationMember'],

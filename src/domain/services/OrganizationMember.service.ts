@@ -26,54 +26,12 @@ export default class OrganizationMemberService {
         this.userModel = dependency.userModel
     }
 
-    async getRelatedMembership(email: string, memberQuery: IOrganizationMemberQuery) {
-        const members = await this.organizationMemberModel.getRelatedMemberships(email, memberQuery)
-        return members
-    }
-
-    joinRelatedOrganization(member: IOrganizationMember) {
-        this.organizationMemberModel.acceptInvitation(member)
-    }
-
-    async directAddHost(uid: string, member: IOrganizationMember,) {
-        const count = await this.organizationMemberModel.addMember(uid, member)
-        return count
-    }
-
-    async setMemberById(uid: string, member: IOrganizationMember,) {
-        const count = await this.organizationMemberModel.setMemberById(uid, member)
-        return count
-    }
-
-    async deleteMemberById(member: IOrganizationMember) {
-        const count = await this.organizationMemberModel.deleteMemberById(member)
-        return count
-    }
-
-    async deleteSelfByEmail(member: IOrganizationMember) {
-        const count = await this.organizationMemberModel.deleteSelfByEmail(member)
-        return count
-    }
-
-    async checkMemberAuths(member: IOrganizationMemberQuery): Promise<IOrganizationMember> {
-        try {
-            return await this.organizationMemberModel.checkMemberAuths(member)
-        } catch (error) {
-            throw '權限不符合'
-        }
-    }
-
     /**
-     * 取得成員列表
-     * @param uid 使用者uid
-     * @param organizationId 企業文件Id
+     * C
+     * @param uid 
+     * @param member 
      * @returns 
      */
-    async getMemberList(member: IOrganizationMember, query: IPagination) {
-        const result = await this.organizationMemberModel.getMemberList(member, query)
-        return result
-    }
-
     async inviteMember(uid: string, member: IOrganizationMember) {
         if (!member.email || !member.organizationId) {
             throw '邀約資料有誤'
@@ -102,5 +60,91 @@ export default class OrganizationMemberService {
             html
         })
         return newMember
+    }
+
+    /**
+     * R 取得成員列表
+     * @param uid 使用者uid
+     * @param organizationId 企業文件Id
+     * @returns 
+     */
+    async getMemberList(member: IOrganizationMember, query: IPagination) {
+        const result = await this.organizationMemberModel.getMemberList(member, query)
+        return result
+    }
+
+
+    /**
+     * R
+     * @param member 
+     * @returns 
+     */
+    async getMemberByQuery(member: IOrganizationMemberQuery): Promise<IOrganizationMember> {
+        try {
+            return await this.organizationMemberModel.getMemberByQuery(member)
+        } catch (error) {
+            throw '權限不符合'
+        }
+    }
+
+    /**
+     * R
+     * @param uid 
+     * @param member 
+     * @returns 
+     */
+    async getRelatedMembership(email: string, memberQuery: IOrganizationMemberQuery) {
+        const members = await this.organizationMemberModel.getRelatedMemberships(email, memberQuery)
+        return members
+    }
+
+    /**
+     * U
+     * @param member 
+     */
+    joinRelatedOrganization(member: IOrganizationMember) {
+        this.organizationMemberModel.acceptInvitation(member)
+    }
+
+    /**
+     * U
+     * @param uid 
+     * @param member 
+     * @returns 
+     */
+    async directAddHost(uid: string, member: IOrganizationMember,) {
+        const count = await this.organizationMemberModel.addMember(uid, member)
+        return count
+    }
+
+    /**
+     * U
+     * @param uid 
+     * @param member 
+     * @returns 
+     */
+    async setMemberById(uid: string, member: IOrganizationMember,) {
+        const count = await this.organizationMemberModel.setMemberById(uid, member)
+        return count
+    }
+
+    /**
+     * D
+     * @param member 
+     * @returns 
+     */
+    async deleteMemberById(member: IOrganizationMember) {
+        const count = await this.organizationMemberModel.deleteMemberById(member)
+        return count
+    }
+
+    /**
+     * D
+     * @param member 
+     * @returns 
+     */
+    async deleteSelfByEmail(member: IOrganizationMember) {
+        const count = await this.organizationMemberModel.deleteSelfByEmail(member)
+        return count
     }
 }

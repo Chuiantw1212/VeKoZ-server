@@ -28,7 +28,7 @@ router.use(bearer())
             allowMethods: [request.method]
         }
         if (organizerId) {
-            const userMembership = await OrganizationMemberService.checkMemberAuths({
+            const userMembership = await OrganizationMemberService.getMemberByQuery({
                 email: String(user.email),
                 organizationId: String(organizerId),
                 allowMethods: [request.method],
@@ -45,7 +45,7 @@ router.use(bearer())
         const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const eventTemplate = await request.json()
-        const userMembership = await OrganizationMemberService.checkMemberAuths({
+        const userMembership = await OrganizationMemberService.getMemberByQuery({
             email: String(user.email),
             organizationId: String(eventTemplate.organizerId),
             allowMethods: [request.method],
@@ -65,7 +65,7 @@ router.use(bearer())
             eventTemplate.organizerLogo = organization.logo
             eventTemplate.organizerName = organization.name
         }
-        const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+        const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
             email: String(user.email),
             organizationId: String(eventTemplate.organizerId),
             allowMethods: [request.method]
@@ -80,7 +80,7 @@ router.use(bearer())
         const { id: templateId, organizerId } = query as IEventTemplateQuery
         let impersonatedUid = user.uid
         if (organizerId) {
-            const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+            const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
                 email: String(user.email),
                 organizationId: String(organizerId),
                 allowMethods: [request.method]
@@ -94,7 +94,7 @@ router.use(bearer())
         const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const eventTemplateDesign = await request.json() as ITemplateDesignQuery
-        const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+        const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
             email: String(user.email),
             organizationId: String(eventTemplateDesign.organizerId),
             allowMethods: [request.method]
@@ -107,7 +107,7 @@ router.use(bearer())
         const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const { id, organizerId } = query as ITemplateDesignQuery
-        const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+        const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
             email: String(user.email),
             organizationId: String(organizerId),
             allowMethods: [request.method]
@@ -120,7 +120,7 @@ router.use(bearer())
         const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const templateDesign = await request.json() as ITemplateDesign
-        const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+        const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
             email: String(user.email),
             organizationId: String(templateDesign.organizerId),
             allowMethods: [request.method]

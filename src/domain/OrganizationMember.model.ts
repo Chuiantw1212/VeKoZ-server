@@ -88,7 +88,7 @@ export default class OrganizationMemberModel extends VekozModel {
      * @param method 
      * @returns 
      */
-    async checkMemberAuths(member: IOrganizationMemberQuery): Promise<IOrganizationMember> {
+    async getMemberByQuery(member: IOrganizationMemberQuery): Promise<IOrganizationMember> {
         const { email, organizationId, allowMethods, allowEntities } = member
         const wheres: [string, string, any][] = [['email', '==', email], ['organizationId', '==', organizationId],]
         if (allowMethods) {
