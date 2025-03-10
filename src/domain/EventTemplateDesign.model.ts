@@ -8,6 +8,12 @@ export default class EventTemplateDesignModel extends VekozModel {
         super(data)
     }
 
+    async devGetAllDesignIds(): Promise<string[]> {
+        const designs = await super.getItemsByWheres([])
+        const designIds = designs.map(item => item.id)
+        return designIds
+    }
+
     async setByOrganizationId(uid: string, organizationId: string, data: ITemplateDesign) {
         const options = {
             merge: true,

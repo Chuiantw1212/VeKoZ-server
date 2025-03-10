@@ -1,10 +1,22 @@
 import VekozModel from '../adapters/VekozModel.out'
 import type { IModelPorts } from '../ports/out.model'
 import { IEventTemplate, IEventTemplateQuery } from '../entities/eventTemplate'
+import { ICrudOptions } from '../ports/out.crud'
 
 export default class EventTemplateModel extends VekozModel {
     constructor(data: IModelPorts) {
         super(data)
+    }
+
+    async devCheckCount(designId: string) {
+        const options: ICrudOptions = {
+            count: {
+                absolute: 1
+            }
+        }
+        const query = await super.getQuery([['designIds', 'array-contains', designId]], options)
+        const count = await super.checkQueryCount(query)
+        return count
     }
 
     /**
