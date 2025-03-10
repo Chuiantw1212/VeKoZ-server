@@ -64,6 +64,12 @@ export default class OrganizationModel extends VekozModel {
      * @returns 
      */
     async deleteItem(uid: string, id: string) {
+        const wheres = [['uid', '==', uid]]
+        const query = await super.getQuery(wheres)
+        const count = await super.checkQueryCount(query)
+        if (count <= 1) {
+            throw '不可刪除最後的用戶組織'
+        }
         await super.deleteItemById(uid, id) // 先用uid控權限
         await super.deleteBlobFolderById(id)
         return true

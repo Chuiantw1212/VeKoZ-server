@@ -32,13 +32,8 @@ router.use(bearer())
             organizationId: String(organizationId),
             allowMethods: [request.method]
         })
-        const pagination = query as IPagination
-        const result = await OrganizationMemberService.getMemberList({
-            uid: impersonatedMember.uid,
-            organizationId,
-            email: user.email,
-        }, pagination)
-        return result
+        delete impersonatedMember.uid
+        return impersonatedMember
     })
     .post('/organization/member', async ({ bearer, request, }) => {
         /**
