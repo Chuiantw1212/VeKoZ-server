@@ -21,7 +21,6 @@ export interface IEventTemplateQuery {
 }
 
 export interface ITemplateDesign extends ITemplateDesignMutable {
-    id?: string,
     eventId?: string,
     formField?: string, // 讓連動更新欄位
 }
@@ -57,6 +56,7 @@ export interface ITemplateDesignMutable extends ITemplateDesignQuery {
 }
 
 export interface ITemplateDesignQuery {
+    id?: string,
     type?: string,
     templateId?: string,
     required?: boolean,

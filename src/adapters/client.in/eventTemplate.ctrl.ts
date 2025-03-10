@@ -103,17 +103,17 @@ router.use(bearer())
         const desginId = await EventTemplateService.postDesign(impersonatedUid, eventTemplateDesign)
         return desginId
     })
-    .delete('/event/template/design/:id', async function ({ bearer, params }) {
+    .delete('/event/template/design', async function ({ bearer, request, query }) {
         const { EventTemplateService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const { id } = params
-        // const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
-        //     email: String(user.email),
-        //     organizationId: String(eventTemplateDesign.organizerId),
-        //     allowMethods: [request.method]
-        // })
-        // const impersonatedUid = String(impersonatedMember.uid)
-        const count = await EventTemplateService.deleteDesignById(user.uid, id)
+        const { id, organizerId } = query as ITemplateDesignQuery
+        const impersonatedMember = await OrganizationMemberService.checkMemberAuths({
+            email: String(user.email),
+            organizationId: String(organizerId),
+            allowMethods: [request.method]
+        })
+        const impersonatedUid = String(impersonatedMember.uid)
+        const count = await EventTemplateService.deleteDesignById(impersonatedUid, String(id))
         return count
     })
     .patch('/event/template/design', async function ({ request, bearer }) {
@@ -125,7 +125,7 @@ router.use(bearer())
             organizationId: String(templateDesign.organizerId),
             allowMethods: [request.method]
         })
-        const impersonatedUid = String(impersonatedMember.uid) ?? user.uid
+        const impersonatedUid = String(impersonatedMember.uid)
         const count = await EventTemplateService.patchTemplateDesign(impersonatedUid, templateDesign)
         return count
     })
