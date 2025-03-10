@@ -5,6 +5,25 @@ import { IEvent, IEventQuery } from '../../entities/event'
 import type { IEventTemplate, ITemplateDesign, } from '../../entities/eventTemplate'
 const router = new Elysia()
 router.use(bearer())
+    /**
+     * 也用於公開資料取得
+     */
+    .get('/event/list', async function ({ query }) {
+        const { EventService } = AccessGlobalService.locals
+        const eventQuery = query as IEventQuery
+        const eventList = await EventService.queryEventList(eventQuery)
+        return eventList
+    })
+    /**
+     * 也用於公開資料取得
+     */
+    .get('/event/:id', async function ({ params, bearer }) {
+        const { AuthService, EventService } = AccessGlobalService.locals
+        const { id } = params
+        const user = await AuthService.verifyIdToken(bearer)
+        const event = await EventService.getEvent(id, user.uid)
+        return event
+    })
     .post('/event', async function ({ request, bearer }) {
         const { AuthService, EventService, OrganizationMemberService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
@@ -47,13 +66,6 @@ router.use(bearer())
         const result = await EventService.patchEventForm(String(userMembership.uid), templateDesign)
         return result
     })
-    .get('/event/:id', async function ({ params, bearer }) {
-        const { AuthService, EventService } = AccessGlobalService.locals
-        const { id } = params
-        const user = await AuthService.verifyIdToken(bearer)
-        const event = await EventService.getEvent(id, user.uid)
-        return event
-    })
     .delete('/event', async function ({ request, bearer, query }) {
         const { EventService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
@@ -65,11 +77,5 @@ router.use(bearer())
         })
         const event = await EventService.deleteEvent(String(userMembership.uid), String(eventQuery.id))
         return event
-    })
-    .get('/event/list', async function ({ query }) {
-        const { EventService } = AccessGlobalService.locals
-        const eventQuery = query as IEventQuery
-        const eventList = await EventService.queryEventList(eventQuery)
-        return eventList
     })
 export default router
