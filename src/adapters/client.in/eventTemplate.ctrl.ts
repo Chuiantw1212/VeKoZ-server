@@ -87,7 +87,7 @@ router.use(bearer())
             })
             impersonatedUid = String(impersonatedMember.uid)
         }
-        const count = await EventTemplateService.deleteTemplate(impersonatedUid, String(templateId))
+        const count = await EventTemplateService.deleteTemplateById(impersonatedUid, String(templateId))
         return count
     })
     .post('/event/template/design', async function ({ request, bearer }) {
@@ -125,7 +125,7 @@ router.use(bearer())
             organizationId: String(templateDesign.organizerId),
             allowMethods: [request.method]
         })
-        const impersonatedUid = String(impersonatedMember.uid)
+        const impersonatedUid = String(impersonatedMember.uid) ?? user.uid
         const count = await EventTemplateService.patchTemplateDesign(impersonatedUid, templateDesign)
         return count
     })

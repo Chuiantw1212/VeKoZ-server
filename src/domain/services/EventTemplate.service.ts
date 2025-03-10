@@ -51,8 +51,11 @@ export default class EventTemplateService {
             throw '新增模板資料有誤'
         }
         if (!eventTemplate.designs?.length) {
-            eventTemplate.designs = this.getDefaultTemplateDesigns(eventTemplate.organizerId)
+            eventTemplate.designs = this.getDefaultTemplateDesigns()
         }
+        eventTemplate.designs.forEach(design => {
+            design.organizerId = eventTemplate.organizerId
+        })
         // 暫存designs
         const designsTemp = eventTemplate.designs
         delete eventTemplate.designs
@@ -121,7 +124,7 @@ export default class EventTemplateService {
         return newDesign.id
     }
 
-    async deleteTemplate(uid: string, id: string): Promise<number> {
+    async deleteTemplateById(uid: string, id: string): Promise<number> {
         const oldTemplate = await this.eventTemplateModel.readTemplateById(id)
         if (oldTemplate) {
             const designIds = oldTemplate.designIds ?? []
@@ -129,7 +132,7 @@ export default class EventTemplateService {
                 return this.deleteDesignById(uid, designId)
             })
             await Promise.all(promises)
-            const count = await this.eventTemplateModel.deleteTemplate(uid, id)
+            const count = await this.eventTemplateModel.deleteTemplateById(uid, id)
             return count
         }
         return 0
@@ -153,7 +156,7 @@ export default class EventTemplateService {
         return this.eventTemplateDesignModel.deleteDesignById(uid, id)
     }
 
-    getDefaultTemplateDesigns(organizerId: string) {
+    getDefaultTemplateDesigns() {
         /**
          * 預設值統一從後端管控
          */
@@ -198,9 +201,9 @@ export default class EventTemplateService {
                 "required": true
             }
         ]
-        designs.forEach(design => {
-            design.organizerId = organizerId
-        })
+        // designs.forEach(design => {
+        //     design.organizerId = organizerId
+        // })
         return designs
     }
 }

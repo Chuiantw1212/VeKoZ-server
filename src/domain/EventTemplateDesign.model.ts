@@ -81,7 +81,7 @@ export default class EventTemplateDesignModel extends VekozModel {
         }
         const options = {
             count: {
-                absolute: 1
+                range: [0, 1]
             }
         }
         const count = await super.deleteItemById(uid, id,

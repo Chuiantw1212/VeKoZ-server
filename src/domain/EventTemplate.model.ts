@@ -72,7 +72,7 @@ export default class EventTemplateModel extends VekozModel {
      * 刪除
      * @param uid 
      */
-    async deleteTemplate(uid: string, id: string,): Promise<number> {
+    async deleteTemplateById(uid: string, id: string,): Promise<number> {
         const count = await this.deleteItemById(uid, id, {
             count: {
                 absolute: 1
