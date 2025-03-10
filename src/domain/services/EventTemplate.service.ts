@@ -51,7 +51,7 @@ export default class EventTemplateService {
             throw '新增模板資料有誤'
         }
         if (!eventTemplate.designs?.length) {
-            eventTemplate.designs = this.getDefaultTemplateDesigns()
+            eventTemplate.designs = this.getDefaultTemplateDesigns(eventTemplate.organizerId)
         }
         // 暫存designs
         const designsTemp = eventTemplate.designs
@@ -153,11 +153,11 @@ export default class EventTemplateService {
         return this.eventTemplateDesignModel.deleteDesignById(uid, id)
     }
 
-    getDefaultTemplateDesigns() {
+    getDefaultTemplateDesigns(organizerId: string) {
         /**
          * 預設值統一從後端管控
          */
-        return [
+        const designs: ITemplateDesign[] = [
             {
                 "type": "banner",
                 "label": "",
@@ -198,5 +198,9 @@ export default class EventTemplateService {
                 "required": true
             }
         ]
+        designs.forEach(design => {
+            design.organizerId = organizerId
+        })
+        return designs
     }
 }

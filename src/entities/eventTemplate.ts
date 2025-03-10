@@ -27,7 +27,7 @@ export interface ITemplateDesign extends ITemplateDesignMutable {
 }
 
 /**
- * 與前端共用Interface，盡可能區分定義，避免都使用value便於未來維護
+ * 避免都使用value便於未來維護
  */
 export interface ITemplateDesignMutable extends ITemplateDesignQuery {
     label?: string,
@@ -60,5 +60,5 @@ export interface ITemplateDesignQuery {
     type?: string,
     templateId?: string,
     required?: boolean,
-    organizerId?: string,
+    organizerId?: string, // 未來可能會出現sponsorId之類的，參考schema.org
 }
