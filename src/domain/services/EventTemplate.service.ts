@@ -24,14 +24,14 @@ export default class EventTemplateService {
         this.eventTemplateModel = eventTemplateModel
         this.eventTemplateDesignModel = eventTemplateDesignModel
         this.organizationMemberModel = organizationMemberModel
-
-        // this.devCheckDataIntegrity()
+        // this.devFixDataIntegrity()
     }
 
-    async devCheckDataIntegrity() {
-        const designIds = await this.eventTemplateDesignModel.devGetAllDesignIds()
+    async devFixDataIntegrity() {
+        const designs = await this.eventTemplateDesignModel.devGetAllDesigns()
+        const designIds = designs.map(item => item.id)
         const countPromises = designIds.map(async id => {
-            const count = await this.eventTemplateModel.devCheckCount(id)
+            const count = await this.eventTemplateModel.devCheckCount(String(id))
             if (!count) {
                 return id
             }

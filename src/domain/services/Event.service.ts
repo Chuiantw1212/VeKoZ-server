@@ -399,7 +399,7 @@ export default class EventService {
             query.keywords = keywords
         }
 
-        const currentTime = new Date().getTime()
+        // const currentTime = new Date().getTime()
         const events = await this.eventModel.queryEventList(query) as IEvent[]
         // events.forEach(event => {
         //     if (event.endDate) {
