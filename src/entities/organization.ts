@@ -26,9 +26,11 @@ export interface IOrganizationMember extends IOrganizationMemberQuery {
     isFounder?: boolean, // 創辦者資料的刪除修改方式不同
 }
 
+export type IAllowMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE' | string
+
 export interface IOrganizationMemberQuery extends IPagination {
     organizationId?: string,
     email?: string,
     allowEntities?: 'organizationMember'[],
-    allowMethods?: string[],
+    allowMethods?: IAllowMethod[],
 }

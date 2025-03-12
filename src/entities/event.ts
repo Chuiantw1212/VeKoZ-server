@@ -1,5 +1,6 @@
 import { Timestamp } from "firebase-admin/firestore";
 import type { ITemplateDesign } from "./eventTemplate";
+import type { IAllowMethod } from "./organization";
 
 /**
  * 盡可能最小化，節省索引空間
@@ -37,6 +38,7 @@ export interface IEventQuery {
     isPublic?: boolean,
     limit?: number,
     performerIds?: string[],
+    allowMethods?: IAllowMethod[]
 }
 
 export interface IEventEmail {

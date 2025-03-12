@@ -3,15 +3,27 @@ import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
 import { IEvent, IEventQuery } from '../../entities/event'
 import type { IEventTemplate, ITemplateDesign, } from '../../entities/eventTemplate'
+import { IOrganizationMember } from '../../entities/organization'
 const router = new Elysia()
 router.use(bearer())
     /**
      * 也用於公開資料取得
      */
-    .get('/event/list', async function ({ query }) {
-        const { EventService } = AccessGlobalService.locals
+    .get('/event/list', async function ({ query, bearer }) {
+        const { EventService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const eventQuery = query as IEventQuery
         const eventList = await EventService.queryEventList(eventQuery)
+        if (bearer && eventQuery.allowMethods) {
+            const user = await AuthService.verifyIdToken(bearer)
+            const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
+                email: String(user.email),
+                organizationId: eventQuery.organizerId,
+                allowMethods: eventQuery.allowMethods,
+            })
+            eventList.forEach(event => {
+                event.allowMethods = impersonatedMember.allowMethods
+            })
+        }
         return eventList
     })
     /**

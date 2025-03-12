@@ -89,6 +89,9 @@ export default class OrganizationMemberModel extends VekozModel {
      * @returns 
      */
     async getMemberByQuery(member: IOrganizationMemberQuery): Promise<IOrganizationMember> {
+        if (!member.organizationId) {
+            throw '組織Id未提供'
+        }
         const { email, organizationId, allowMethods, allowEntities } = member
         const wheres: [string, string, any][] = [['email', '==', email], ['organizationId', '==', organizationId],]
         if (allowMethods) {
