@@ -62,6 +62,24 @@ router.use(bearer())
         const count = await OrganizationMemberService.setMemberById(String(impersonatedMember.uid), organizatoinMember)
         return count
     })
+    .patch('/organization/member/calendar-color', async ({ bearer, request, }) => {
+        const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const organizatoinMember = await request.json() as IOrganizationMember
+        /**
+         * 例外處理月曆顏色，讓每個人都可以改自己的顏色
+         */
+        const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
+            email: String(user.email),
+            organizationId: String(organizatoinMember.organizationId),
+            allowMethods: ['GET'],
+        })
+        const count = await OrganizationMemberService.setMemberById(String(impersonatedMember.uid), {
+            id: organizatoinMember.id,
+            calendarColor: organizatoinMember.calendarColor,
+        })
+        return count
+    })
     .delete('/organization/member', async ({ bearer, request, }) => {
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)

@@ -24,6 +24,7 @@ export interface IOrganizationMember extends IOrganizationMemberQuery {
     organizationName?: string,
     organizationLogo?: string,
     isFounder?: boolean, // 創辦者資料的刪除修改方式不同
+    calendarColor?: string,
 }
 
 export type IAllowMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE' | string
