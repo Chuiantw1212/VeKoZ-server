@@ -95,7 +95,11 @@ export default class OrganizationMemberModel extends VekozModel {
         const { email, organizationId, allowMethods, allowEntities } = member
         const wheres: [string, string, any][] = [['email', '==', email], ['organizationId', '==', organizationId],]
         if (allowMethods) {
-            wheres.push(['allowMethods', 'array-contains-any', allowMethods])
+            if (Array.isArray(allowMethods)) {
+                wheres.push(['allowMethods', 'array-contains-any', allowMethods])
+            } else {
+                wheres.push(['allowMethods', 'array-contains-any', [allowMethods]])
+            }
         }
         if (allowEntities) {
             wheres.push(['allowEntities', 'array-contains-any', allowEntities])
