@@ -231,8 +231,8 @@ export default class EventService {
                 break;
             }
             case 'dates': {
-                const startDate = eventDesign.value[0]
-                const endDate = eventDesign.value[1]
+                const startDate = eventDesign.startDate ?? ''
+                const endDate = eventDesign.endDate ?? ''
                 eventPatch.startDate = startDate
                 eventPatch.endDate = endDate
                 const startHour = new Date(startDate).getHours()
