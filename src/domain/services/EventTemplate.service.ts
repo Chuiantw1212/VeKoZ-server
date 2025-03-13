@@ -166,6 +166,12 @@ export default class EventTemplateService {
     }
     async patchTemplateDesign(uid: string, payload: ITemplateDesign) {
         const count = await this.eventTemplateDesignModel.patchDesignById(uid, String(payload.id), payload)
+        if (payload.formField === 'dates') {
+            this.eventTemplateModel.mergeTemplateById(uid, String(payload.templateId), {
+                startDate: payload.startDate,
+                endDate: payload.endDate,
+            })
+        }
         return count
     }
 

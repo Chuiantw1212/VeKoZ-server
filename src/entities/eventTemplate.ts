@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase-admin/firestore";
 import type { IOffer } from "./offer";
 /**
  * https://schema.org/Organization
@@ -13,6 +14,8 @@ export interface IEventTemplate extends IEventTemplateQuery {
     allowMethods?: string[],
     organizerLogo?: string,
     organizerName?: string,
+    startDate?: string | Date | Timestamp,
+    endDate?: string | Date | Timestamp,
 }
 
 export interface IEventTemplateQuery {
