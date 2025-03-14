@@ -82,9 +82,10 @@ export default class EventService {
                 const categoryId = crypto.randomUUID()
                 const categoryName = design.label ?? ''
                 const newOfferPromises = design.offers.map(offer => {
-                    const newOffer = this.convertNewOffer(offer, event)
+                    const newOffer: IOffer = this.convertNewOffer(offer, event)
                     newOffer.categoryId = categoryId // composite key
                     newOffer.categoryName = categoryName
+
                     return this.offerModel.createOffer(uid, newOffer)
                 })
                 const createdOffers = await Promise.all(newOfferPromises)

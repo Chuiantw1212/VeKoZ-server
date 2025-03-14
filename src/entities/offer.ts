@@ -2,6 +2,7 @@ export interface IOffer extends IOfferQuery {
     uid?: string,
     id?: string,
     name?: string,
+    description?:string,
     inventoryValue?: number,
     showInventoryValue?: boolean,
     price?: number,
@@ -10,7 +11,7 @@ export interface IOffer extends IOfferQuery {
     categoryName?: string,
     offererName?: string,
     sellerName?: string,
-    availableAtOrFrom?: string | 'VeKoZ'
+    availableAtOrFrom?: string | 'VeKoZ',
 }
 
 export interface IOfferQuery {
