@@ -2,16 +2,17 @@ import VekozModel from '../adapters/VekozModel.out'
 import type { IModelPorts, IBlob } from '../ports/out.model'
 import type { ICrudOptions } from '../ports/out.crud'
 import { ITemplateDesign } from '../entities/eventTemplate'
+import { Timestamp } from 'firebase-admin/firestore'
 export default class EventDesignModel extends VekozModel {
     constructor(data: IModelPorts) {
         super(data)
     }
 
-    async setByOrganizationId(uid: string, organizationId: string, data: ITemplateDesign) {
+    async setByOrganizationId(uid: string, organizer: string, data: ITemplateDesign) {
         const options = {
             merge: true,
         }
-        return await super.setItemsByQuery([['uid', '==', uid], ['organizationId', '==', organizationId]], data, options)
+        return await super.setItemsByQuery([['uid', '==', uid], ['organizer', '==', organizer]], data, options)
     }
 
     /**
@@ -41,6 +42,18 @@ export default class EventDesignModel extends VekozModel {
             merge: true,
             count: {
                 absolute: 1
+            }
+        }
+        if (data.startDate) {
+            const formatStart = super.formatDate(data.startDate)
+            if (formatStart instanceof Date) {
+                data.startDate = formatStart
+            }
+        }
+        if (data.endDate) {
+            const formatStart = super.formatDate(data.endDate)
+            if (formatStart instanceof Date) {
+                data.endDate = formatStart
             }
         }
         const count = await super.setItemById(uid, id, data, options)

@@ -5,9 +5,15 @@ import { bearer } from '@elysiajs/bearer'
 import { IOffer, IOfferQuery } from '../../entities/offer'
 const router = new Elysia()
 router.use(bearer())
-    .get('/offer/list', async ({ query }) => {
-        const { OfferService } = AccessGlobalService.locals
+    .get('/offer/list', async ({ bearer, query }) => {
+        const { AuthService, OfferService, OrganizationMemberService } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
         const offerQuery = query as IOfferQuery
+        // const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
+        //     email: String(user.email),
+        //     organizationId: String(eventTemplate.organizerId),
+        //     allowMethods: [request.method]
+        // })
         const offerList: IOffer[] = await OfferService.queryOfferList(offerQuery)
         return offerList
     })
