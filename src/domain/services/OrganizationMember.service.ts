@@ -80,6 +80,9 @@ export default class OrganizationMemberService {
      * @returns 
      */
     async getMemberByQuery(member: IOrganizationMemberQuery): Promise<IOrganizationMember> {
+        if (!member.organizationId) {
+            throw '組織代碼未提供'
+        }
         try {
             return await this.organizationMemberModel.getMemberByQuery(member)
         } catch (error) {
