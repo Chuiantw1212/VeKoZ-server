@@ -29,12 +29,27 @@ router.use(bearer())
     /**
      * 也用於公開資料取得
      */
-    .get('/event/:id', async function ({ params, bearer }) {
-        const { AuthService, EventService } = AccessGlobalService.locals
-        const { id } = params
-        const user = await AuthService.verifyIdToken(bearer)
-        const event = await EventService.getEvent(id, user.uid)
-        return event
+    .get('/event', async function ({ request, bearer, query }) {
+        const { AuthService, EventService, OrganizationMemberService } = AccessGlobalService.locals
+        const eventQuery = query as IEventQuery
+        if (bearer) {
+            // 可編輯
+            const user = await AuthService.verifyIdToken(bearer)
+            const userMembership = await OrganizationMemberService.getMemberByQuery({
+                email: String(user.email),
+                organizationId: String(eventQuery.organizerId),
+                allowMethods: [request.method],
+            })
+            const event = await EventService.getEventByQuery(String(eventQuery.id), userMembership.uid)
+            if (event) {
+                event.allowMethods = userMembership.allowMethods
+            }
+            return event
+        } else {
+            // 僅共檢視
+            const event = await EventService.getEventByQuery(String(eventQuery.id))
+            return event
+        }
     })
     .post('/event', async function ({ request, bearer }) {
         const { AuthService, EventService, OrganizationMemberService, } = AccessGlobalService.locals

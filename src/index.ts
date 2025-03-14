@@ -186,7 +186,7 @@ import offerController from './adapters/client.in/offer.ctrl'
             })
             if (code === 'NOT_FOUND') return
 
-            console.error(error)
+            // console.error(error)
         })
         .use(cors())
         .use(rootController)

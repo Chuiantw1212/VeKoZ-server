@@ -309,6 +309,7 @@ export default class VekozModel extends VenoniaCRUD {
             message = `資料數量範圍不合: ${count} 不在 ${options.range} 中`
         }
         if (message) {
+            console.trace(message)
             throw message
         }
         return count

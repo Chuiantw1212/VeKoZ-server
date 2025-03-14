@@ -45,6 +45,9 @@ export default class EventService {
      * @returns 
      */
     async createNewEvent(uid: string, eventTemplate: IEventTemplate): Promise<IEvent> {
+        if (!eventTemplate.startDate || !eventTemplate.endDate) {
+            throw '日期未提供'
+        }
         if (!eventTemplate.designs?.length) {
             throw 'designs不存在'
         }
@@ -338,7 +341,7 @@ export default class EventService {
         return count
     }
 
-    async getEvent(id: string, uid: string,): Promise<IEventTemplate | 0> {
+    async getEventByQuery(id: string, uid?: string,): Promise<IEventTemplate | 0> {
         const eventTemplate: IEventTemplate | 0 = await this.eventModel.getEventById(id)
         if (eventTemplate) {
             const designIds = eventTemplate.designIds || []
