@@ -32,7 +32,7 @@ router.use(bearer())
     .get('/event', async function ({ request, bearer, query }) {
         const { AuthService, EventService, OrganizationMemberService } = AccessGlobalService.locals
         const eventQuery = query as IEventQuery
-        if (bearer) {
+        if (bearer && eventQuery.organizerId) {
             // 可編輯
             const user = await AuthService.verifyIdToken(bearer)
             const userMembership = await OrganizationMemberService.getMemberByQuery({
