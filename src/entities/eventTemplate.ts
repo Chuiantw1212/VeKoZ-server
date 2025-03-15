@@ -42,8 +42,8 @@ export interface ITemplateDesignMutable extends ITemplateDesignQuery {
     memberIds?: string[],
     memberNames?: string[],
     // 時間
-    startDate?: Date,
-    endDate?: Date,
+    startDate?: Date | string,
+    endDate?: Date | string,
     // 線下地點
     placeId?: string, // entities, 如果有owner可共用評價
     placeOwnerId?: string,

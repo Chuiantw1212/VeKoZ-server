@@ -40,14 +40,14 @@ router.use(bearer())
                 organizationId: String(eventQuery.organizerId),
                 allowMethods: [request.method],
             })
-            const event = await EventService.getEventByQuery(String(eventQuery.id), userMembership.uid)
+            const event = await EventService.getEventById(String(eventQuery.id), userMembership.uid)
             if (event) {
                 event.allowMethods = userMembership.allowMethods
             }
             return event
         } else {
             // 僅共檢視
-            const event = await EventService.getEventByQuery(String(eventQuery.id))
+            const event = await EventService.getEventById(String(eventQuery.id))
             return event
         }
     })

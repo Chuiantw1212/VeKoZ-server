@@ -78,6 +78,12 @@ export default class EventDesignModel extends VekozModel {
      */
     async getEventDesignById(designId: string): Promise<ITemplateDesign> {
         const templateDesign: ITemplateDesign = await super.getItemById(designId) as ITemplateDesign
+        if (templateDesign.startDate) {
+            templateDesign.startDate = super.formatDate(templateDesign.startDate)
+        }
+        if (templateDesign.endDate) {
+            templateDesign.endDate = super.formatDate(templateDesign.endDate)
+        }
         return templateDesign
     }
 

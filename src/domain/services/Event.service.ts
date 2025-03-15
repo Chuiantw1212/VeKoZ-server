@@ -341,28 +341,29 @@ export default class EventService {
         return count
     }
 
-    async getEventByQuery(id: string, uid?: string,): Promise<IEventTemplate | 0> {
+    async getEventById(id: string, uid?: string,): Promise<IEventTemplate | 0> {
         const eventTemplate: IEventTemplate | 0 = await this.eventModel.getEventById(id)
-        if (eventTemplate) {
-            const designIds = eventTemplate.designIds || []
-            // 取得details並回傳
-            const designPromises = await designIds.map((designId: string) => {
-                return this.eventDesignModel.getEventDesignById(designId)
-            })
-            const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
-            const isAllDetailMissing = eventTemplateDesigns.every(value => !value)
-            if (isAllDetailMissing) {
-                if (uid) {
-                    this.eventModel.deleteByEventId(uid, id)
-                }
-                return 0
-            } else {
-                eventTemplate.designs = eventTemplateDesigns
-                delete eventTemplate.designIds
-                return eventTemplate
-            }
+        if (!eventTemplate) {
+            return 0
         }
-        return 0
+
+        // 附加Details
+        const designIds = eventTemplate.designIds || []
+        const designPromises = await designIds.map((designId: string) => {
+            return this.eventDesignModel.getEventDesignById(designId)
+        })
+        const eventTemplateDesigns = await Promise.all(designPromises) as ITemplateDesign[]
+        const isAllDetailMissing = eventTemplateDesigns.every(value => !value)
+        if (isAllDetailMissing) {
+            if (uid) {
+                this.eventModel.deleteByEventId(uid, id)
+            }
+            return 0
+        } else {
+            eventTemplate.designs = eventTemplateDesigns
+            delete eventTemplate.designIds
+            return eventTemplate
+        }
     }
 
     async deleteEvent(uid: string, id: string): Promise<number> {
