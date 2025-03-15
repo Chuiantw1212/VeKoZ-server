@@ -214,6 +214,18 @@ export default class EventTemplateService {
                 "formField": "performers"
             },
             {
+                "type": "place",
+                "label": "空間地點",
+                "required": true,
+                "formField": "location"
+            },
+            {
+                "type": "url",
+                "label": "視訊連結",
+                "required": true,
+                "formField": "virtualLocation"
+            },
+            {
                 "type": "offers",
                 "label": "預設票券群組",
                 "required": true,

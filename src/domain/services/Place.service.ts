@@ -1,6 +1,6 @@
 import PlaceModel from '../Place.model'
 import EventTemplateModel from '../EventTemplate.model';
-import type { IPlace } from '../../entities/place';
+import type { IPlace, IPlaceQuery } from '../../entities/place';
 
 interface Idependency {
     placeModel: PlaceModel;
@@ -12,7 +12,7 @@ export default class PlaceService {
     constructor(dependency: Idependency) {
         const {
             placeModel,
-            
+
         } = dependency
         this.placeModel = placeModel
     }
@@ -37,8 +37,8 @@ export default class PlaceService {
      * 取得列表
      * @returns 
      */
-    async getPlaceList() {
-        const list: IPlace[] = await this.placeModel.getPlaceList()
+    async getPlaceList(query: IPlaceQuery) {
+        const list: IPlace[] = await this.placeModel.getPlaceList(query)
         return list
     }
 

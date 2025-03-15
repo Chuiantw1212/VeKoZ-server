@@ -1,5 +1,5 @@
 import VekozModel from '../adapters/VekozModel.out'
-import { IPlace } from '../entities/place'
+import { IPlace, IPlaceQuery } from '../entities/place'
 import type { IModelPorts } from '../ports/out.model'
 
 export default class PlaceModel extends VekozModel {
@@ -26,8 +26,22 @@ export default class PlaceModel extends VekozModel {
         })
         return count
     }
-    async getPlaceList() {
-        const placeList = await super.getItemsByWheres([]) as IPlace[]
+    async getPlaceList(query: IPlaceQuery) {
+        if (!query.organizationIds) {
+            throw ''
+        }
+
+        let organizationIds = query.organizationIds
+
+        if (typeof query.organizationIds === 'string') {
+            organizationIds = query.organizationIds.split(',')
+        }
+        // console.log({
+        //     query
+        // })
+        // return []
+        const wheres = [['organizationId', 'in', organizationIds]]
+        const placeList = await super.getItemsByWheres(wheres) as IPlace[]
         return placeList
     }
     async deletePlaceById(uid: string, id: string) {
