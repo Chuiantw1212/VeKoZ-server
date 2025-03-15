@@ -96,24 +96,25 @@ export default class OrganizationService {
         }
         const count = await this.organizationModel.mergeOrganizationById(uid, organization.id, organization)
 
-        // 更新連動Model
+        // Organization Member
         this.organizationMemberModel.setMembersByOrgnaizationId(uid, {
             organizationName: organization.name,
             organizationLogo: organization.logo, // 前面已更新過
             organizationId: organization.id,
         })
+        // Event Template 
         this.eventTemplateModel.mergeTemplateByOrganizerId(uid, organization.id, {
             organizerName: organization.name,
             organizerLogo: organization.logo, // 前面已更新過
         })
-        // Offer Model
+        // Offer 
         this.offerModel.updateOfferGroupByOffererId(uid, organization.id, {
             offererName: organization.name,
         })
         this.offerModel.updateOfferGroupBySellerId(uid, organization.id, {
             sellerName: organization.name,
         })
-        // DesignModel
+        // Design
         this.eventTemplateDesignModel.setByOrganizationId(uid, organization.id, {
             organizationName: organization.name,
         })
