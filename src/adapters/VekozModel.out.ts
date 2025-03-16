@@ -61,13 +61,14 @@ export default class VekozModel extends VenoniaCRUD {
             const query = await this.getQuery(defaultQuery, options)
             await this.checkQueryCount(query, options.count)
         }
-        const docRef = this.collection.doc()
+        // 增加必要資料
         const lastmod = Timestamp.fromDate(new Date())
+        data.lastmod = lastmod
+        const docRef = this.collection.doc()
         if (!data.id) {
             data.id = docRef.id
         }
-        data.lastmod = lastmod
-        await this.collection.doc(data.id).set({
+        await this.collection.doc(docRef.id).set({
             ...data,
             uid
             // IMPORTANT 否則新資料會是null

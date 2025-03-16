@@ -23,13 +23,18 @@ router.use(bearer())
         const { AuthService, PlaceService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const place = await request.json() as IPlace
-        const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
-            email: String(user.email),
-            organizationId: String(place.organizationId),
-            allowMethods: [request.method]
-        })
-        const result = await PlaceService.addPlace(String(impersonatedMember.uid), place)
-        return result
+        if (place.organizationId) {
+            const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
+                email: String(user.email),
+                organizationId: String(place.organizationId),
+                allowMethods: [request.method]
+            })
+            const result = await PlaceService.addPlace(String(impersonatedMember.uid), place)
+            return result
+        } else {
+            const result = await PlaceService.addPlace(String(user.uid), place)
+            return result
+        }
     })
     .patch('/place', async ({ request, bearer }) => {
         const { AuthService, PlaceService, OrganizationMemberService } = AccessGlobalService.locals
