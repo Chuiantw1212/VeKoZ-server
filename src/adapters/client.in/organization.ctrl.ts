@@ -1,5 +1,5 @@
 import AccessGlobalService from '../../entities/app'
-import type { IOrganization, IOrganizationMember } from '../../entities/organization'
+import type { IOrganization, IOrganizationMember, IOrganizationQuery } from '../../entities/organization'
 import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
 
@@ -11,11 +11,17 @@ router.use(bearer())
         const organization: IOrganization = await OrganizationService.getItem(id)
         return organization
     })
-    .get('/organization/list', async ({ bearer }) => {
+    .get('/organization/list', async ({ bearer, query }) => {
         const { AuthService, OrganizationService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
-        const organizations: IOrganization[] = await OrganizationService.getOrganizationList(String(user.uid))
-        return organizations
+        const organizationQuery = query as IOrganizationQuery
+        if (organizationQuery.name) {
+            const organizations: IOrganization[] = await OrganizationService.getOrganizationList(organizationQuery)
+            return organizations
+        } else {
+            return []
+            // throw '尚未實裝'
+        }
     })
     .post('/organization', async ({ request, bearer }) => {
         const { OrganizationService, AuthService } = AccessGlobalService.locals

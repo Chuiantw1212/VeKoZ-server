@@ -27,20 +27,20 @@ export default class PlaceModel extends VekozModel {
         return count
     }
     async getPlaceList(query: IPlaceQuery) {
-        if (!query.organizationIds) {
-            throw ''
+        // if (!query.organizationIds) {
+        //     throw ''
+        // }
+        const wheres = []
+        if (query.organizationIds) {
+            let organizationIds = query.organizationIds
+            if (typeof query.organizationIds === 'string') {
+                organizationIds = query.organizationIds.split(',')
+            }
+            wheres.push(['organizationId', 'in', organizationIds])
         }
-
-        let organizationIds = query.organizationIds
-
-        if (typeof query.organizationIds === 'string') {
-            organizationIds = query.organizationIds.split(',')
+        if (query.organizationId) {
+            wheres.push(['organizationId', '==', query.organizationId])
         }
-        // console.log({
-        //     query
-        // })
-        // return []
-        const wheres = [['organizationId', 'in', organizationIds]]
         const placeList = await super.getItemsByWheres(wheres) as IPlace[]
         return placeList
     }

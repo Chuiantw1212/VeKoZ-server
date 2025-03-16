@@ -1,6 +1,6 @@
 import VekozModel from '../adapters/VekozModel.out'
 import type { IModelPorts } from '../ports/out.model'
-import { IOrganization } from '../entities/organization';
+import { IOrganization, IOrganizationQuery } from '../entities/organization';
 import { ICrudOptions } from '../ports/out.crud';
 interface IBlob {
     type: string;
@@ -91,8 +91,12 @@ export default class OrganizationModel extends VekozModel {
         return count
     }
 
-    async getOrganizationList(uid: string,) {
-        const organizationList = await super.getItemsByWheres([['uid', '==', uid]]) as IOrganization[]
+    async getOrganizationList(query: IOrganizationQuery,) {
+        const wheres = []
+        if (query.keywords) {
+            wheres.push(['keywords', 'array-contains-any', query.keywords])
+        }
+        const organizationList = await super.getItemsByWheres(wheres) as IOrganization[]
         return organizationList
     }
 }

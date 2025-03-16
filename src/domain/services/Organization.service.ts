@@ -7,7 +7,7 @@ import EventTemplateDesignModel from '../EventTemplateDesign.model';
 import EventDesignModel from '../EventDesign.model';
 import NlpAdapter from '../../adapters/nlp.out';
 import { IEvent } from '../../entities/event';
-import type { IOrganization, IOrganizationMember } from '../../entities/organization';
+import type { IOrganization, IOrganizationMember, IOrganizationQuery } from '../../entities/organization';
 
 interface Idependency {
     organizationModel: OrganizationModel;
@@ -139,10 +139,22 @@ export default class OrganizationService {
      * 取得列表
      * @returns 
      */
-    async getOrganizationList(uid: string,) {
-        const list: IOrganization[] = await this.organizationModel.getOrganizationList(uid)
+    async getOrganizationList(query: IOrganizationQuery,) {
+        if (query.name) {
+            query.keywords = this.nlpAdapter.cutForSearch(query.name)
+        }
+        const list: IOrganization[] = await this.organizationModel.getOrganizationList(query)
         return list
     }
+
+    // /**
+    //  * 取得列表
+    //  * @returns 
+    //  */
+    // async getOrganizationList(uid: string,) {
+    //     const list: IOrganization[] = await this.organizationModel.getOrganizationList(uid)
+    //     return list
+    // }
 
     /**
      * 刪除組織

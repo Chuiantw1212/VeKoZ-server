@@ -3,18 +3,21 @@ import { IPagination } from "./meta";
 /**
  * https://schema.org/Organization
  */
-export interface IOrganization {
+export interface IOrganization extends IOrganizationQuery {
     uid?: string;
     id?: string; // doc id
     banner?: string;
     logo?: string;
-    name?: string;
     seoName?: string,
     description?: string,
     sameAs?: string[],
     email?: string, // 聯絡用email
     image?: string,
     googleCalendarId?: string,
+}
+
+export interface IOrganizationQuery {
+    name?: string;
     keywords?: string[],
 }
 
