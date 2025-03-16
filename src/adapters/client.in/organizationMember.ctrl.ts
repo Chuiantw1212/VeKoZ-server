@@ -16,7 +16,7 @@ router.use(bearer())
             allowMethods: [request.method]
         })
         const pagination = query as IPagination
-        const result = await OrganizationMemberService.getMemberList({
+        const result = await OrganizationMemberService.getMemberListByQuery({
             uid: impersonatedMember.uid,
             organizationId,
             email: user.email,

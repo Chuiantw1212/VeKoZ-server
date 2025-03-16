@@ -60,7 +60,7 @@ export default class OrganizationMemberModel extends VekozModel {
      * @param pagination 
      * @returns 
      */
-    async getMemberList(member: IOrganizationMember, pagination?: IPagination) {
+    async getMemberListByQuery(member: IOrganizationMember, pagination?: IPagination) {
         const options: ICrudOptions = {
             orderBy: ['lastmod', 'desc'],
         }
@@ -71,7 +71,21 @@ export default class OrganizationMemberModel extends VekozModel {
                 options.limit = Number(pagination.pageSize)
             }
         }
-        const wheres = [['uid', '==', member.uid], ['organizationId', '==', member.organizationId]]
+        const wheres = []
+        if (member.uid) {
+            wheres.push(['uid', '==', member.uid])
+        }
+        if (member.organizationId) {
+            wheres.push(['organizationId', '==', member.organizationId])
+        }
+        if (member.organizationIds) {
+            if (typeof member.organizationIds === 'string') {
+                wheres.push(['organizationId', 'in', String(member.organizationIds).split(',')])
+            }
+        }
+        if (member.email) {
+            wheres.push(['email', '==', member.email])
+        }
         const query = await super.getQuery(wheres)
         const count = await super.checkQueryCount(query, options?.count ?? {})
         const memberList = await super.getItemsByWheres(wheres, options)

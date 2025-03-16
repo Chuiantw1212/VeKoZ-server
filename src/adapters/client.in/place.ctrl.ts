@@ -6,8 +6,21 @@ const router = new Elysia()
 router.use(bearer())
     .get('/place/list', async ({ bearer, query, request }) => {
         const { PlaceService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
-        // const user = await AuthService.verifyIdToken(bearer)
         const placeQuery = query as IPlaceQuery
+        if (bearer) {
+            const user = await AuthService.verifyIdToken(bearer)
+            const memberQueryResult = await OrganizationMemberService.getMemberListByQuery({
+                email: String(user.email),
+                organizationIds: placeQuery.organizationIds,
+                allowMethods: [request.method]
+            })
+            const uids = memberQueryResult.items.map(item => item.uid)
+            placeQuery.uids = uids
+            const result = await PlaceService.getPlaceList(placeQuery)
+            return result
+        } else {
+            return []
+        }
         // if (placeQuery.organizationId&&) {
 
         // }
@@ -16,8 +29,6 @@ router.use(bearer())
         //     organizationId: String(placeQuery.organizationId),
         //     allowMethods: [request.method]
         // })
-        const result = await PlaceService.getPlaceList(placeQuery)
-        return result
     })
     .post('/place', async ({ request, bearer }) => {
         const { AuthService, PlaceService, OrganizationMemberService } = AccessGlobalService.locals
