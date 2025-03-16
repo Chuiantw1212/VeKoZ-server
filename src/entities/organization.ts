@@ -15,6 +15,7 @@ export interface IOrganization {
     email?: string, // 聯絡用email
     image?: string,
     googleCalendarId?: string,
+    keywords?: string[],
 }
 
 export interface IOrganizationMember extends IOrganizationMemberQuery {

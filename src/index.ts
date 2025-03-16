@@ -145,6 +145,7 @@ import offerController from './adapters/client.in/offer.ctrl'
             offerModel,
             eventDesignModel,
             eventTemplateDesignModel,
+            nlpAdapter,
         }),
         OrganizationMemberService: new OrganizationMemberService({
             emailAdapter,

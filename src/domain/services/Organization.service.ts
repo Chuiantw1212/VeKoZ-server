@@ -5,6 +5,7 @@ import OfferModel from '../OfferModel';
 import EventTemplateModel from '../EventTemplate.model';
 import EventTemplateDesignModel from '../EventTemplateDesign.model';
 import EventDesignModel from '../EventDesign.model';
+import NlpAdapter from '../../adapters/nlp.out';
 import { IEvent } from '../../entities/event';
 import type { IOrganization, IOrganizationMember } from '../../entities/organization';
 
@@ -16,16 +17,18 @@ interface Idependency {
     eventTemplateModel: EventTemplateModel;
     eventTemplateDesignModel: EventTemplateDesignModel,
     eventDesignModel: EventDesignModel,
+    nlpAdapter: NlpAdapter
 }
 
 export default class OrganizationService {
-    protected organizationModel: OrganizationModel
-    protected organizationMemberModel: OrganizationMemberModel
+    private organizationModel: OrganizationModel
+    private organizationMemberModel: OrganizationMemberModel
     private eventModel: EventModel
     private offerModel: OfferModel
     private eventTemplateDesignModel: EventTemplateDesignModel
     private eventTemplateModel: EventTemplateModel
     private eventDesignModel: EventDesignModel
+    private nlpAdapter: NlpAdapter
 
     constructor(dependency: Idependency) {
         this.organizationModel = dependency.organizationModel
@@ -35,6 +38,7 @@ export default class OrganizationService {
         this.eventTemplateModel = dependency.eventTemplateModel
         this.eventTemplateDesignModel = dependency.eventTemplateDesignModel
         this.eventDesignModel = dependency.eventDesignModel
+        this.nlpAdapter = dependency.nlpAdapter
     }
 
     /**
@@ -43,15 +47,18 @@ export default class OrganizationService {
      * @param founder 
      * @returns 
      */
-    async newItem(uid: string, founder: IOrganizationMember) {
+    async newItem(uid: string, membership: IOrganizationMember) {
+        const organizationName = String(membership.organizationName)
+        const keywords = this.nlpAdapter.cutForSearch(organizationName)
         const defaultOrganization: IOrganization = {
             sameAs: [], // 必要
-            name: founder.organizationName,
-            email: founder.email,
+            name: organizationName,
+            email: membership.email,
+            keywords,
         }
         const newOrganization = await this.organizationModel.createOrganization(uid, defaultOrganization) as IOrganization
-        founder.organizationId = newOrganization.id
-        await this.organizationMemberModel.addMember(uid, founder)
+        membership.organizationId = newOrganization.id
+        await this.organizationMemberModel.addMember(uid, membership)
         return newOrganization
     }
 
@@ -94,6 +101,10 @@ export default class OrganizationService {
             const publicUrl: string = await this.organizationModel.storeBanner(organization.id, tempBanner)
             organization.banner = publicUrl
         }
+
+        const organizationName = String(organization.name)
+        const keywords = this.nlpAdapter.cutForSearch(organizationName)
+        organization.keywords = keywords
         const count = await this.organizationModel.mergeOrganizationById(uid, organization.id, organization)
 
         // Organization Member

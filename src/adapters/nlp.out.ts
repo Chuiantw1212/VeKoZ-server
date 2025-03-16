@@ -51,14 +51,15 @@ export default class NlpAdapter {
     }
 
     /**
-     * 盡可能擷取斷字，但用處不大而且會切出空白
+     * 盡可能擷取斷字
      * @param text 
      * @returns 
      */
     cutAll(text: string,) {
         const cnText = this.fromTaiwanToChina(text)
         const cnWords: string[] = this.jieba.cut(cnText)
-        const twTexts = cnWords.map(cnWord => {
+        const nonEmptyCnKeywords = cnWords.filter(word => !!word)
+        const twTexts = nonEmptyCnKeywords.map(cnWord => {
             const twWord = this.fromChinaToTaiwan(cnWord)
             return twWord
         })
