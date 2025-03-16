@@ -116,7 +116,13 @@ router.use(bearer())
         const { AuthService, OrganizationMemberService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const memberQuery = query as IOrganizationMemberQuery
-        const result = await OrganizationMemberService.getRelatedMembership(String(user.email), memberQuery)
+        const result = await OrganizationMemberService.getRelatedMemberships(String(user.email), memberQuery)
+        /**
+         * 雖然不太可能被盜用，但還是盡可能讓uid不曝光在網頁端
+         */
+        result.items.forEach(membership => {
+            delete membership.uid
+        })
         return result
     })
 export default router

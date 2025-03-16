@@ -31,7 +31,7 @@ export default class OrganizationMemberModel extends VekozModel {
      * @param memberQuery 
      * @returns 
      */
-    async getRelatedMemberships(email: string, memberQuery: IOrganizationMemberQuery) {
+    async getRelatedMembershipss(email: string, memberQuery: IOrganizationMemberQuery) {
         const options: ICrudOptions = {
             orderBy: ['lastmod', 'desc'],
             startAfter: Number(memberQuery.pageSize) * (Number(memberQuery.currentPage) - 1),
@@ -44,13 +44,34 @@ export default class OrganizationMemberModel extends VekozModel {
         } else {
             allowMethod = memberQuery.allowMethods ?? 'GET'
         }
-        const wheres = [['email', '==', email], ['allowMethods', 'array-contains', allowMethod]]
+
+        const wheres = []
+        if (allowMethod) {
+            wheres.push(['allowMethods', 'array-contains', allowMethod])
+        }
+        if (email) {
+            wheres.push(['email', '==', email])
+        }
+        if (memberQuery.organizationId) {
+            wheres.push(['organizationId', '==', memberQuery.organizationId])
+        }
+        if (memberQuery.organizationIds) {
+            if (typeof memberQuery.organizationIds === 'string') {
+                const organizationIds = String(memberQuery.organizationIds).split(',')
+                wheres.push(['organizationId', 'in', organizationIds])
+            }
+        }
         const query = await super.getQuery(wheres)
         const count = await super.checkQueryCount(query, options?.count ?? {})
-        const memberList: IOrganizationMember[] = await super.getItemsByWheres(wheres, options)
+        const querySnapshot = await query.get()
+        const items = querySnapshot.docs.map(doc => {
+            const data = doc.data()
+            data.lastmod = super.formatDate(data.lastmod)
+            return data
+        })
         return {
             total: count,
-            items: memberList,
+            items,
         }
     }
 
@@ -81,9 +102,6 @@ export default class OrganizationMemberModel extends VekozModel {
         if (member.organizationIds) {
             if (typeof member.organizationIds === 'string') {
                 const organizationIds = String(member.organizationIds).split(',')
-                console.log({
-                    organizationIds
-                })
                 wheres.push(['organizationId', 'in', organizationIds])
             }
         }

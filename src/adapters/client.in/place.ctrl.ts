@@ -9,30 +9,17 @@ router.use(bearer())
         const placeQuery = query as IPlaceQuery
         if (bearer) {
             const user = await AuthService.verifyIdToken(bearer)
-            const memberQueryResult = await OrganizationMemberService.getRelatedMembership(String(user.email), {
+            const memberQueryResult = await OrganizationMemberService.getRelatedMemberships(String(user.email), {
                 email: String(user.email),
                 organizationIds: placeQuery.organizationIds,
                 allowMethods: [request.method]
             })
             const uids = memberQueryResult.items.map(item => {
-                console.log({
-                    item
-                })
                 return item.uid
             })
-            return []
-            // console.log({
-            //     result
-            // })
-            // const memberQueryResult = await OrganizationMemberService.getMemberListByQuery({
-            //     email: String(user.email),
-            //     organizationIds: placeQuery.organizationIds,
-            //     allowMethods: [request.method]
-            // })
-            // placeQuery.uids = uids
-            // // return []
-            // const result = await PlaceService.getPlaceList(placeQuery)
-            // return result
+            placeQuery.uids = uids
+            const result = await PlaceService.getPlaceList(placeQuery)
+            return result
         } else {
             return []
         }

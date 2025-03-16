@@ -63,13 +63,13 @@ export default class OrganizationMemberService {
     }
 
     /**
-     * R 取得用戶所屬組織權限列表
+     * R 取得用戶所有的組織全縣，不做分頁
      * @param uid 
      * @param member 
      * @returns 
      */
-    async getRelatedMembership(email: string, memberQuery: IOrganizationMemberQuery) {
-        const members = await this.organizationMemberModel.getRelatedMemberships(email, memberQuery)
+    async getRelatedMemberships(email: string, memberQuery: IOrganizationMemberQuery) {
+        const members = await this.organizationMemberModel.getRelatedMembershipss(email, memberQuery)
         return members
     }
 
