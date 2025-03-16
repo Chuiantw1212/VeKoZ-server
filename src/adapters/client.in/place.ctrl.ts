@@ -4,7 +4,7 @@ import { Elysia, } from 'elysia'
 import { bearer } from '@elysiajs/bearer'
 const router = new Elysia()
 router.use(bearer())
-    .get('/place/list', async ({ bearer, query, request }) => {
+    .get('/place/list', async ({ query, bearer, request }) => {
         const { PlaceService, AuthService, OrganizationMemberService } = AccessGlobalService.locals
         const placeQuery = query as IPlaceQuery
         if (bearer) {
@@ -17,20 +17,17 @@ router.use(bearer())
             const uids = memberQueryResult.items.map(item => {
                 return item.uid
             })
+            /**
+             * 用UID限制前端抓到的無從屬地點
+             */
             placeQuery.uids = uids
             const result = await PlaceService.getPlaceList(placeQuery)
             return result
         } else {
             return []
         }
-        // if (placeQuery.organizationId&&) {
-
-        // }
-        // const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
-        //     email: String(user.email),
-        //     organizationId: String(placeQuery.organizationId),
-        //     allowMethods: [request.method]
-        // })
+        // const result = await PlaceService.getPlaceList(placeQuery)
+        // return result
     })
     .post('/place', async ({ request, bearer }) => {
         const { AuthService, PlaceService, OrganizationMemberService } = AccessGlobalService.locals

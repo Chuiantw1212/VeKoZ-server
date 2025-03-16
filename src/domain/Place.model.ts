@@ -32,20 +32,17 @@ export default class PlaceModel extends VekozModel {
             wheres.push(['uid', '==', query.uid])
         }
         if (query.uids) {
-            console.log({
-                uids: query.uids
-            })
             wheres.push(['uid', 'in', query.uids])
         }
+        if (query.email) {
+            wheres.push(['email', '==', query.email])
+        }
+        let organizationIds = query.organizationIds
         if (query.organizationIds) {
-            let organizationIds = query.organizationIds
             if (typeof query.organizationIds === 'string') {
                 organizationIds = query.organizationIds.split(',')
             }
             if (Array.isArray(organizationIds) && organizationIds.length) {
-                console.log({
-                    organizationIds
-                })
                 wheres.push(['organizationId', 'in', organizationIds])
             }
         }
@@ -53,6 +50,10 @@ export default class PlaceModel extends VekozModel {
             wheres.push(['organizationId', '==', query.organizationId])
         }
         const placeList = await super.getItemsByWheres(wheres) as IPlace[]
+        // if (query.uids) {
+        //     const linkedPlaces = await super.getItemsByWheres([['uid', 'in', query.uids]]) as IPlace[]
+        //     placeList.push(...linkedPlaces)
+        // }
         return placeList
     }
     async deletePlaceById(uid: string, id: string) {

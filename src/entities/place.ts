@@ -11,7 +11,8 @@ export interface IPlace extends IPlaceQuery {
 export interface IPlaceQuery {
     id?: string; // doc id
     uid?: string;
-    uids?: string[];
+    uids?: string[],
+    email?: string,
     organizationId?: string,
     organizationName?: string,
     organizationIds?: string[] | string
