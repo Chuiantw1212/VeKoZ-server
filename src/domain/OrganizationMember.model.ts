@@ -26,7 +26,7 @@ export default class OrganizationMemberModel extends VekozModel {
     }
 
     /**
-     * R 管理成員列表
+     * R 取得用戶所屬組織權限列表
      * @param email 
      * @param memberQuery 
      * @returns 
@@ -92,11 +92,10 @@ export default class OrganizationMemberModel extends VekozModel {
         }
         const query = await super.getQuery(wheres)
         const count = await super.checkQueryCount(query, options?.count ?? {})
-        const snapshot = await query.get()
-        const items = snapshot.docs.map(item => item.data())
+        const memberList = await super.getItemsByWheres(wheres, options)
         return {
-            count,
-            items
+            total: count,
+            items: memberList
         }
     }
 

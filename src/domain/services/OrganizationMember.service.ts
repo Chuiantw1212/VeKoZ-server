@@ -63,6 +63,17 @@ export default class OrganizationMemberService {
     }
 
     /**
+     * R 取得用戶所屬組織權限列表
+     * @param uid 
+     * @param member 
+     * @returns 
+     */
+    async getRelatedMembership(email: string, memberQuery: IOrganizationMemberQuery) {
+        const members = await this.organizationMemberModel.getRelatedMemberships(email, memberQuery)
+        return members
+    }
+
+    /**
      * R 取得成員列表
      * @param uid 使用者uid
      * @param organizationId 企業文件Id
@@ -88,17 +99,6 @@ export default class OrganizationMemberService {
         } catch (error) {
             throw '權限不符合'
         }
-    }
-
-    /**
-     * R
-     * @param uid 
-     * @param member 
-     * @returns 
-     */
-    async getRelatedMembership(email: string, memberQuery: IOrganizationMemberQuery) {
-        const members = await this.organizationMemberModel.getRelatedMemberships(email, memberQuery)
-        return members
     }
 
     /**
