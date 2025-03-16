@@ -80,7 +80,11 @@ export default class OrganizationMemberModel extends VekozModel {
         }
         if (member.organizationIds) {
             if (typeof member.organizationIds === 'string') {
-                wheres.push(['organizationId', 'in', String(member.organizationIds).split(',')])
+                const organizationIds = String(member.organizationIds).split(',')
+                console.log({
+                    organizationIds
+                })
+                wheres.push(['organizationId', 'in', organizationIds])
             }
         }
         if (member.email) {
@@ -88,10 +92,11 @@ export default class OrganizationMemberModel extends VekozModel {
         }
         const query = await super.getQuery(wheres)
         const count = await super.checkQueryCount(query, options?.count ?? {})
-        const memberList = await super.getItemsByWheres(wheres, options)
+        const snapshot = await query.get()
+        const items = snapshot.docs.map(item => item.data())
         return {
-            total: count,
-            items: memberList
+            count,
+            items
         }
     }
 

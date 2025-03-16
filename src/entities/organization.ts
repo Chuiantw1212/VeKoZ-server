@@ -35,7 +35,7 @@ export type IAllowMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE' | string
 
 export interface IOrganizationMemberQuery extends IPagination {
     organizationId?: string,
-    organizationIds?: string[],
+    organizationIds?: string[] | string,
     email?: string,
     allowEntities?: 'organizationMember'[],
     allowMethods?: IAllowMethod[],

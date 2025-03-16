@@ -32,6 +32,9 @@ export default class PlaceModel extends VekozModel {
             wheres.push(['uid', '==', query.uid])
         }
         if (query.uids) {
+            console.log({
+                uids: query.uids
+            })
             wheres.push(['uid', 'in', query.uids])
         }
         if (query.organizationIds) {
@@ -39,7 +42,12 @@ export default class PlaceModel extends VekozModel {
             if (typeof query.organizationIds === 'string') {
                 organizationIds = query.organizationIds.split(',')
             }
-            wheres.push(['organizationId', 'in', organizationIds])
+            if (Array.isArray(organizationIds) && organizationIds.length) {
+                console.log({
+                    organizationIds
+                })
+                wheres.push(['organizationId', 'in', organizationIds])
+            }
         }
         if (query.organizationId) {
             wheres.push(['organizationId', '==', query.organizationId])

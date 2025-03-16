@@ -14,8 +14,14 @@ router.use(bearer())
                 organizationIds: placeQuery.organizationIds,
                 allowMethods: [request.method]
             })
-            const uids = memberQueryResult.items.map(item => item.uid)
+            const uids = memberQueryResult.items.map(item => {
+                console.log({
+                    item
+                })
+                return item.uid
+            })
             placeQuery.uids = uids
+            // return []
             const result = await PlaceService.getPlaceList(placeQuery)
             return result
         } else {
