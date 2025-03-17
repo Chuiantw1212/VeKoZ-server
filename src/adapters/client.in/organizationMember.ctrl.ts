@@ -19,7 +19,7 @@ router.use(bearer())
         const result = await OrganizationMemberService.getMemberListByQuery({
             uid: impersonatedMember.uid,
             organizationId,
-            email: user.email,
+            // email: user.email, // 不可加上，會拿不到完整的名單列表
         }, pagination)
         return result
     })

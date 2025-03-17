@@ -39,7 +39,11 @@ router.use(bearer())
                 organizationId: String(place.organizationId),
                 allowMethods: [request.method]
             })
-            const result = await PlaceService.addPlace(String(impersonatedMember.uid), place)
+            const impersonatedUid = impersonatedMember.uid ?? user.uid
+            if (!impersonatedMember.uid && place.organizationId !== 'public') {
+                place.email = user.email
+            }
+            const result = await PlaceService.addPlace(impersonatedUid, place)
             return result
         } else {
             /**
