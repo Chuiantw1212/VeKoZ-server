@@ -216,13 +216,13 @@ export default class EventTemplateService {
             {
                 "type": "place",
                 "label": "空間地點",
-                "required": true,
+                // "required": true,
                 "formField": "location"
             },
             {
                 "type": "url",
                 "label": "視訊連結",
-                "required": true,
+                // "required": true,
                 "formField": "virtualLocation"
             },
             {
