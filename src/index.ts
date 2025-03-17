@@ -156,6 +156,7 @@ import offerController from './adapters/client.in/offer.ctrl'
         }),
         PlaceService: new PlaceService({
             placeModel,
+            organizationModel,
         }),
         AuthService: new AuthService(firebase),
         UserService: new UserService({

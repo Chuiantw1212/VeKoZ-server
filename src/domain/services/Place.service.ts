@@ -1,20 +1,24 @@
 import PlaceModel from '../Place.model'
 import EventTemplateModel from '../EventTemplate.model';
 import type { IPlace, IPlaceQuery } from '../../entities/place';
+import OrganizationModel from '../Organization.model';
 
 interface Idependency {
-    placeModel: PlaceModel;
+    placeModel: PlaceModel
+    organizationModel: OrganizationModel
 }
 
 export default class PlaceService {
-    protected placeModel: PlaceModel = null as any
+    private placeModel: PlaceModel
+    private organizationModel: OrganizationModel
 
     constructor(dependency: Idependency) {
         const {
             placeModel,
-
+            organizationModel
         } = dependency
         this.placeModel = placeModel
+        this.organizationModel = organizationModel
     }
 
     /**
@@ -22,8 +26,11 @@ export default class PlaceService {
      * @param uid UserUid
      * @param place 
      */
-    addPlace(uid: string, place: IPlace) {
-        return this.placeModel.createItem(uid, place)
+    async addPlace(uid: string, place: IPlace) {
+        const createdResult = await this.placeModel.createItem(uid, place)
+        const organizationPlacesCount = await this.placeModel.countByOrganizationId(String(place.organizationId))
+        // this.organizationModel.updatePlaceCount()
+        return createdResult
     }
 
     /**

@@ -6,9 +6,22 @@ export default class PlaceModel extends VekozModel {
     constructor(data: IModelPorts) {
         super(data)
     }
+    /**
+     * C
+     * @param uid 
+     * @param place 
+     * @returns 
+     */
     async createItem(uid: string, place: IPlace) {
         return super.createItem(uid, place)
     }
+
+    /**
+     * R
+     * @param uid 
+     * @param id 
+     * @returns 
+     */
     async getPlaceById(uid: string, id: string): Promise<IPlace> {
         const items = await super.getItemsByWheres([['uid', '==', uid], ['id', '==', id]], {
             count: {
@@ -17,28 +30,24 @@ export default class PlaceModel extends VekozModel {
         }) as IPlace[]
         return items[0]
     }
+
     /**
-     * 只有被updateOrganization使用更新組織名稱與Logo
-     * @param uid 
+     * R
      * @param organizationId 
-     * @param place 
      * @returns 
      */
-    async mergeByOrganizationId(uid: string, organizationId: string, place: IPlace) {
-        const count = await super.setItemsByQuery([['organizationId', '==', organizationId]], place, {
-            merge: true,
-        })
+    async countByOrganizationId(organizationId: string) {
+        const wheres = [['organizationId', '==', organizationId]]
+        const query = await super.getQuery(wheres)
+        const count = await super.checkQueryCount(query)
         return count
     }
-    async mergePlaceById(uid: string, id: string, place: IPlace) {
-        const count = await super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], place, {
-            merge: true,
-            count: {
-                absolute: 1
-            }
-        })
-        return count
-    }
+
+    /**
+     * R
+     * @param query 
+     * @returns 
+     */
     async getPlaceList(query: IPlaceQuery) {
         const wheres = []
         if (query.uid) {
@@ -63,12 +72,46 @@ export default class PlaceModel extends VekozModel {
             wheres.push(['organizationId', '==', query.organizationId])
         }
         const placeList = await super.getItemsByWheres(wheres) as IPlace[]
-        // if (query.uids) {
-        //     const linkedPlaces = await super.getItemsByWheres([['uid', 'in', query.uids]]) as IPlace[]
-        //     placeList.push(...linkedPlaces)
-        // }
         return placeList
     }
+
+    /**
+     * U 只有被updateOrganization使用更新組織名稱與Logo
+     * @param uid 
+     * @param organizationId 
+     * @param place 
+     * @returns 
+     */
+    async mergeByOrganizationId(uid: string, organizationId: string, place: IPlace) {
+        const count = await super.setItemsByQuery([['organizationId', '==', organizationId]], place, {
+            merge: true,
+        })
+        return count
+    }
+
+    /**
+     * U
+     * @param uid 
+     * @param id 
+     * @param place 
+     * @returns 
+     */
+    async mergePlaceById(uid: string, id: string, place: IPlace) {
+        const count = await super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], place, {
+            merge: true,
+            count: {
+                absolute: 1
+            }
+        })
+        return count
+    }
+
+    /**
+     * D
+     * @param uid 
+     * @param id 
+     * @returns 
+     */
     async deletePlaceById(uid: string, id: string) {
         const count = await super.deleteItemById(uid, id, {
             count: {

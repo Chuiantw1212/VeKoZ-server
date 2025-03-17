@@ -42,6 +42,10 @@ router.use(bearer())
             const result = await PlaceService.addPlace(String(impersonatedMember.uid), place)
             return result
         } else {
+            /**
+             * 疑似死碼
+             */
+            console.log('is this dead code?')
             const result = await PlaceService.addPlace(String(user.uid), place)
             return result
         }
