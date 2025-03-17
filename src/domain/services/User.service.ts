@@ -128,7 +128,8 @@ export default class UserService {
             menuType: 'attendee',
             event: {
                 calendarViewType: 'dayGridMonth',
-                organizationIds: [],
+                organizerIds: [],
+                organizerId: '',
             }
         }
     }
@@ -203,7 +204,7 @@ export default class UserService {
      */
     async setUser(uid: string, user: IUser) {
         // check seo availability
-        delete user.seoName
+        // delete user.seoName
         // if (user.seoName) {
         //     throw '該網址已存在'
         //     const isValid = await this.userModel.checkSeoNameAvailable(uid, user.seoName)
