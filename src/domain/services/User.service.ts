@@ -111,13 +111,16 @@ export default class UserService {
             telephone: userIdToken.phoneNumber ?? '',
             avatar: userIdToken.picture ?? '',
             providerId: userIdToken.firebase.sign_in_provider,
-            uid: userIdToken.uid
+            uid: userIdToken.uid,
         }
         const createdUser: IUser = await this.userModel.createUser(String(newUser.uid), newUser)
         if (createdUser.id) {
             const userPreference: IUserPreference = this.getDefaultPreference(createdUser)
             this.userPreferenceModel.createPreference(userIdToken.uid, userPreference)
             newUser.preference = userPreference
+            this.userModel.setUser(userIdToken.uid, {
+                seoName: createdUser.id,
+            })
         }
         return newUser
     }
