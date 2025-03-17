@@ -96,6 +96,9 @@ export default class OrganizationModel extends VekozModel {
         if (query.keywords) {
             wheres.push(['keywords', 'array-contains-any', query.keywords])
         }
+        if (query.exludeIds) {
+            wheres.push(['id', 'not-in', query.exludeIds])
+        }
         const organizationList = await super.getItemsByWheres(wheres) as IOrganization[]
         return organizationList
     }

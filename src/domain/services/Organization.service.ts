@@ -8,6 +8,7 @@ import EventDesignModel from '../EventDesign.model';
 import NlpAdapter from '../../adapters/nlp.out';
 import { IEvent } from '../../entities/event';
 import type { IOrganization, IOrganizationMember, IOrganizationQuery } from '../../entities/organization';
+import PlaceModel from '../Place.model';
 
 interface Idependency {
     organizationModel: OrganizationModel;
@@ -17,7 +18,8 @@ interface Idependency {
     eventTemplateModel: EventTemplateModel;
     eventTemplateDesignModel: EventTemplateDesignModel,
     eventDesignModel: EventDesignModel,
-    nlpAdapter: NlpAdapter
+    nlpAdapter: NlpAdapter,
+    placeModel: PlaceModel,
 }
 
 export default class OrganizationService {
@@ -29,6 +31,7 @@ export default class OrganizationService {
     private eventTemplateModel: EventTemplateModel
     private eventDesignModel: EventDesignModel
     private nlpAdapter: NlpAdapter
+    private placeModel: PlaceModel
 
     constructor(dependency: Idependency) {
         this.organizationModel = dependency.organizationModel
@@ -39,6 +42,7 @@ export default class OrganizationService {
         this.eventTemplateDesignModel = dependency.eventTemplateDesignModel
         this.eventDesignModel = dependency.eventDesignModel
         this.nlpAdapter = dependency.nlpAdapter
+        this.placeModel = dependency.placeModel
     }
 
     /**
@@ -131,6 +135,11 @@ export default class OrganizationService {
         })
         this.eventDesignModel.setByOrganizationId(uid, organization.id, {
             organizationName: organization.name,
+        })
+        // Place
+        this.placeModel.mergeByOrganizationId(uid, organization.id, {
+            organizationName: organization.name,
+            organizationLogo: organization.logo, // 前面已更新過
         })
         return count
     }

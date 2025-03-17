@@ -125,6 +125,23 @@ import offerController from './adapters/client.in/offer.ctrl'
         MetaService: new MetaService({
             selectModel,
         }),
+        OrganizationService: new OrganizationService({
+            organizationModel,
+            organizationMemberModel,
+            eventModel,
+            eventTemplateModel,
+            offerModel,
+            eventDesignModel,
+            eventTemplateDesignModel,
+            nlpAdapter,
+            placeModel,
+        }),
+        OrganizationMemberService: new OrganizationMemberService({
+            emailAdapter,
+            organizationMemberModel,
+            organizationModel,
+            userModel,
+        }),
         EventService: new EventService({
             eventModel,
             eventDesignModel,
@@ -136,22 +153,6 @@ import offerController from './adapters/client.in/offer.ctrl'
             eventTemplateModel,
             eventTemplateDesignModel,
             organizationMemberModel,
-        }),
-        OrganizationService: new OrganizationService({
-            organizationModel,
-            organizationMemberModel,
-            eventModel,
-            eventTemplateModel,
-            offerModel,
-            eventDesignModel,
-            eventTemplateDesignModel,
-            nlpAdapter,
-        }),
-        OrganizationMemberService: new OrganizationMemberService({
-            emailAdapter,
-            organizationMemberModel,
-            organizationModel,
-            userModel,
         }),
         PlaceService: new PlaceService({
             placeModel,

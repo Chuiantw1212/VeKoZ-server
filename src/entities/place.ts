@@ -15,5 +15,6 @@ export interface IPlaceQuery {
     email?: string,
     organizationId?: string,
     organizationName?: string,
+    organizationLogo?: string,
     organizationIds?: string[] | string
 }

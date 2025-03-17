@@ -17,6 +17,19 @@ export default class PlaceModel extends VekozModel {
         }) as IPlace[]
         return items[0]
     }
+    /**
+     * 只有被updateOrganization使用更新組織名稱與Logo
+     * @param uid 
+     * @param organizationId 
+     * @param place 
+     * @returns 
+     */
+    async mergeByOrganizationId(uid: string, organizationId: string, place: IPlace) {
+        const count = await super.setItemsByQuery([['organizationId', '==', organizationId]], place, {
+            merge: true,
+        })
+        return count
+    }
     async mergePlaceById(uid: string, id: string, place: IPlace) {
         const count = await super.setItemsByQuery([['uid', '==', uid], ['id', '==', id]], place, {
             merge: true,
