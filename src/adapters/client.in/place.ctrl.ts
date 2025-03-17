@@ -50,13 +50,18 @@ router.use(bearer())
         const { AuthService, PlaceService, OrganizationMemberService } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
         const place = await request.json() as IPlace
-        const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
-            email: String(user.email),
-            organizationId: String(place.organizationId),
-            allowMethods: [request.method]
-        })
-        const result = await PlaceService.mergePlaceById(String(impersonatedMember.uid), String(place.id), place)
-        return result
+        if (place.organizationId === 'public') {
+            const result = await PlaceService.mergePlaceById(String(user.uid), String(place.id), place)
+            return result
+        } else {
+            const impersonatedMember = await OrganizationMemberService.getMemberByQuery({
+                email: String(user.email),
+                organizationId: String(place.organizationId),
+                allowMethods: [request.method]
+            })
+            const result = await PlaceService.mergePlaceById(String(impersonatedMember.uid), String(place.id), place)
+            return result
+        }
     })
     .delete('/place', async ({ bearer, query, request }) => {
         const { AuthService, PlaceService, OrganizationMemberService } = AccessGlobalService.locals
