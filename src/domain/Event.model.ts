@@ -138,18 +138,19 @@ export default class EventModel extends VekozModel {
      */
     async getEventById(id: string): Promise<IEvent | 0> {
         const events = await super.getItemsByWheres([['id', '==', id]]) as IEvent[]
-        if (events) {
-            const event = events[0]
-            delete event.keywords // 前端不需要知道的資料
-            if (event.startDate) {
-                event.startDate = super.formatDate(event.startDate)
-            }
-            if (event.endDate) {
-                event.endDate = super.formatDate(event.endDate)
-            }
-            return event
+        if (!events) {
+            return 0
         }
-        return 0
+
+        const event = events[0]
+        delete event.keywords // 前端不需要知道的資料
+        if (event.startDate) {
+            event.startDate = super.formatDate(event.startDate)
+        }
+        if (event.endDate) {
+            event.endDate = super.formatDate(event.endDate)
+        }
+        return event
     }
 
     /**

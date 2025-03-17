@@ -316,7 +316,12 @@ export default class EventService {
         if (dateDesignId && startDate && endDate) {
             const originEventDesign: ITemplateDesign = await this.eventDesignModel.getEventDesignById(dateDesignId)
             if (originEventDesign) {
-                originEventDesign.value = [startDate, endDate]
+                if (typeof startDate === 'string') {
+                    originEventDesign.startDate = new Date(startDate)
+                }
+                if (typeof endDate === 'string') {
+                    originEventDesign.endDate = new Date(endDate)
+                }
             }
             await this.eventDesignModel.patchEventDesignById(uid, dateDesignId, originEventDesign)
         }
