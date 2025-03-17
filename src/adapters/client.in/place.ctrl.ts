@@ -72,7 +72,8 @@ router.use(bearer())
             organizationId: String(placeQuery.organizationId),
             allowMethods: [request.method]
         })
-        const result = await PlaceService.deletePlaceById(String(impersonatedMember.uid), String(placeQuery.id))
+        const impersonatedUid = impersonatedMember.uid ?? user.uid
+        const result = await PlaceService.deletePlaceById(impersonatedUid, String(placeQuery.id))
         return result
     })
 export default router

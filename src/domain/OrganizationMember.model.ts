@@ -142,11 +142,15 @@ export default class OrganizationMemberModel extends VekozModel {
         }
         const query = await super.getQuery(wheres)
         await super.checkQueryCount(query, {
-            absolute: 1
+            range: [0, 1]
         })
         const snapshot = await query.get()
-        const impersonatedMember = snapshot.docs[0].data() as IOrganizationMember
-        return impersonatedMember
+        if (snapshot.docs[0]) {
+            const impersonatedMember = snapshot.docs[0].data() as IOrganizationMember
+            return impersonatedMember
+        } else {
+            return {}
+        }
     }
 
     /**
