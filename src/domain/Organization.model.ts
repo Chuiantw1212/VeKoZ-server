@@ -96,10 +96,22 @@ export default class OrganizationModel extends VekozModel {
         if (query.keywords) {
             wheres.push(['keywords', 'array-contains-any', query.keywords])
         }
-        if (query.exludeIds) {
-            wheres.push(['id', 'not-in', query.exludeIds])
-        }
         const organizationList = await super.getItemsByWheres(wheres) as IOrganization[]
+        /**
+         * 3 INVALID_ARGUMENT: 'NOT_IN' cannot be used in the same query with 'IN', 'ARRAY_CONTAINS_ANY' or 'OR'.
+         */
+        // // console.log({
+        // //     query
+        // // })
+        // if (query.excludeIds) {
+        //     console.log(query.excludeIds)
+        //     let excludeIds = query.excludeIds
+        //     if (typeof query.excludeIds === 'string') {
+        //         excludeIds = String(query.excludeIds).split(',')
+        //     }
+        //     console.log(excludeIds)
+        //     wheres.push(['id', 'not-in', excludeIds])
+        // }
         return organizationList
     }
 }

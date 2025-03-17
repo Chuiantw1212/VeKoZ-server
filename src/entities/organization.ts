@@ -19,7 +19,7 @@ export interface IOrganization extends IOrganizationQuery {
 export interface IOrganizationQuery {
     name?: string;
     keywords?: string[],
-    exludeIds?: string[],
+    excludeIds?: string[],
 }
 
 export interface IOrganizationMember extends IOrganizationMemberQuery {
