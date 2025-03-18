@@ -15,6 +15,7 @@ router.use(bearer())
         const userCreated = await UserService.addUser(userIdToken)
         // 建立自己的預設組織
         OrganizationService.newItem(userIdToken.uid, {
+            id: userCreated.id, // important
             name: userIdToken.name ?? '',
             email: userIdToken.email,
             organizationName: `${userCreated.name}的第一個組織`,
