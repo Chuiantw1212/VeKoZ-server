@@ -121,7 +121,7 @@ import followController from './adapters/client.in/userFollow.ctrl'
         collection: firebase.getCollection('offers')
     })
     const userFollowModel = new UserFollowModel({
-        collection: firebase.getCollection('followerActions'),
+        collection: firebase.getCollection('userFollows'),
     })
 
     /**
