@@ -25,6 +25,10 @@ export default class OrganizationModel extends VekozModel {
         })
         if (count === 0) {
             const newOrganization = await super.createItem(uid, organization)
+            newOrganization.seoName = newOrganization.id
+            super.setItemById(uid, newOrganization.id, {
+                seoName: newOrganization.id,
+            })
             return newOrganization as IOrganization
         } else {
             return count
