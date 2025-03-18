@@ -4,26 +4,25 @@ import UserDesignModel from '../UserDesign.model';
 import type { IUser, IUserDesign, IUserPreference } from '../../entities/user';
 import { IBlob } from '../../ports/out.model';
 import { DecodedIdToken } from 'firebase-admin/auth';
+import UserFollowModel from '../UserFollow.model';
 
 interface Idependency {
     userModel: UserModel
     userPreferenceModel: UserPreferenceModel
-    userDesignModel: UserDesignModel
+    userDesignModel: UserDesignModel,
+    userFollowModel: UserFollowModel
 }
 export default class UserService {
-    protected userModel: UserModel
-    protected userPreferenceModel: UserPreferenceModel
-    protected userDesignModel: UserDesignModel
+    private userModel: UserModel
+    private userPreferenceModel: UserPreferenceModel
+    private userDesignModel: UserDesignModel
+    private userFollowModel: UserFollowModel
 
     constructor(dependency: Idependency) {
-        const {
-            userModel,
-            userPreferenceModel,
-            userDesignModel,
-        } = dependency
-        this.userModel = userModel
-        this.userPreferenceModel = userPreferenceModel
-        this.userDesignModel = userDesignModel
+        this.userModel = dependency.userModel
+        this.userPreferenceModel = dependency.userPreferenceModel
+        this.userDesignModel = dependency.userDesignModel
+        this.userFollowModel = dependency.userFollowModel
     }
 
     async uploadUserAvatar(uid: string, avatar: IBlob): Promise<string> {
@@ -44,8 +43,19 @@ export default class UserService {
      * @param value 
      * @returns 
      */
-    async getUserPublicInfo(field: string, value: string) {
-        const user: IUser = await this.userModel.getPublicInfo(field, value)
+    async getUserPublicInfoById(userId: string) {
+        const user: IUser = await this.userModel.getPublicInfoById(userId)
+        const detailedUser = this.getUserDetails(user)
+        return detailedUser
+    }
+
+    async getUserPublicInfoBySeoName(seoName: string) {
+        const user: IUser = await this.userModel.getPublicInfoBySeoName(seoName)
+        const detailedUser = this.getUserDetails(user)
+        return detailedUser
+    }
+
+    private async getUserDetails(user: IUser) {
         if (!user.id) {
             return 0
         }

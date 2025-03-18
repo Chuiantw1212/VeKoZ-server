@@ -69,23 +69,23 @@ router.use(bearer())
         const user = await UserService.getUserByUid(userIdToken.uid)
         return user
     })
-    .get('/user/:userId', async ({ params }) => {
-        const { UserService } = AccessGlobalService.locals
-        const { userId } = params
-        const user = await UserService.getUserPublicInfo('id', userId)
-        return user
-    })
     /**
      * 造訪用戶個人頁，可隱藏
      */
+    .get('/user/:userId', async ({ params }) => {
+        const { UserService } = AccessGlobalService.locals
+        const { userId } = params
+        const user = await UserService.getUserPublicInfoById(userId)
+        return user
+    })
     .get('/user/seo/:seoName', async ({ params }) => {
         const { UserService } = AccessGlobalService.locals
         const { seoName } = params
-        const user = await UserService.getUserPublicInfo('seoName', seoName)
+        const user = await UserService.getUserPublicInfoBySeoName(seoName)
         if (user) {
             return user
         } else {
-            const user = await UserService.getUserPublicInfo('id', seoName)
+            const user = await UserService.getUserPublicInfoById(seoName)
             return user
         }
     })

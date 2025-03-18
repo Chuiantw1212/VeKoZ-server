@@ -16,13 +16,27 @@ export default class UserModel extends Firestore {
     /**
      * 取得用戶資料，這邊並不會拿到偏好資料，而且應該用白名單確保個資不流出
      */
-    async getPublicInfo(field: string, value: string) {
-        // const wheres = [[field, '==', value], ['isPublic', '==', true]]
-        const users: IUser[] = await super.getItemsByWheres([[field, '==', value], ['isPublic', '==', true]], {
+    async getPublicInfoById(userId: string) {
+        const users: IUser[] = await super.getItemsByWheres([['id', '==', userId], ['isPublic', '==', true]], {
             count: {
                 range: [0, 1]
             }
         }) as IUser[]
+        const userPublicInfo = this.getConvertPublicInfo(users)
+        return userPublicInfo
+    }
+
+    async getPublicInfoBySeoName(seoName: string) {
+        const users: IUser[] = await super.getItemsByWheres([['seoName', '==', seoName], ['isPublic', '==', true]], {
+            count: {
+                range: [0, 1]
+            }
+        }) as IUser[]
+        const userPublicInfo = this.getConvertPublicInfo(users)
+        return userPublicInfo
+    }
+
+    private getConvertPublicInfo(users: IUser[]) {
         const user = users[0]
         if (!user) {
             return {}
