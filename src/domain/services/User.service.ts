@@ -66,14 +66,12 @@ export default class UserService {
      */
     async getUserByUid(uid: string) {
         const user: IUser = await this.userModel.getUserByUid(uid)
-        if (!user) {
+        if (!user?.id) {
             return
         }
-        if (user.id) {
-            // 抓取preference
-            const userPreference = await this.userPreferenceModel.getPreference(user.id)
-            user.preference = userPreference
-        }
+        // 抓取preference
+        const userPreference = await this.userPreferenceModel.getPreference(user.id)
+        user.preference = userPreference
         // 抓取designs
         const userDesignIds = user.designIds
         if (userDesignIds) {

@@ -1,14 +1,17 @@
 /**
  * https://schema.org/FollowAction
  */
-export interface IUserFollow {
-    // 未來呈現用戶列表功能
-    followeeId?: string,
+export interface IUserFollow extends IUserFollowQuery {
     followeeType?: string,
     followeeName?: string,
     followeeImage?: string,
-    //
-    id?: string,// userId
     name?: string,
     image?: string,
+    id?: string,// userId
+    followeeId?: string,
+}
+
+export interface IUserFollowQuery {
+    uid?: string,
+    followeeSeoName?: string,
 }

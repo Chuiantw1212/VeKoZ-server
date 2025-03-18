@@ -1,4 +1,4 @@
-import { IUserFollow } from '../../entities/userFollow';
+import { IUserFollow, IUserFollowQuery } from '../../entities/userFollow';
 import UserFollowModel from '../UserFollow.model';
 
 interface Idependency {
@@ -18,5 +18,10 @@ export default class EventTemplateService {
     async addNewFollow(uid: string, userFollow: IUserFollow) {
         const addedUserFollow = await this.userFollowModel.addNewFollow(uid, userFollow)
         return addedUserFollow
+    }
+
+    async checkFollowed(query: IUserFollowQuery) {
+        const count = await this.userFollowModel.checkFollowed(query)
+        return count
     }
 }
