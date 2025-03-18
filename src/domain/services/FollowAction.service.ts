@@ -1,26 +1,22 @@
-import EventTemplateModel from '../EventTemplate.model'
-import EventTemplateDesignModel from '../EventTemplateDesign.model';
-import OrganizationMemberModel from '../OrganizationMember.model';
+import { IFollowAction } from '../../entities/followAction';
+import FollowActionModel from '../FollowAction.model';
 
 interface Idependency {
-    eventTemplateModel: EventTemplateModel;
-    eventTemplateDesignModel: EventTemplateDesignModel
-    organizationMemberModel: OrganizationMemberModel
+    followActionModel: FollowActionModel;
 }
 
 export default class EventTemplateService {
-    protected eventTemplateModel: EventTemplateModel
-    protected eventTemplateDesignModel: EventTemplateDesignModel
-    protected organizationMemberModel: OrganizationMemberModel
+    protected followActionModel: FollowActionModel
 
     constructor(dependency: Idependency) {
         const {
-            eventTemplateModel,
-            eventTemplateDesignModel,
-            organizationMemberModel,
+            followActionModel,
         } = dependency
-        this.eventTemplateModel = eventTemplateModel
-        this.eventTemplateDesignModel = eventTemplateDesignModel
-        this.organizationMemberModel = organizationMemberModel
+        this.followActionModel = followActionModel
+    }
+
+    async addNewFollow(uid: string, followAction: IFollowAction) {
+        const addedFollowAction = await this.followActionModel.addNewFollow(uid, followAction)
+        return addedFollowAction
     }
 }

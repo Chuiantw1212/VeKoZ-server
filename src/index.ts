@@ -24,6 +24,7 @@ import UserModel from './domain/User.model'
 import UserPreferenceModel from './domain/UserPreference.model'
 import UserDesignModel from './domain/UserDesign.model'
 import OfferModel from './domain/OfferModel'
+import FollowActionModel from './domain/FollowAction.model'
 // services
 import MetaService from './domain/services/Meta.service';
 import EventService from './domain/services/Event.service';
@@ -36,6 +37,7 @@ import UserService from './domain/services/User.service'
 import UserTemplaceService from './domain/services/UserDesign.service'
 import GoogleService from './domain/services/Google.service'
 import OfferService from './domain/services/Offer.service'
+import FollowService from './domain/services/FollowAction.service'
 import { ILocals } from './entities/app'
 // controllers
 import rootController from './adapters/client.in/root.ctrl'
@@ -49,6 +51,7 @@ import userDesignController from './adapters/client.in/userDesign.ctrl'
 import googleController from './adapters/client.in/google.ctrl'
 import metaController from './adapters/client.in/meta.ctrl'
 import offerController from './adapters/client.in/offer.ctrl'
+import followController from './adapters/client.in/followAction.ctrl'
 
 (async () => {
     const app = new Elysia({ adapter: node() })
@@ -117,6 +120,9 @@ import offerController from './adapters/client.in/offer.ctrl'
     const offerModel = new OfferModel({
         collection: firebase.getCollection('offers')
     })
+    const followActionModel = new FollowActionModel({
+        collection: firebase.getCollection('followers'),
+    })
 
     /**
      * Services
@@ -124,6 +130,9 @@ import offerController from './adapters/client.in/offer.ctrl'
     const allServices: ILocals = {
         MetaService: new MetaService({
             selectModel,
+        }),
+        FollowService: new FollowService({
+            followActionModel,
         }),
         OrganizationService: new OrganizationService({
             organizationModel,
@@ -203,6 +212,7 @@ import offerController from './adapters/client.in/offer.ctrl'
         .use(metaController)
         .use(offerController)
         .use(organizationMemberController)
+        .use(followController)
 
     // Start Listening
     app.listen(8080, ({ hostname, port }) => {
