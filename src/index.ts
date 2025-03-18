@@ -37,7 +37,7 @@ import UserService from './domain/services/User.service'
 import UserTemplaceService from './domain/services/UserDesign.service'
 import GoogleService from './domain/services/Google.service'
 import OfferService from './domain/services/Offer.service'
-import FollowService from './domain/services/UserFollow'
+import FollowService from './domain/services/UserFollow.service'
 import { ILocals } from './entities/app'
 // controllers
 import rootController from './adapters/client.in/root.ctrl'

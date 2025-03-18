@@ -24,4 +24,9 @@ export default class EventTemplateService {
         const count = await this.userFollowModel.checkFollowed(query)
         return count
     }
+
+    async deleteUserFollow(query: IUserFollowQuery) {
+        const count = await this.userFollowModel.deleteUserFollow(query)
+        return count
+    }
 }

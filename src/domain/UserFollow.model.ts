@@ -20,7 +20,22 @@ export default class UserFollowModel extends VekozModel {
     async checkFollowed(userFollow: IUserFollowQuery) {
         const wheres = [['uid', '==', userFollow.uid], ['followeeSeoName', '==', userFollow.followeeSeoName]]
         const query = await super.getQuery(wheres)
-        const count = await super.checkQueryCount(query)
+        const count = await super.checkQueryCount(query, {
+            range: [0, 1]
+        })
+        return count
+    }
+
+    async deleteUserFollow(userFollow: IUserFollowQuery) {
+        if (!userFollow.followeeSeoName) {
+            throw 'deleteUserFollow資料不全'
+        }
+        const wheres = [['uid', '==', userFollow.uid], ['followeeSeoName', '==', userFollow.followeeSeoName]]
+        const count = await super.deleteItemsByQuery(wheres, {
+            count: {
+                absolute: 1,
+            }
+        })
         return count
     }
 }

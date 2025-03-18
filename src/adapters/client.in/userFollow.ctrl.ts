@@ -19,4 +19,12 @@ router.use(bearer())
         const result = await FollowService.addNewFollow(user.uid, userFollow)
         return result
     })
+    .delete('/user/follow', async function ({ query, bearer }) {
+        const { AuthService, FollowService, } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const followQuery = query as IUserFollowQuery
+        followQuery.uid = user.uid
+        const count = await FollowService.deleteUserFollow(followQuery)
+        return count
+    })
 export default router
