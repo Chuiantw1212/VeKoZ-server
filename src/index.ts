@@ -24,7 +24,7 @@ import UserModel from './domain/User.model'
 import UserPreferenceModel from './domain/UserPreference.model'
 import UserDesignModel from './domain/UserDesign.model'
 import OfferModel from './domain/OfferModel'
-import FollowActionModel from './domain/FollowAction.model'
+import UserFollowModel from './domain/UserFollow.model'
 // services
 import MetaService from './domain/services/Meta.service';
 import EventService from './domain/services/Event.service';
@@ -37,7 +37,7 @@ import UserService from './domain/services/User.service'
 import UserTemplaceService from './domain/services/UserDesign.service'
 import GoogleService from './domain/services/Google.service'
 import OfferService from './domain/services/Offer.service'
-import FollowService from './domain/services/FollowAction.service'
+import FollowService from './domain/services/UserFollow'
 import { ILocals } from './entities/app'
 // controllers
 import rootController from './adapters/client.in/root.ctrl'
@@ -51,7 +51,7 @@ import userDesignController from './adapters/client.in/userDesign.ctrl'
 import googleController from './adapters/client.in/google.ctrl'
 import metaController from './adapters/client.in/meta.ctrl'
 import offerController from './adapters/client.in/offer.ctrl'
-import followController from './adapters/client.in/followAction.ctrl'
+import followController from './adapters/client.in/userFollow.ctrl'
 
 (async () => {
     const app = new Elysia({ adapter: node() })
@@ -120,8 +120,8 @@ import followController from './adapters/client.in/followAction.ctrl'
     const offerModel = new OfferModel({
         collection: firebase.getCollection('offers')
     })
-    const followActionModel = new FollowActionModel({
-        collection: firebase.getCollection('followers'),
+    const userFollowModel = new UserFollowModel({
+        collection: firebase.getCollection('followerActions'),
     })
 
     /**
@@ -132,7 +132,7 @@ import followController from './adapters/client.in/followAction.ctrl'
             selectModel,
         }),
         FollowService: new FollowService({
-            followActionModel,
+            userFollowModel,
         }),
         OrganizationService: new OrganizationService({
             organizationModel,

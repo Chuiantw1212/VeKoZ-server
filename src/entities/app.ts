@@ -12,7 +12,7 @@ import UserService from "../domain/services/User.service"
 import UserDesignService from "../domain/services/UserDesign.service"
 import GoogleService from '../domain/services/Google.service'
 import OfferService from "../domain/services/Offer.service"
-import FollowService from '../domain/services/FollowAction.service'
+import FollowService from '../domain/services/UserFollow'
 
 export interface ILocals {
     [key: string]: any

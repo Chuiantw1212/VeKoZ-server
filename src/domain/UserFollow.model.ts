@@ -1,13 +1,14 @@
 import VekozModel from '../adapters/VekozModel.out'
-import { IFollowAction } from '../entities/followAction'
+import { IUserFollow } from '../entities/userFollow'
 import type { IModelPorts } from '../ports/out.model'
 
-export default class FollowActionModel extends VekozModel {
+export default class UserFollowModel extends VekozModel {
     constructor(data: IModelPorts) {
         super(data)
     }
 
-    async addNewFollow(uid: string, followaction: IFollowAction) {
+    async addNewFollow(uid: string, followaction: IUserFollow) {
         const addedFollowed = await super.createItem(uid, followaction)
+        return addedFollowed
     }
 }
