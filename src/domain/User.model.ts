@@ -95,4 +95,21 @@ export default class UserModel extends Firestore {
         // await super.setItemById(uid, String(user.id), user, options)
         return count
     }
+
+    /**
+     * 單一功能更新追蹤者
+     * @param userId 
+     * @param count 
+     */
+    async setUserFollowers(userId: string, count: number) {
+        const options: ICrudOptions = {
+            merge: true,
+            count: {
+                absolute: 1
+            }
+        }
+        super.setItemsByQuery([['id', '==', userId]], {
+            followerCount: count,
+        }, options)
+    }
 }

@@ -133,6 +133,7 @@ import followController from './adapters/client.in/userFollow.ctrl'
         }),
         FollowService: new FollowService({
             userFollowModel,
+            userModel,
         }),
         OrganizationService: new OrganizationService({
             organizationModel,

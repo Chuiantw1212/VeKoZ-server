@@ -4,25 +4,25 @@ import UserDesignModel from '../UserDesign.model';
 import type { IUser, IUserDesign, IUserPreference } from '../../entities/user';
 import { IBlob } from '../../ports/out.model';
 import { DecodedIdToken } from 'firebase-admin/auth';
-import UserFollowModel from '../UserFollow.model';
+// import UserFollowModel from '../UserFollow.model';
 
 interface Idependency {
     userModel: UserModel
     userPreferenceModel: UserPreferenceModel
     userDesignModel: UserDesignModel,
-    userFollowModel: UserFollowModel
+    // userFollowModel: UserFollowModel
 }
 export default class UserService {
     private userModel: UserModel
     private userPreferenceModel: UserPreferenceModel
     private userDesignModel: UserDesignModel
-    private userFollowModel: UserFollowModel
+    // private userFollowModel: UserFollowModel
 
     constructor(dependency: Idependency) {
         this.userModel = dependency.userModel
         this.userPreferenceModel = dependency.userPreferenceModel
         this.userDesignModel = dependency.userDesignModel
-        this.userFollowModel = dependency.userFollowModel
+        // this.userFollowModel = dependency.userFollowModel
     }
 
     async uploadUserAvatar(uid: string, avatar: IBlob): Promise<string> {

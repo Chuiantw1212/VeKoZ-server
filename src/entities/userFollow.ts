@@ -7,11 +7,11 @@ export interface IUserFollow extends IUserFollowQuery {
     followeeImage?: string,
     name?: string,
     image?: string,
-    id?: string,// userId
     followeeId?: string,
 }
 
 export interface IUserFollowQuery {
     uid?: string,
+    id?: string,// userId
     followeeSeoName?: string,
 }

@@ -8,13 +8,20 @@ export default class UserFollowModel extends VekozModel {
     }
 
     async addNewFollow(uid: string, userFollow: IUserFollow) {
-        const wheres = [['id', '==', userFollow.id], ['followeeId', '==', userFollow.followeeId]]
+        const wheres = [['id', '==', userFollow.id], ['followeeSeoName', '==', userFollow.followeeSeoName]]
         const query = await super.getQuery(wheres)
         await super.checkQueryCount(query, {
             absolute: 0,
         })
         const addedFollowed = await super.createItem(uid, userFollow)
         return addedFollowed
+    }
+
+    async countFollowers(userFollow: IUserFollow) {
+        const wheres = [['followeeSeoName', '==', userFollow.followeeSeoName]]
+        const query = await super.getQuery(wheres)
+        const count = await super.checkQueryCount(query)
+        return count
     }
 
     async checkFollowed(userFollow: IUserFollowQuery) {
