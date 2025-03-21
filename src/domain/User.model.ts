@@ -42,7 +42,7 @@ export default class UserModel extends Firestore {
             return {}
         }
         const publicUser: IUser = {}
-        const fieldWhiteList: string[] = ['id', 'description', 'name', 'seoName', 'seoTitle', 'avatar', 'sameAs']
+        const fieldWhiteList: string[] = ['id', 'description', 'name', 'seoName', 'seoTitle', 'avatar', 'sameAs', 'followerCount']
         fieldWhiteList.forEach(field => {
             publicUser[field] = user[field]
         })
@@ -104,9 +104,6 @@ export default class UserModel extends Firestore {
     async setUserFollowers(userId: string, count: number) {
         const options: ICrudOptions = {
             merge: true,
-            count: {
-                absolute: 1
-            }
         }
         super.setItemsByQuery([['id', '==', userId]], {
             followerCount: count,
