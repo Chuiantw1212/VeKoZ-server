@@ -74,6 +74,11 @@ export default class EventTemplateService {
         return count
     }
 
+    async patchUserFollow(uid: string, userFollow: IUserFollow) {
+        const count = await this.userFollowModel.setUserFollow(uid, userFollow)
+        return count
+    }
+
     async deleteUserFollow(query: IUserFollowQuery) {
         if (!query.followeeSeoName) {
             throw 'addNewFollow資料不全'

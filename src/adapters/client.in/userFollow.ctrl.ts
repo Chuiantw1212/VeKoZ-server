@@ -27,6 +27,14 @@ router.use(bearer())
         const result = await FollowService.addNewFollow(user.uid, userFollow)
         return result
     })
+    .patch('/user/follow', async function ({ request, bearer }) {
+        const { AuthService, FollowService, } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const userFollow = await request.json() as IUserFollow
+        userFollow.uid = user.uid
+        const result = await FollowService.patchUserFollow(user.uid, userFollow)
+        return result
+    })
     .delete('/user/follow', async function ({ query, bearer }) {
         const { AuthService, FollowService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)
