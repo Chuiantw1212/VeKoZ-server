@@ -37,7 +37,7 @@ export default class OrganizationMemberService {
             throw '邀約資料有誤'
         }
         // 找既有客戶資料，賦予預設值
-        const existedMember = await this.userModel.getPublicInfo('email', member.email)
+        const existedMember = await this.userModel.getPublicInfoByEmail(member.email)
         member.name = existedMember.name ?? '新用戶'
         member.allowMethods = ['GET']
 

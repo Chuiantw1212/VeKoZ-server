@@ -76,6 +76,7 @@ router.use(bearer())
         })
         const count = await OrganizationMemberService.setMemberById(String(impersonatedMember.uid), {
             id: organizatoinMember.id,
+            organizationId: String(organizatoinMember.organizationId),
             calendarColor: organizatoinMember.calendarColor,
         })
         return count

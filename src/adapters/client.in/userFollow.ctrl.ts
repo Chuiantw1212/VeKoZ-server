@@ -12,6 +12,14 @@ router.use(bearer())
         const count = await FollowService.checkFollowed(followQuery)
         return count
     })
+    .get('/user/follow/list', async function ({ query, bearer }) {
+        const { AuthService, FollowService, } = AccessGlobalService.locals
+        const user = await AuthService.verifyIdToken(bearer)
+        const followQuery = query as IUserFollowQuery
+        followQuery.uid = user.uid
+        const count = await FollowService.getFollowList(followQuery)
+        return count
+    })
     .post('/user/follow', async function ({ request, bearer }) {
         const { AuthService, FollowService, } = AccessGlobalService.locals
         const user = await AuthService.verifyIdToken(bearer)

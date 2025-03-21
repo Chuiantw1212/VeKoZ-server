@@ -165,24 +165,28 @@ export default class OrganizationMemberModel extends VekozModel {
     }
 
     /**
-     * U
+     * U：變更單一資料時使用
      * @param uid 
      * @param member 
      * @returns 
      */
     async setMemberById(uid: string, member: IOrganizationMember,) {
-        const optoins: ICrudOptions = {
+        if (!member.organizationId || !member.id) {
+            throw 'setMemberById資料不全'
+        }
+        const options: ICrudOptions = {
             merge: true,
             count: {
                 absolute: 1
             }
         }
-        const count = await super.setItemById(uid, String(member.id), member, optoins)
+        const wheres = [['uid', '==', uid], ['id', '==', member.id], ['organizationId', '==', member.organizationId]]
+        const count = await super.setItemsByQuery(wheres, member, options)
         return count
     }
 
     /**
-     * U:
+     * U: 資料連動更新時使用
      * @param uid 
      * @param member 
      * @returns 

@@ -25,7 +25,15 @@ export default class UserModel extends Firestore {
         const userPublicInfo = this.getConvertPublicInfo(users)
         return userPublicInfo
     }
-
+    async getPublicInfoByEmail(email: string) {
+        const users: IUser[] = await super.getItemsByWheres([['email', '==', email], ['isPublic', '==', true]], {
+            count: {
+                range: [0, 1]
+            }
+        }) as IUser[]
+        const userPublicInfo = this.getConvertPublicInfo(users)
+        return userPublicInfo
+    }
     async getPublicInfoBySeoName(seoName: string) {
         const users: IUser[] = await super.getItemsByWheres([['seoName', '==', seoName], ['isPublic', '==', true]], {
             count: {
@@ -42,7 +50,17 @@ export default class UserModel extends Firestore {
             return {}
         }
         const publicUser: IUser = {}
-        const fieldWhiteList: string[] = ['id', 'description', 'name', 'seoName', 'seoTitle', 'avatar', 'sameAs', 'followerCount']
+        const fieldWhiteList: string[] = [
+            'id',
+            'name',
+            'avatar',
+            'seoName',
+            'seoTitle',
+            'seoSubtitle',
+            'followerCount',
+            'description',
+            'sameAs',
+        ]
         fieldWhiteList.forEach(field => {
             publicUser[field] = user[field]
         })

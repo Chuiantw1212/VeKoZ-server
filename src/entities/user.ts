@@ -14,6 +14,8 @@ export interface IUser {
     preference?: IUserPreference,
     // 講師個人頁
     seoName?: string,
+    seoTitle?: string,
+    seoSubtitle?: string,
     designIds?: string[],
     designs?: IUserDesign[]
 }

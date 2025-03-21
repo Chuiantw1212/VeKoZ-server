@@ -44,6 +44,28 @@ export default class EventTemplateService {
         return addedUserFollow
     }
 
+    async getFollowList(query: IUserFollowQuery) {
+        const followList = await this.userFollowModel.queryFollowList(query)
+        // // 資料修正機制
+        // const promises = followList.map(async (followAction: IUserFollow) => {
+        //     if (!followAction.followeeName) {
+        //         switch (followAction.followeeType) {
+        //             case 'user': {
+        //                 const userPublicInfo = await this.userModel.getPublicInfoById(String(followAction.followeeId))
+        //                 followAction.followeeName = userPublicInfo.name
+        //                 break;
+        //             }
+        //             case 'organization': {
+        //                 break;
+        //             }
+        //         }
+        //     }
+        //     return followAction
+        // })
+        // const fixedList = await Promise.all(promises)
+        return followList
+    }
+
     async checkFollowed(query: IUserFollowQuery) {
         if (!query.followeeSeoName) {
             throw 'checkFollowed資料不全'
