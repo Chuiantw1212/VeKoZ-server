@@ -118,4 +118,18 @@ export default class OrganizationModel extends VekozModel {
         // }
         return organizationList
     }
+
+    /**
+     * 單一功能更新追蹤者
+     * @param userId 
+     * @param count 
+     */
+    async setFollowerCount(organizationId: string, count: number) {
+        const options: ICrudOptions = {
+            merge: true,
+        }
+        super.setItemsByQuery([['id', '==', organizationId]], {
+            followerCount: count,
+        }, options)
+    }
 }

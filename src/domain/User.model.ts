@@ -101,7 +101,7 @@ export default class UserModel extends Firestore {
      * @param userId 
      * @param count 
      */
-    async setUserFollowers(userId: string, count: number) {
+    async setFollowerCount(userId: string, count: number) {
         const options: ICrudOptions = {
             merge: true,
         }

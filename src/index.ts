@@ -134,6 +134,7 @@ import followController from './adapters/client.in/userFollow.ctrl'
         FollowService: new FollowService({
             userFollowModel,
             userModel,
+            organizationModel,
         }),
         OrganizationService: new OrganizationService({
             organizationModel,
