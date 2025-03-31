@@ -29,7 +29,7 @@ export default class UserPreferenceModel extends Firestore {
      * @returns 
      */
     async getPreference(id: string): Promise<IUserPreference> {
-        const users: IUserPreference[] = await super.getItemsByWheres([['id', '==', id]], {
+        const users: IUserPreference[] = await super.getItemsByQuery([['id', '==', id]], {
             count: {
                 range: [0, 1]
             }
@@ -38,16 +38,41 @@ export default class UserPreferenceModel extends Firestore {
     }
 
     /**
-     * U
+     * U 增加追蹤對象
      */
     async addFollowee(uid: string, followeeId: string) {
-        const preferences = await super.getItemsByWheres([['uid', '==', uid]], {
+        const preferences = await super.getItemsByQuery([['uid', '==', uid]], {
             count: {
                 absolute: 1,
             }
         }) as IUserPreference[]
         const userPreference = preferences[0]
-        userPreference.follow.followeeIds?.push(followeeId)
-        this.setPreference(uid, userPreference)
+        if (userPreference.follow.followeeIds && !userPreference.follow.followeeIds.includes(followeeId)) {
+            userPreference.follow.followeeIds?.push(followeeId)
+            this.setPreference(uid, userPreference)
+        }
+    }
+
+    /**
+    * U 移除追蹤對象
+    */
+    async removeFollowee(uid: string, followeeId: string) {
+        const preferences = await super.getItemsByQuery([['uid', '==', uid]], {
+            count: {
+                absolute: 1,
+            }
+        }) as IUserPreference[]
+        const userPreference = preferences[0]
+        // console.log({
+        //     userPreference,
+        //     followeeId
+        // })
+        const index = userPreference.follow.followeeIds?.findIndex(id => {
+            return id === followeeId
+        })
+        if (index && index !== -1) {
+            userPreference.follow.followeeIds?.splice(index, 1);
+            this.setPreference(uid, userPreference)
+        }
     }
 }

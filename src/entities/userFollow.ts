@@ -2,7 +2,6 @@
  * https://schema.org/FollowAction
  */
 export interface IUserFollow extends IUserFollowQuery {
-    followeeType?: string,
     followeeName?: string,
     followeeImage?: string,
     name?: string,
@@ -14,4 +13,5 @@ export interface IUserFollowQuery {
     id?: string,// userId
     followeeId?: string,
     followeeSeoName?: string,
+    followeeType?: string,
 }

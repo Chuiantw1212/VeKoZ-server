@@ -100,7 +100,7 @@ export default class OrganizationModel extends VekozModel {
         if (query.keywords) {
             wheres.push(['keywords', 'array-contains-any', query.keywords])
         }
-        const organizationList = await super.getItemsByWheres(wheres) as IOrganization[]
+        const organizationList = await super.getItemsByQuery(wheres) as IOrganization[]
         /**
          * 3 INVALID_ARGUMENT: 'NOT_IN' cannot be used in the same query with 'IN', 'ARRAY_CONTAINS_ANY' or 'OR'.
          */

@@ -33,7 +33,7 @@ export default class UserModel extends Firestore {
      * 取得用戶資料，這邊並不會拿到偏好資料，而且應該用白名單確保個資不流出
      */
     async getPublicInfoById(userId: string) {
-        const users: IUser[] = await super.getItemsByWheres([['id', '==', userId], ['isPublic', '==', true]], {
+        const users: IUser[] = await super.getItemsByQuery([['id', '==', userId], ['isPublic', '==', true]], {
             count: {
                 range: [0, 1]
             }
@@ -42,7 +42,7 @@ export default class UserModel extends Firestore {
         return userPublicInfo
     }
     async getPublicInfoByEmail(email: string) {
-        const users: IUser[] = await super.getItemsByWheres([['email', '==', email], ['isPublic', '==', true]], {
+        const users: IUser[] = await super.getItemsByQuery([['email', '==', email], ['isPublic', '==', true]], {
             count: {
                 range: [0, 1]
             }
@@ -51,7 +51,7 @@ export default class UserModel extends Firestore {
         return userPublicInfo
     }
     async getPublicInfoBySeoName(seoName: string) {
-        const users: IUser[] = await super.getItemsByWheres([['seoName', '==', seoName], ['isPublic', '==', true]], {
+        const users: IUser[] = await super.getItemsByQuery([['seoName', '==', seoName], ['isPublic', '==', true]], {
             count: {
                 range: [0, 1]
             }
@@ -89,7 +89,7 @@ export default class UserModel extends Firestore {
      * @returns 
      */
     async getUserByUid(uid: string): Promise<IUser> {
-        const users: IUser[] = await super.getItemsByWheres([['uid', '==', uid]], {
+        const users: IUser[] = await super.getItemsByQuery([['uid', '==', uid]], {
             count: {
                 range: [0, 1]
             }

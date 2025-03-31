@@ -31,7 +31,7 @@ export default class UserFollowModel extends VekozModel {
      */
     async queryFollowList(query: IUserFollowQuery) {
         const wheres = [['uid', '==', query.uid], ['id', '==', query.id]]
-        const followList = await super.getItemsByWheres(wheres)
+        const followList = await super.getItemsByQuery(wheres)
         return followList
     }
 
@@ -59,6 +59,38 @@ export default class UserFollowModel extends VekozModel {
             range: [0, 1]
         })
         return count
+    }
+
+    /**
+     * R: 用seoName取得follow action
+     * @param uid 
+     * @param followeeSeoName 
+     * @returns 
+     */
+    async getFollowActionBySeoName(uid: string, query: IUserFollowQuery) {
+        if (!query.followeeSeoName) {
+            throw 'getFollowActionBySeoName資料不全'
+        }
+        const wheres = [['uid', '==', uid]]
+        switch (query.followeeType) {
+            case 'user': {
+                wheres.push(['seoName', '==', query.followeeSeoName])
+                break;
+            }
+            case 'organization': {
+                wheres.push(['id', '==', query.followeeSeoName])
+                break;
+            }
+            default: {
+                throw 'getFollowActionBySeoName資料不全'
+            }
+        }
+        const followActions = await super.getItemsByQuery(wheres, {
+            count: {
+                absolute: 1
+            }
+        })
+        return followActions[0]
     }
 
     /**

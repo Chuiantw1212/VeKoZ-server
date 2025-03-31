@@ -110,7 +110,7 @@ export default class OrganizationMemberModel extends VekozModel {
         }
         const query = await super.getQuery(wheres)
         const count = await super.checkQueryCount(query, options?.count ?? {})
-        const memberList = await super.getItemsByWheres(wheres, options)
+        const memberList = await super.getItemsByQuery(wheres, options)
         return {
             total: count,
             items: memberList

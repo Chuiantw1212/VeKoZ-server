@@ -23,7 +23,7 @@ export default class PlaceModel extends VekozModel {
      * @returns 
      */
     async getPlaceById(uid: string, id: string): Promise<IPlace> {
-        const items = await super.getItemsByWheres([['uid', '==', uid], ['id', '==', id]], {
+        const items = await super.getItemsByQuery([['uid', '==', uid], ['id', '==', id]], {
             count: {
                 absolute: 1
             }
@@ -71,7 +71,7 @@ export default class PlaceModel extends VekozModel {
         if (query.organizationId) {
             wheres.push(['organizationId', '==', query.organizationId])
         }
-        const placeList = await super.getItemsByWheres(wheres) as IPlace[]
+        const placeList = await super.getItemsByQuery(wheres) as IPlace[]
         return placeList
     }
 

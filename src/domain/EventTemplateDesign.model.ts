@@ -9,7 +9,7 @@ export default class EventTemplateDesignModel extends VekozModel {
     }
 
     async devGetAllDesigns(): Promise<ITemplateDesign[]> {
-        const designs = await super.getItemsByWheres([])
+        const designs = await super.getItemsByQuery([])
         return designs
     }
 

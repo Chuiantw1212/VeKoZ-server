@@ -120,7 +120,7 @@ export default class VekozModel extends VenoniaCRUD {
      * @param uid 
      * @param options 
      */
-    protected async getItemsByWheres(wheres: any[][], options?: ICrudOptions): Promise<DocumentData[]> {
+    protected async getItemsByQuery(wheres: any[][], options?: ICrudOptions): Promise<DocumentData[]> {
         if (!this.collection) {
             throw this.error.collectionIsNotReady
         }

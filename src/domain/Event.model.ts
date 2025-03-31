@@ -81,7 +81,7 @@ export default class EventModel extends VekozModel {
         if (query.locationAddressRegion) {
             wheres.push(['locationAddressRegion', '==', query.locationAddressRegion])
         }
-        const firstEventList = await super.getItemsByWheres(wheres, options)
+        const firstEventList = await super.getItemsByQuery(wheres, options)
         firstEventList.forEach(docData => {
             if (docData.startDate) {
                 docData.startDate = super.formatDate(docData.startDate)
@@ -101,7 +101,7 @@ export default class EventModel extends VekozModel {
                 wheres.push(['locationAddressRegion', '!=', query.locationAddressRegion])
             }
             wheres.push(['hasVirtualLocation', '==', true])
-            onlineEvents = await super.getItemsByWheres(wheres, options)
+            onlineEvents = await super.getItemsByQuery(wheres, options)
             onlineEvents.forEach(docData => {
                 if (docData.startDate) {
                     docData.startDate = super.formatDate(docData.startDate)
@@ -137,7 +137,7 @@ export default class EventModel extends VekozModel {
      * @returns 
      */
     async getEventById(id: string): Promise<IEvent | 0> {
-        const events = await super.getItemsByWheres([['id', '==', id]]) as IEvent[]
+        const events = await super.getItemsByQuery([['id', '==', id]]) as IEvent[]
         if (!events) {
             return 0
         }
