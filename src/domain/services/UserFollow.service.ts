@@ -93,24 +93,30 @@ export default class EventTemplateService {
         return count
     }
 
+    /**
+     * D: 刪除追蹤
+     * @param query 
+     * @returns 
+     */
     async deleteUserFollow(query: IUserFollowQuery) {
         if (!query.followeeSeoName) {
             throw 'addNewFollow資料不全'
         }
 
-        // 刪除follow action
-        const deleteCount = await this.userFollowModel.deleteUserFollow(query)
-
         // 抓出follow action
         this.userFollowModel.getFollowActionBySeoName(String(query.uid), query).then((followAction: IUserFollow) => {
-            // 加入追蹤者名單
-            this.userPreferenceModel.removeFollowee(String(query.uid), String(followAction.followeeId))
-            // 更新被追蹤者的追蹤者人數
-            this.userFollowModel.countFollowers(query).then(count => {
-                this.userModel.setFollowerCount(String(followAction.followeeId), count)
-            })
+            if (followAction) {
+                // 加入追蹤者名單
+                this.userPreferenceModel.removeFollowee(String(query.uid), String(followAction.followeeId))
+                // 更新被追蹤者的追蹤者人數
+                this.userFollowModel.countFollowers(query).then(count => {
+                    this.userModel.setFollowerCount(String(followAction.followeeId), count)
+                })
+            }
         })
 
+        // 刪除follow action
+        const deleteCount = await this.userFollowModel.deleteUserFollow(query)
         return deleteCount
     }
 }

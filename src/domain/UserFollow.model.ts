@@ -74,11 +74,11 @@ export default class UserFollowModel extends VekozModel {
         const wheres = [['uid', '==', uid]]
         switch (query.followeeType) {
             case 'user': {
-                wheres.push(['seoName', '==', query.followeeSeoName])
+                wheres.push(['followeeSeoName', '==', query.followeeSeoName])
                 break;
             }
             case 'organization': {
-                wheres.push(['id', '==', query.followeeSeoName])
+                wheres.push(['followeeId', '==', query.followeeSeoName])
                 break;
             }
             default: {
