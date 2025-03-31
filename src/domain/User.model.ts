@@ -8,6 +8,22 @@ export default class UserModel extends Firestore {
         super(data)
     }
 
+    /**
+     * C
+     * @param uid 
+     * @param user 
+     * @returns 
+     */
+    async createUser(uid: string, user: IUser) {
+        const options: ICrudOptions = {
+            count: {
+                absolute: 0,
+            }
+        }
+        const createdUser: IUser = await super.createItem(uid, user, options) as IUser
+        return createdUser
+    }
+
     async uploadAvatar(id: string, avatar: IBlob): Promise<string> {
         const publicUrl = await super.uploadUniqueImage(`${id}/avatar`, avatar)
         return publicUrl
@@ -81,16 +97,12 @@ export default class UserModel extends Firestore {
         return users[0]
     }
 
-    async createUser(uid: string, user: IUser) {
-        const options: ICrudOptions = {
-            count: {
-                absolute: 0,
-            }
-        }
-        const createdUser: IUser = await super.createItem(uid, user, options) as IUser
-        return createdUser
-    }
-
+    /**
+     * R
+     * @param uid 
+     * @param seoName 
+     * @returns 
+     */
     async checkSeoNameAvailable(uid: string, seoName: string): Promise<boolean> {
         const query = await super.getQuery([['uid', '!=', uid], ['seoName', '==', seoName]])
         const count = await super.checkQueryCount(query)
@@ -98,7 +110,7 @@ export default class UserModel extends Firestore {
     }
 
     /**
-     * 
+     * U
      * @param uid 
      */
     async setUser(uid: string, user: IUser) {
@@ -115,7 +127,7 @@ export default class UserModel extends Firestore {
     }
 
     /**
-     * 單一功能更新追蹤者
+     * U 單一功能更新追蹤者
      * @param userId 
      * @param count 
      */

@@ -45,5 +45,9 @@ export interface IUserPreference {
     eventTemplate?: {
         organizerId: string,
         templateId: string,
+    },
+    follow: {
+        followeeIds?: string[],
+        calendarViewType?: 'dayGridMonth' | 'dayGridWeek' | 'listWeek'
     }
-} 
+}

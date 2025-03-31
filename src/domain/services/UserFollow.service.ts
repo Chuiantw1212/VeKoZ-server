@@ -1,12 +1,14 @@
 import { IUserFollow, IUserFollowQuery } from '../../entities/userFollow';
 import UserFollowModel from '../UserFollow.model';
 import OrganizationMemberModel from '../OrganizationMember.model';
+import UserPreferenceModel from '../UserPreference.model';
 import UserModel from '../User.model';
 import OrganizationModel from '../Organization.model';
 
 interface Idependency {
     userFollowModel: UserFollowModel;
     userModel: UserModel
+    userPreferenceModel: UserPreferenceModel
     organizationModel: OrganizationModel
 }
 
@@ -14,11 +16,13 @@ export default class EventTemplateService {
     private userFollowModel: UserFollowModel
     private userModel: UserModel
     private organizationModel: OrganizationModel
+    private userPreferenceModel: UserPreferenceModel
 
     constructor(dependency: Idependency) {
         this.userFollowModel = dependency.userFollowModel
         this.userModel = dependency.userModel
         this.organizationModel = dependency.organizationModel
+        this.userPreferenceModel = dependency.userPreferenceModel
     }
 
     async addNewFollow(uid: string, userFollow: IUserFollow) {
@@ -26,6 +30,13 @@ export default class EventTemplateService {
             throw 'addNewFollow資料不全'
         }
         const addedUserFollow = await this.userFollowModel.addNewFollow(uid, userFollow)
+        // 加入追蹤者名單
+        // this.userPreferenceModel.
+        // this.userModel.setUser(uid, {
+
+        // })
+
+        // 更新追蹤者數據
         this.userFollowModel.countFollowers(userFollow).then(count => {
             switch (userFollow.followeeType) {
                 case 'user': {

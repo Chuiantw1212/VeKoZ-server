@@ -1,5 +1,6 @@
 import Firestore from '../adapters/VekozModel.out'
 import { IUserPreference } from '../entities/user'
+import { ICrudOptions } from '../ports/out.crud'
 import type { IModelPorts } from '../ports/out.model'
 
 export default class UserPreferenceModel extends Firestore {
@@ -9,7 +10,7 @@ export default class UserPreferenceModel extends Firestore {
 
     async createPreference(uid: string, preference: IUserPreference): Promise<IUserPreference> {
         const createdItem = await super.createItem(uid, preference)
-        return createdItem
+        return createdItem as IUserPreference
     }
 
     async setPreference(uid: string, preference: IUserPreference): Promise<number> {
@@ -34,5 +35,19 @@ export default class UserPreferenceModel extends Firestore {
             }
         }) as IUserPreference[]
         return users[0]
+    }
+
+    /**
+     * U
+     */
+    async addFollowee(uid: string, followeeId: string) {
+        const preferences = await super.getItemsByWheres([['uid', '==', uid]], {
+            count: {
+                absolute: 1,
+            }
+        }) as IUserPreference[]
+        const userPreference = preferences[0]
+        userPreference.follow.followeeIds?.push(followeeId)
+        this.setPreference(uid, userPreference)
     }
 }
