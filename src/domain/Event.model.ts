@@ -120,7 +120,8 @@ export default class EventModel extends VekozModel {
         const requiredFiels = [
             'id', 'banner', 'name', 'startDate', 'endDate', 'organizerName',
             'organizerLogo', 'offerCategoryIds', 'dateDesignId',
-            'locationAddressRegion', 'hasVirtualLocation', 'isPublic', 'organizerId']
+            'locationAddressRegion', 'hasVirtualLocation', 'isPublic', 'organizerId',
+            'performerIds']
         const minimumEvents = allEvents.map((event: IEvent) => {
             const miniEvent: IEvent = {}
             requiredFiels.forEach(field => {
