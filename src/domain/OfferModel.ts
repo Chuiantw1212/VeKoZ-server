@@ -116,6 +116,14 @@ export default class OfferModel extends VekozModel {
         if (query.eventId) {
             wheres.push(['eventId', '==', query.eventId])
         }
+        if (query.offererIds) {
+            if (Array.isArray(query.offererIds)) {
+                wheres.push(['offererId', 'in', query.offererIds])
+            } else {
+                const offererIds = query.offererIds.split(',')
+                wheres.push(['offererId', 'in', offererIds])
+            }
+        }
         const offers: IOffer[] = await super.getItemsByQuery(wheres, options) as IOffer[]
         offers.forEach(offer => {
             offer.validFrom = super.formatDate(offer.validFrom)

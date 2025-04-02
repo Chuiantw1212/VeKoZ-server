@@ -1,18 +1,19 @@
 import OfferModel from '../OfferModel';
 import type { IOffer, IOfferQuery } from '../../entities/offer';
 import { ICrudOptions } from '../../ports/out.crud';
+import EventModel from '../Event.model';
 
 interface Idependency {
-    offerModel: OfferModel;
+    offerModel: OfferModel
+    eventModel: EventModel
 }
 export default class OfferService {
-    protected offerModel: OfferModel
+    private offerModel: OfferModel
+    private eventModel: EventModel
 
     constructor(dependency: Idependency) {
-        const {
-            offerModel,
-        } = dependency
-        this.offerModel = offerModel
+        this.offerModel = dependency.offerModel
+        this.eventModel = dependency.eventModel
     }
 
     async setOfferById(uid: string, id: string, offer: IOffer) {
@@ -20,7 +21,14 @@ export default class OfferService {
     }
 
     async queryOfferList(query: IOfferQuery) {
-        return await this.offerModel.getOfferList(query)
+        const offers: IOffer[] = await this.offerModel.getOfferList(query)
+        // offers.forEach(async offer => {
+        //     const event = await this.eventModel.getEventById(String(offer.eventId))
+        //     console.log({
+        //         event
+        //     })
+        // })
+        return offers
     }
 
     async setOffersByCategoryId(uid: string, categoryId: string, offer: IOffer) {

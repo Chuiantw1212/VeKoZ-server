@@ -185,6 +185,7 @@ import followController from './adapters/client.in/userFollow.ctrl'
         }),
         OfferService: new OfferService({
             offerModel: offerModel,
+            eventModel,
         })
     }
     Object.assign(AccessGlobalService.locals, {
