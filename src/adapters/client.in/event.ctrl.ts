@@ -64,7 +64,9 @@ router.use(bearer())
         return result
     })
     /**
-     * 拖曳月曆的事件時使用
+     * 觸發來源
+     * 1. 拖曳月曆事件日期
+     * 2. 變更事件公開性
      */
     .patch('/event/calendar', async function ({ request, bearer }) {
         const { AuthService, EventService, OrganizationMemberService } = AccessGlobalService.locals
